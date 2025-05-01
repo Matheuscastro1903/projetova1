@@ -50,6 +50,7 @@ class Cadastro:
     def conferir_ap(self):
         #dessa forma oq estará sendo analisado será o valor e não a chave
         if self.apartamento in dados_apartamento.values():
+            pass
 
 
             
