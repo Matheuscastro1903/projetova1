@@ -22,59 +22,90 @@ with open(r"D:/github/PERÍODO 1/projetova1/projetova1/banco_dados.JSON", "r", e
 
 def login():
     with open(r"D:/github/PERÍODO 1/projetova1/projetova1/banco_dados.JSON", "r", encoding="utf-8") as arquivo:
-    # quando usa json.load o arquivo json é transformado em dicionário python
+        # quando usa json.load o arquivo json é transformado em dicionário python
         arquivo_lido = json.load(arquivo)
 
-        print("Bem vindo a tela de Login ECODROP.")
-        email=input("Digite seu email(escreva da forma correta):")
-        #"joao.silva@email.com": "48291" dados para teste
-        senha=input("Digite sua senha:")
+        print("Bem vindo a tela de Login ECODROP💧.")
+        email = input("Digite seu email(ex:nome123@gmail.com):")
+        # "joao.silva@email.com": "48291" dados para teste
+        senha = input("Digite sua senha:")
         if email in dados_conta:
-            if dados_conta[email]==senha:
+            if dados_conta[email] == senha:
                 menu()
             else:
-                print("SENHA OU EMAIL INCORRETO.")
-                tentativas=2
-                while tentativas!=0:
-                    email=input("Digite seu email(escreva da forma correta):")
-                    senha=input("Digite sua senha:")
-                    if dados_conta[email]==senha:
+                print("EMAIL OU SENHA INCORRETO.")
+                tentativas = 2
+                while tentativas != 0:
+                    email = input("Digite seu email(nome123@gmail.com):")
+                    senha = input("Digite sua senha:")
+                    if dados_conta[email] == senha:
                         menu()
+                        # return serve para interromper a função login de continuar rodando
+                        return
                     else:
                         print("SENHA OU EMAIL INCORRETO.")
-                        tentativas-=1
+                        tentativas -= 1
+                        print(f"Tentativas restantes {tentativas}")
                 else:
-                    print("NÚMERO DE TENTATIVAS EXTRAPOLADAS.TENTE NOVAMENTE MAIS TARDE.")
+                    print(
+                        "NÚMERO DE TENTATIVAS EXTRAPOLADAS.TENTE NOVAMENTE MAIS TARDE.")
 
-
-
-        
         else:
             print("EMAIL NÃO CADASTRADO.")
-            opcao=input("Deseja ir para tela de cadastro ou sair do sistema ??(cadastro/sair)").strip().lower()
+            opcao = input(
+                "Deseja ir para tela de cadastro ou sair do sistema ??(cadastro/sair)").strip().lower()
             if opcao in ["cadastro", "cadastrar", "criar conta", "novo cadastro"]:
-                cadastro_novo=Cadastro()
-            elif opcao in ["sair","sair sistema","quitar","sai"]:
+                cadastro_novo = Cadastro()
+            elif opcao in ["sair", "sair sistema", "quitar", "sai"]:
                 print("Tenha um bom dia!!")
                 sys.exit()
-                
-            
+            else:
+                print("Opção inválida")
+                tentativas3 = 2
+                while tentativas3 != 0:
+                    opcao = input(
+                        "Deseja ir para tela de cadastro ou sair do sistema ??(cadastro/sair)").strip().lower()
+                    if opcao in ["cadastro", "cadastrar", "criar conta", "novo cadastro"]:
+                        cadastro_novo = Cadastro()
+                    elif opcao in ["sair", "sair sistema", "quitar", "sai"]:
+                        print("Tenha um bom dia!!")
+                        sys.exit()
+                    else:
+                        print("Opção inválida")
+                        print(f"Tentativas restantes {tentativas3}")
+                        tentativas3 -= 1
 
-
-
-
-
-
-
-
-
+                print("NÚMERO DE TENTATIVAS EXTRAPOLADAS.TENTE NOVAMENTE MAIS TARDE.")
 
 
 def atualizar():
+    print("Bem-vindo à tela de atualização do ECODROP.")
+    tentativas = 3
+
+    while tentativas > 0:
+        question1 = input(
+            "O que você deseja atualizar na sua conta? (dados conta / dados pessoais): ").strip().lower()
+
+        if question1 in ["dados conta", "conta", "dados da conta", "conta dados"]:
+            # atualizar_dados_conta()  # Supondo que essa função exista
+            return
+        elif question1 in ["dados pessoais", "pessoais", "informações pessoais", "info pessoais"]:
+            # atualizar_dados_pessoais()  # Supondo que essa função exista
+            return
+        else:
+            print("Opção inválida.")
+            tentativas -= 1
+            print(f"Tentativas restantes: {tentativas}")
+
+    print("Limite de tentativas atingido. Encerrando o processo de atualização.")
+
     pass
 
 
 def deletar():
+    # usar arquivo csv para guardar as possíveis reclamações
+    # usar a biblioteca time para capturar a data
+    # usuário e motivo
     pass
 
 
@@ -144,35 +175,36 @@ class Cadastro:
         self.pontos = 0
         self.apartamento = int(input("Digite o número do seu apartamento:"))
         self.verificador = input("Digite seu código verificador:\n"
-                               "ATENÇÃO,GUARDE ESSE CÓDIGO DE UMA FORMA SEGURA,CASO VOCÊ ESQUEÇA A SENHA ELE É A ÚNICA FORMA DE CONSEGUIR ACESSAR A CONTA:")
-        self.conferir_email()
+                                 "ATENÇÃO,GUARDE ESSE CÓDIGO DE UMA FORMA SEGURA,CASO VOCÊ ESQUEÇA A SENHA ELE É A ÚNICA FORMA DE CONSEGUIR ACESSAR A CONTA:")
+        self.email_valido()
 
     # precisa passar o self como parâmetro para conseguir pegar as info do init
 
-   
-        
-
-    def conferir_email(self):
+    def email_valido(self):
         dominios_validos = [
-        'gmail.com', 'outlook.com', 'hotmail.com',
-        'yahoo.com', 'icloud.com'
+            'gmail.com', 'outlook.com', 'hotmail.com',
+            'yahoo.com', 'icloud.com'
         ]
 
         tentativas_email = 3
         while tentativas_email != 0:
-        # Verifica formato
+            # VERIFICA SE O FORMATO DO EMAIL ESTÁ ESCRITO CORRETAMENTE
             if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', self.email):
                 print("FORMATO DE EMAIL INVÁLIDO, UTILIZE UM DOMÍNIO VÁLIDO")
                 self.email = input("Digite novamente seu email: ").strip()
                 tentativas_email -= 1
-                continue  # volta pro início do while para validar de novo
+                print(f"Tentativas restantes: {tentativas_email}")
 
-            # Verifica domínio
+                continue  # volta pro início do while para validar de novo,caso esteja correto,irá passar pelo verificador
+
+            # VERIFICA APENAS O DOMÍNIO,SEPARA TODO O RESTO E PEGA APENAS A PARTE DO DOMÍNIO
             dominio = self.email.split('@')[1].lower()
             if dominio not in dominios_validos:
                 print("Domínio não aceito. Use: Gmail, Outlook, Yahoo, iCloud, etc.")
                 self.email = input("Digite novamente seu email: ").strip()
                 tentativas_email -= 1
+                print(f"Tentativas restantes: {tentativas_email}")
+
                 continue
 
         # Se chegou aqui, formato e domínio estão corretos
@@ -182,38 +214,33 @@ class Cadastro:
             print("Limite de tentativas atingido. Encerrando o processo de cadastro.")
             return
 
+        self.conferir_email()
+
     # Agora verifica se email já está cadastrado
-        
-        
-        
+    def conferir_email(self):
         if self.email in dados_conta:
             print("EMAIL JÁ POSSUI UMA CONTA.")
             tentativas = 3
             while tentativas != 0:
-                resposta1 = input("Deseja tentar refazer a conta ou ir para tela de login caso já possua conta? (refazer/login) ").strip().lower()
+                resposta1 = input(
+                    "Deseja tentar refazer a conta ou ir para tela de login caso já possua conta? (refazer/login) ").strip().lower()
                 if resposta1 in ["login", "tela de login", "logi"]:
                     login()
                     return
                 elif resposta1 in ["refazer", "retentar", "conta", "refazer conta"]:
                     self.email = input("Digite novamente seu email: ").strip()
-                    self.conferir_email
+                    self.conferir_email()
                     return
                 else:
                     print("Resposta inválida")
                     tentativas -= 1
+                    print(f"Tentativas restantes {tentativas}")
             else:
-                print("Limite de tentativas atingido. Encerrando o processo de cadastro.")
+                print(
+                    "Limite de tentativas atingido. Encerrando o processo de cadastro.")
                 return
         else:
             self.conferir_ap()  # Continua o processo normalmente
-
-        
-        
-        
-        
-        
-        
-        
 
     def conferir_ap(self):
         # dessa forma oq estará sendo analisado será o valor e não a chave
@@ -221,25 +248,26 @@ class Cadastro:
             print("APARTAMENTO JÁ CADASTRADO.")
             tentativas = 3
             while tentativas != 0:
-                resposta1 = input("Deseja tentar refazer a conta ou ir para tela de login caso já possua conta ??(refazer/login)").strip().lower()
-                if resposta1 in ["login", "tela de login","logi"]:
+                resposta1 = input(
+                    "Deseja tentar refazer a conta ou ir para tela de login caso já possua conta ??(refazer/login)").strip().lower()
+                if resposta1 in ["login", "tela de login", "logi"]:
                     login()
                     return
-                elif resposta1 in ["refazer", "retentar","conta","refazer conta"]:
+                elif resposta1 in ["refazer", "retentar", "conta", "refazer conta"]:
                     Cadastro()
                     return
                 else:
                     print("Resposta inválida")
                     tentativas -= 1
-            else: # ✅ Só imprime quando zerar tentativas
-                print("Limite de tentativas atingido. Encerrando o processo de cadastro.")
+                    print(f"Tentativas restantes {tentativas}")
+            else:  # ✅ Só imprime quando zerar tentativas
+                print(
+                    "Limite de tentativas atingido. Encerrando o processo de cadastro.")
         else:
             self.cadastrar_conta()
 
-
-
     def cadastrar_conta(self):
-           #print("Bem vindo ao projeto ECODROP do condomínio Village")
+        # print("Bem vindo ao projeto ECODROP do condomínio Village")
 
         dados_conta[self.email] = self.senha
         dados_familia[self.email] = self.nome_familia
@@ -248,12 +276,11 @@ class Cadastro:
         dados_apartamento[self.email] = self.apartamento
         dados_codigov[self.email] = self.verificador
 
-
         # PARA ARQUIVO TIPO JSON É MELHOR USAR "w" pois qualquer errinho de formatação pode quebrar o sistema
         with open(r"D:/github/PERÍODO 1/projetova1/projetova1/banco_dados.JSON", "w", encoding="utf-8") as arquivo:
-            #Aqui, estamos criando um dicionário com duas chaves:
-            json.dump({"senha": dados_conta, "familia": dados_familia, "membros":dados_quantidade,"pontos":dados_pontos,
-                       "apartamento": dados_apartamento,"verificador":dados_codigov},arquivo, indent=4, ensure_ascii=False)
+            # Aqui, estamos criando um dicionário com duas chaves:
+            json.dump({"senha": dados_conta, "familia": dados_familia, "membros": dados_quantidade, "pontos": dados_pontos,
+                       "apartamento": dados_apartamento, "verificador": dados_codigov}, arquivo, indent=4, ensure_ascii=False)
         menu()
 
 
@@ -265,7 +292,8 @@ print("OLÁ,BEM VINDO AO SISTEMA ECODROP💧 do condomínio Village")
 
 tentativas = 3  # Por exemplo, 3 tentativas permitidas
 while tentativas != 0:
-    tipo_servico = input("QUAL TIPO DE SERVIÇO VOCÊ DESEJA ?? (LOGIN/CADASTRO) ").strip().lower()
+    tipo_servico = input(
+        "QUAL TIPO DE SERVIÇO VOCÊ DESEJA ?? (LOGIN/CADASTRO) ").strip().lower()
 
     if tipo_servico in ["login", "entrar", "acessar", "fazer login"]:
         login()
@@ -278,6 +306,7 @@ while tentativas != 0:
     else:
         print("Serviço inválido. Por favor, tente novamente.")
         tentativas -= 1
+        print(f"Tentativas restantes {tentativas}")
 
 else:
     print("Limite de tentativas atingido. Reinicie o programa.")
