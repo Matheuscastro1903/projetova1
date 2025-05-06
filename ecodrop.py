@@ -162,12 +162,14 @@ def deletar():
 
 
 def feedback():
-    pass
+    print("O que você achou do nosso serviço")
+    input(str("Avalie-nos")
+          #abrir arquivo 
+pass
 
 
 def ranking():
-    pass
-
+   
 
 def resgatar():
     pass
