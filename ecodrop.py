@@ -26,7 +26,7 @@ def login():
         arquivo_lido = json.load(arquivo)
 
         print("Bem vindo a tela de Login ECODROP💧.")
-        email = input("Digite seu email(ex:nome123@gmail.com):")
+        email =input("Digite seu email(ex:nome123@gmail.com):")
         # "joao.silva@email.com": "48291" dados para teste
         senha = input("Digite sua senha:")
         if email in dados_conta:
@@ -40,15 +40,28 @@ def login():
                     senha = input("Digite sua senha:")
                     if dados_conta[email] == senha:
                         menu()
-                        # return serve para interromper a função login de continuar rodando
+                        # return serve para interromper a função login de continuar rodando e deixar apenas a função menu
                         return
                     else:
                         print("SENHA OU EMAIL INCORRETO.")
                         tentativas -= 1
                         print(f"Tentativas restantes {tentativas}")
                 else:
-                    print(
-                        "NÚMERO DE TENTATIVAS EXTRAPOLADAS.TENTE NOVAMENTE MAIS TARDE.")
+                    print("NÚMERO DE TENTATIVAS EXTRAPOLADAS.TENTE NOVAMENTE MAIS TARDE.")
+                    question1=input("Deseja tentar entrar usando código verificador ??(sim/não)")
+                    if question1 in ["sim","si","yes","codigo","código verificador","verificador","código"]:
+                        tryverificador=input("Digite seu código verificador(Você terá apenas 1 chance):")
+                        if dados_codigov[email]==tryverificador:
+                            print("Você conseguiu o acesso.Mude imediatamente sua senha,visando não ter problemas futuros.")
+                            menu()
+                            return
+                        else:
+                            print("Você errou o código verificador.")
+                            print("Tente novamente mais tarde.Use esse tempo para tentar relembrar seus dados.")
+                            sys.exit()
+                    if question1 in ["não","no","nao","sair","sai"]:
+                        print("Tenha um bom dia.")
+                        sys.exit
 
         else:
             print("EMAIL NÃO CADASTRADO.")
@@ -76,7 +89,8 @@ def login():
                         tentativas3 -= 1
 
                 print("NÚMERO DE TENTATIVAS EXTRAPOLADAS.TENTE NOVAMENTE MAIS TARDE.")
-
+                sys.exit()
+#######
 
 def atualizar():
     print("Bem-vindo à tela de atualização do ECODROP.")
@@ -87,11 +101,16 @@ def atualizar():
             "O que você deseja atualizar na sua conta? (dados conta / dados pessoais): ").strip().lower()
 
         if question1 in ["dados conta", "conta", "dados da conta", "conta dados"]:
-            # atualizar_dados_conta()  # Supondo que essa função exista
+            atualizar_conta()
             return
+            
+            
+            
         elif question1 in ["dados pessoais", "pessoais", "informações pessoais", "info pessoais"]:
-            # atualizar_dados_pessoais()  # Supondo que essa função exista
+            atualizar_pessoais()
             return
+            
+         
         else:
             print("Opção inválida.")
             tentativas -= 1
@@ -100,6 +119,39 @@ def atualizar():
     print("Limite de tentativas atingido. Encerrando o processo de atualização.")
 
     pass
+
+
+def atualizar_pessoais():
+    while True:
+         try:   
+            membros_novos=int(input("Digite a quantidade de membros na família(Quantidade em numeral):"))
+            break
+         except ValueError:
+             print("Valor inválido.Digite apenas números inteiros")
+             #dessa forma só irá sair do loop se o valor for inteiro
+    
+    nome_novo=input("Digite o nome da sua família(Ficará registrado no ranking da forma que você escrever):")
+    print(f"Dados atualizados:" \
+    f"Quantidade de pessoas na família: {membros_novos}" \
+    f"Nome da família:{nome_novo}")
+    confirmar=input("Deseja confirmar a atualização dos dados ??(sim/não)").strip().lower()
+    if confirmar in ["sim","si","confirmar","confirma","confirmo"]:
+        pass
+    if confirmar in ["não","no","nao","cancelar","cancelo","cancela"]:
+        pass
+
+
+
+    
+   
+       
+    
+        
+    
+def atualizar_conta():
+    pass
+
+
 
 
 def deletar():
@@ -205,6 +257,7 @@ class Cadastro:
                 tentativas_email -= 1
                 print(f"Tentativas restantes: {tentativas_email}")
 
+                #continuar o loop sem parar
                 continue
 
         # Se chegou aqui, formato e domínio estão corretos
