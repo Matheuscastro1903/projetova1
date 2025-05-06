@@ -169,6 +169,25 @@ pass
 
 
 def ranking():
+    import json
+
+# Lê os dados do arquivo JSON
+with open('dados_usuarios.json', 'r', encoding='utf-8') as arquivo:
+    dados = json.load(arquivo)
+
+# Extrai os pontos
+pontos = dados['pontos']
+
+# Gera uma lista de tuplas com email e pontos
+ranking = sorted(pontos.items(), key=lambda item: item[1], reverse=True)
+
+# Mostra o ranking com outros dados (nome da família e apartamento)
+print("🏆 RANKING DOS USUÁRIOS POR PONTOS:\n")
+for posicao, (email, ponto) in enumerate(ranking, start=1):
+    familia = dados['familia'].get(email, 'Desconhecido')
+    ap = dados['apartamento'].get(email, '???')
+    print(f"{posicao}º lugar: Família {familia} (Apt {ap}) - {ponto} pontos")
+pass
    
 
 def resgatar():
