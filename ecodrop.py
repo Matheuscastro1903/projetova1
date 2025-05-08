@@ -129,7 +129,7 @@ def atualizar():
             "O que você deseja atualizar na sua conta? (dados conta / dados pessoais): ").strip().lower()
 
         if question1 in ["dados conta", "conta", "dados da conta", "conta dados"]:
-            atualizar_conta()
+            email_valido()
             return
 
         elif question1 in ["dados pessoais", "pessoais", "informações pessoais", "info pessoais"]:
@@ -143,12 +143,15 @@ def atualizar():
 
     print("Limite de tentativas atingido. Encerrando o processo de atualização.")
 
-    pass
+    #pass
 
 
-def atualizar_pessoais():
-    import json
-import sys
+
+
+
+
+
+
 
 def atualizar_pessoais():
     # Carregar os dados do arquivo
@@ -231,10 +234,145 @@ def atualizar_pessoais():
 # Exemplo de chamada da função
 #atualizar_pessoais()
 
+def email_valido():
+    
+        dominios_validos = [
+            'gmail.com', 'outlook.com', 'hotmail.com',
+            'yahoo.com', 'icloud.com'
+        ]
+    email_novo=input("Digite seu novo email:")
+
+        tentativas_email = 3
+        while tentativas_email != 0:
+            # VERIFICA SE O FORMATO DO EMAIL ESTÁ ESCRITO CORRETAMENTE
+            if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',email_novo):
+                print("FORMATO DE EMAIL INVÁLIDO, UTILIZE UM DOMÍNIO VÁLIDO")
+                email_novo = input("Digite novamente seu email: ").strip()
+                tentativas_email -= 1
+                print(f"Tentativas restantes: {tentativas_email}")
+
+                continue  # volta pro início do while para validar de novo,caso esteja correto,irá passar pelo verificador
+
+            # VERIFICA APENAS O DOMÍNIO,SEPARA TODO O RESTO E PEGA APENAS A PARTE DO DOMÍNIO
+            dominio = email_novo.split('@')[1].lower()
+            if dominio not in dominios_validos:
+                print("Domínio não aceito. Use: Gmail, Outlook, Yahoo, iCloud, etc.")
+                email_novo = input("Digite novamente seu email: ").strip()
+                tentativas_email -= 1
+                print(f"Tentativas restantes: {tentativas_email}")
+
+                # continuar o loop sem parar
+                continue
+
+        # Se chegou aqui, formato e domínio estão corretos
+            break
+
+        else:
+            print("Limite de tentativas atingido. Encerrando o processo de cadastro.")
+            return
+
+        conferir_email()
+
+    # Agora verifica se email já está cadastrado
+    def conferir_email(email_novo)):
+        if email_novo in dados_conta:
+            print("EMAIL JÁ POSSUI UMA CONTA.")
+            tentativas = 3
+            while tentativas != 0:
+                resposta1 = input(
+                    "Deseja tentar refazer a conta ou ir para tela de login caso já possua conta? (refazer/login) ").strip().lower()
+                if resposta1 in ["login", "tela de login", "logi"]:
+                    login()
+                    return
+                elif resposta1 in ["refazer", "retentar", "conta", "refazer conta"]:
+                    self.email = input("Digite novamente seu email: ").strip()
+                    self.conferir_email()
+                    return
+                else:
+                    print("Resposta inválida")
+                    tentativas -= 1
+                    print(f"Tentativas restantes {tentativas}")
+            else:
+                print(
+                    "Limite de tentativas atingido. Encerrando o processo de cadastro.")
+                return
+        else:
+            atualizar_conta()  # Continua o processo normalmente
 
 
-def atualizar_conta():
-    pass
+
+def atualizar_conta(novo_email):
+   #ajustar o email novo pois teria que mudar todos os dicionários
+    
+    senha_nova=input("Digite sua nova senha:")
+    print(f"Dados atualizados:\nNovo email cadastrado: {novo_email}\nNova senha: {senha_nova}")
+    
+    confirmar = input("Deseja confirmar a atualização dos dados? (sim/não): ").strip().lower()
+    if confirmar in ["sim", "si", "confirmar", "confirma", "confirmo"]:
+        print("DIGITE SEUS DADOS NOVAMENTE PARA A SEGURANÇA DA SUA CONTA")
+        email = input("Digite seu e-mail (ex:nome123@gmail.com): ")
+        senha = input("Digite sua senha: ")
+        
+        # Verifica se o e-mail existe e se a senha está correta
+        if email in dados["senha"]:
+            if dados["senha"][email] == senha:
+                # Atualiza os dados
+                dados["familia"][email] = 
+                dados["membros"][email] = membros_novos
+                print("Dados atualizados com sucesso!")
+                
+                # Salva os dados modificados no arquivo
+                with open(r"D:/github/PERÍODO 1/projetova1/projetova1/banco_dados.JSON", "w", encoding="utf-8") as arquivo:
+                    json.dump({
+                        "senha": dados["senha"],
+                        "familia": dados["familia"],
+                        "membros": dados["membros"],
+                        "pontos": dados["pontos"],
+                        "apartamento": dados["apartamento"],
+                        "verificador": dados["verificador"]
+                    }, arquivo, indent=4, ensure_ascii=False)
+                return
+            else:
+                print("E-mail ou senha incorretos.")
+                tentativas = 2
+                while tentativas > 0:
+                    email = input("Digite seu e-mail (nome123@gmail.com): ")
+                    senha = input("Digite sua senha: ")
+                    if dados["senha"].get(email) == senha:
+                        dados["familia"][email] = nome_novo
+                        dados["membros"][email] = membros_novos
+                        print("Dados atualizados com sucesso!")
+                        # Salva os dados modificados no arquivo
+                        with open(r"D:/github/PERÍODO 1/projetova1/projetova1/banco_dados.JSON", "w", encoding="utf-8") as arquivo:
+                            json.dump({
+                                "senha": dados["senha"],
+                                "familia": dados["familia"],
+                                "membros": dados["membros"],
+                                "pontos": dados["pontos"],
+                                "apartamento": dados["apartamento"],
+                                "verificador": dados["verificador"]
+                            }, arquivo, indent=4, ensure_ascii=False)
+                        return
+                    else:
+                        print("E-mail ou senha incorretos.")
+                        tentativas -= 1
+                        print(f"Tentativas restantes: {tentativas}")
+                print("Número de tentativas excedido. Tente novamente mais tarde.")
+                sys.exit()
+        else:
+            print("E-mail não encontrado no banco de dados.")
+            sys.exit()
+
+    elif confirmar in ["não", "nao", "cancelar", "cancelo", "cancela"]:
+        print("Cancelando operação... Voltando para o menu inicial.")
+        menu()  # Substitua com sua função de menu, caso necessário
+    else:
+        print("Opção inválida. Cancelando operação.")
+        menu()
+    
+     
+    
+    
 
 
 def deletar():
