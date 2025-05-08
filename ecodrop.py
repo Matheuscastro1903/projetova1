@@ -322,6 +322,19 @@ def resgatar():
     print("\n🎁 Resgate de Prêmios:")
     print(f"Você pode resgatar: {premio}")
 
+ if pontos >= 200:
+        recompensa = recompensas[200]
+    elif pontos >= 100:
+        recompensa = recompensas[100]
+    elif pontos >= 50:
+        recompensa = recompensas[50]
+    elif pontos >= 20:
+        recompensa = recompensas[20]
+    else:
+        recompensa = "Você não tem pontos suficientes para resgatar recompensas."
+    
+    print(f"Você pode resgatar: {recompensa}")
+
 pass
 
 
@@ -339,30 +352,7 @@ def exibir_resultado(pontos):
     print(f"Você economizou {pontos/0.5} litros de água e acumulou {pontos:.2f} pontos!")
     return pontos
 
-# Função para resgatar recompensas com base nos pontos
-def resgatar_pontos(pontos):
-    recompensas = {
-        20: "Desconto em um produto de limpeza ecológico",
-        50: "Cartão presente de R$50",
-        100: "Assinatura de um serviço de streaming por 3 meses",
-        200: "Viagem para uma reserva ecológica por 1 final de semana"
-    }
-
-    print("\n🎁 Resgate de Pontos:")
-    if pontos >= 200:
-        recompensa = recompensas[200]
-    elif pontos >= 100:
-        recompensa = recompensas[100]
-    elif pontos >= 50:
-        recompensa = recompensas[50]
-    elif pontos >= 20:
-        recompensa = recompensas[20]
-    else:
-        recompensa = "Você não tem pontos suficientes para resgatar recompensas."
-    
-    print(f"Você pode resgatar: {recompensa}")
-
-
+pass
 
 def menu():
     tentativas = 3
