@@ -248,7 +248,7 @@ def feedback():
     print("======Sistema de avaliação"========")
 
     print("O que você achou do nosso serviço?")
-     nome = input("Digite seu nome: ")
+    nome = input("Digite seu nome: ")
     nota = float(input("Qual sua nota (0 a 10)? "))
     
     # Verifica se a nota está dentro do intervalo permitido
@@ -301,7 +301,7 @@ def ranking():
             familia = dados['familia'].get(email, 'Desconhecido')
             ap = dados['apartamento'].get(email, '???')
             print(f"{posicao}º lugar: Família {familia} (Apt {ap}) - {ponto} pontos")
-# pass
+pass
 
 
 def resgatar():
@@ -321,6 +321,8 @@ def resgatar():
 
     print("\n🎁 Resgate de Prêmios:")
     print(f"Você pode resgatar: {premio}")
+
+pass
 
 
 def calculo():
