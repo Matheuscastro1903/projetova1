@@ -247,62 +247,39 @@ def deletar():
 def feedback():
     print("======Sistema de avaliação"========")
 
-    def registrar_avaliacao():
-    nome = input("Nome do avaliador: ")
-    nota = float(input("Nota (0 a 10): "))
-    comentario = input("Comentário: ")
+    print("O que você achou do nosso serviço?")
+     nome = input("Digite seu nome: ")
+    nota = float(input("Qual sua nota (0 a 10)? "))
     
-    # Armazenar avaliação como dicionário
-    avaliacao = {
+    # Verifica se a nota está dentro do intervalo permitido
+    if nota < 0 or nota > 10:
+        print("Nota inválida. Por favor, digite uma nota entre 0 e 10.")
+        return
+    
+    comentario = input("Deixe seu comentário: ")
+    
+    # Armazenar o feedback como um dicionário
+    feedback = {
         "nome": nome,
         "nota": nota,
         "comentario": comentario
     }
     
-    avaliacoes.append(avaliacao)
-    print("✅ Avaliação registrada com sucesso!\n")
+    feedbacks.append(feedback)
+    print("\n✅ Feedback registrado com sucesso!\n")
 
-# Função para exibir todas as avaliações
-def mostrar_avaliacoes():
-    if not avaliacoes:
-        print("Ainda não há avaliações registradas.\n")
+# Função para exibir todos os feedbacks
+def exibir_feedbacks():
+    if not feedbacks:
+        print("Ainda não há feedbacks registrados.\n")
         return
     
-    print("\n📋 Relatório de Comentários e Avaliações:")
-    for i, a in enumerate(avaliacoes, start=1):
-        print(f"\n{i} - Avaliador: {a['nome']}")
-        print(f"Nota: {a['nota']}/10")
-        print(f"Comentário: {a['comentario']}")
+    print("\n📋 Lista de Feedbacks Recebidos:")
+    for i, f in enumerate(feedbacks, start=1):
+        print(f"\n{i} - Nome: {f['nome']}")
+        print(f"Nota: {f['nota']}/10")
+        print(f"Comentário: {f['comentario']}")
 
-# Menu principal
-def menu():
-    while True:
-        print("\n--- Setor de Comentários e Avaliação ---")
-        print("1. Registrar nova avaliação")
-        print("2. Ver todas as avaliações")
-        print("3. Sair")
-        opcao = input("Escolha uma opção: ")
-        
-        if opcao == '1':
-            registrar_avaliacao()
-        elif opcao == '2':
-            mostrar_avaliacoes()
-        elif opcao == '3':
-            print("Encerrando o setor de avaliação. Até logo!")
-            break
-        else:
-            print("Opção inválida. Tente novamente.")
-
-# Executar o programa
-menu()
-
-          
-
-
-   # print("O que você achou do nosso serviço")
-    # input(str("Avalie-nos")
-    # abrir arquivo
-    pass
 
 
 def ranking():
