@@ -245,6 +245,58 @@ def deletar():
 
 
 def feedback():
+    print("======Sistema de avaliação"========")
+
+    def registrar_avaliacao():
+    nome = input("Nome do avaliador: ")
+    nota = float(input("Nota (0 a 10): "))
+    comentario = input("Comentário: ")
+    
+    # Armazenar avaliação como dicionário
+    avaliacao = {
+        "nome": nome,
+        "nota": nota,
+        "comentario": comentario
+    }
+    
+    avaliacoes.append(avaliacao)
+    print("✅ Avaliação registrada com sucesso!\n")
+
+# Função para exibir todas as avaliações
+def mostrar_avaliacoes():
+    if not avaliacoes:
+        print("Ainda não há avaliações registradas.\n")
+        return
+    
+    print("\n📋 Relatório de Comentários e Avaliações:")
+    for i, a in enumerate(avaliacoes, start=1):
+        print(f"\n{i} - Avaliador: {a['nome']}")
+        print(f"Nota: {a['nota']}/10")
+        print(f"Comentário: {a['comentario']}")
+
+# Menu principal
+def menu():
+    while True:
+        print("\n--- Setor de Comentários e Avaliação ---")
+        print("1. Registrar nova avaliação")
+        print("2. Ver todas as avaliações")
+        print("3. Sair")
+        opcao = input("Escolha uma opção: ")
+        
+        if opcao == '1':
+            registrar_avaliacao()
+        elif opcao == '2':
+            mostrar_avaliacoes()
+        elif opcao == '3':
+            print("Encerrando o setor de avaliação. Até logo!")
+            break
+        else:
+            print("Opção inválida. Tente novamente.")
+
+# Executar o programa
+menu()
+
+          
 
 
    # print("O que você achou do nosso serviço")
@@ -276,11 +328,61 @@ def ranking():
 
 
 def resgatar():
-    pass
+    def resgatar_premio(litros_economizados):
+    if litros_economizados >= 1000:
+        premio = "Viagem para uma reserva ecológica por 1 final de semana"
+    elif litros_economizados >= 500:
+        premio = "Assinatura de um serviço de streaming por 3 meses"
+    elif litros_economizados >= 200:
+        premio = "Desconto em um produto de limpeza ecológico"
+    elif litros_economizados >= 100:
+        premio = "Cartão presente de R$50"
+    elif litros_economizados >= 50:
+        premio = "Garrafa d'água ecológica"
+    else:
+        premio = "Você ainda não tem pontos suficientes para resgatar prêmios."
+
+    print("\n🎁 Resgate de Prêmios:")
+    print(f"Você pode resgatar: {premio}")
 
 
 def calculo():
-    pass
+    # Função para calcular os pontos com base na economia de água em litros
+def calcular_pontos_por_litros(litros_economizados):
+    # Definir uma relação entre litros economizados e pontos
+    pontos_por_litro = 0.5  # Cada litro economizado gera 0.5 ponto
+    pontos_totais = litros_economizados * pontos_por_litro
+    return pontos_totais
+
+# Função para exibir a pontuação final
+def exibir_resultado(pontos):
+    print("\n🏅 Resultado da Economia de Água:")
+    print(f"Você economizou {pontos/0.5} litros de água e acumulou {pontos:.2f} pontos!")
+    return pontos
+
+# Função para resgatar recompensas com base nos pontos
+def resgatar_pontos(pontos):
+    recompensas = {
+        20: "Desconto em um produto de limpeza ecológico",
+        50: "Cartão presente de R$50",
+        100: "Assinatura de um serviço de streaming por 3 meses",
+        200: "Viagem para uma reserva ecológica por 1 final de semana"
+    }
+
+    print("\n🎁 Resgate de Pontos:")
+    if pontos >= 200:
+        recompensa = recompensas[200]
+    elif pontos >= 100:
+        recompensa = recompensas[100]
+    elif pontos >= 50:
+        recompensa = recompensas[50]
+    elif pontos >= 20:
+        recompensa = recompensas[20]
+    else:
+        recompensa = "Você não tem pontos suficientes para resgatar recompensas."
+    
+    print(f"Você pode resgatar: {recompensa}")
+
 
 
 def menu():
