@@ -3,6 +3,8 @@ import json
 import time
 import re
 import random
+import os
+
 # RESOLVER EMAIL
 # LOGIN
 # ATUALIZAR
@@ -38,30 +40,41 @@ mensagens_agua = [
     "💙 Água limpa é direito de todos. Preserve!"
 ]
 
-
+def limpar_tela():
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 def login():
     with open(r"D:/github/PERÍODO 1/projetova1/projetova1/banco_dados.JSON", "r", encoding="utf-8") as arquivo:
         # quando usa json.load o arquivo json é transformado em dicionário python
         arquivo_lido = json.load(arquivo)
+        
+        dados_conta = arquivo_lido["senha"]
+        dados_familia = arquivo_lido["familia"]
+        dados_quantidade = arquivo_lido["membros"]
+        dados_pontos = arquivo_lido["pontos"]
+        dados_apartamento = arquivo_lido["apartamento"]
+        dados_codigov = arquivo_lido["verificador"]
+
 
         print("Bem vindo a tela de Login ECODROP💧.")
         #print(random.choice(mensagens_agua))
         time.sleep(1)
-        email = input("Digite seu email(ex:nome123@gmail.com):")
+        email_login = input("Digite seu email(ex:nome123@gmail.com):")
         # "joao.silva@email.com": "48291" dados para teste
-        senha = input("Digite sua senha:")
-        if email in dados_conta:
-            if dados_conta[email] == senha:
-                menu()
+        senha_login = input("Digite sua senha:")
+        if email_login in dados_conta:
+            if dados_conta[email_login] == senha_login:
+                limpar_tela()
+                menu(email_login,senha_login)
             else:
                 print("EMAIL OU SENHA INCORRETO.")
                 tentativas = 2
                 while tentativas != 0:
-                    email = input("Digite seu email(nome123@gmail.com):")
-                    senha = input("Digite sua senha:")
-                    if dados_conta[email] == senha:
-                        menu()
+                    email_login = input("Digite seu email(nome123@gmail.com):")
+                    senha_login = input("Digite sua senha:")
+                    if dados_conta[email_login] == senha_login:
+                        limpar_tela()
+                        menu(email_login,senha_login)
                         # return serve para interromper a função login de continuar rodando e deixar apenas a função menu
                         return
                     else:
@@ -76,10 +89,10 @@ def login():
                     if question1 in ["sim", "si", "yes", "codigo", "código verificador", "verificador", "código"]:
                         tryverificador = input(
                             "Digite seu código verificador(Você terá apenas 1 chance):")
-                        if dados_codigov[email] == tryverificador:
+                        if dados_codigov[email_login] == tryverificador:
                             print(
                                 "Você conseguiu o acesso.Mude imediatamente sua senha,visando não ter problemas futuros.")
-                            menu()
+                            menu(email_login,senha_login)
                             return
                         else:
                             print("Você errou o código verificador.")
@@ -119,8 +132,52 @@ def login():
                 sys.exit()
 #######
 
+def menu(email_login,senha_login):
+    tentativas = 3
+    print("BEM VINDO AO MENU PRINCIPAL DO ECODROP💧.")
+    #mensagem estilo minecraft
+    print(random.choice(mensagens_agua))
+    time.sleep(1)
+    while tentativas != 0:
+        resposta2 = input("Qual tipo de função você deseja ?? (Ranking/Calcular pontos/Atualizar dados/Deletar conta/Feedback/Resgatar recompensas/sair sistema):").strip().lower()
 
-def atualizar():
+        if resposta2 in ["ver ranking", "ranking"]:
+            ranking()
+            return
+
+        elif resposta2 in ["calcular pontos", "calcular", "calculo", "pontos"]:
+            calculo()
+            return
+
+        elif resposta2 in ["atualizar", "atualização", "atualizar dados", "atualiza dados","dados"]:
+            atualizar(email_login,senha_login)
+            return
+
+        elif resposta2 in ["deletar", "deletar conta", "excluir", "excluir conta", "apagar conta"]:
+            deletar(email_login,senha_login)
+            return
+
+        elif resposta2 in ["feedback", "enviar feedback", "sugestao", "sugestão", "critica", "crítica"]:
+            feedback()
+            return
+        elif resposta2 in ["resgatar", "recompensa", "resgatar recompensa", "prêmios", "premio"]:
+            resgatar_premio()
+            return
+        elif resposta2 in ["sair","sai","sair sistema","sai sistema","quit"]:
+            print("Tenha um bom dia!!")
+            sys.exit()
+
+        else:
+            print("Resposta inválida")
+            tentativas -= 1
+
+    else:
+        print("Limite de tentativas atingido. Reinicie o programa.")
+        sys.exit()
+
+
+#FEITO E TESTADO(CONCLUIDO)
+def atualizar(email_login,senha_login):
     print("Bem-vindo à tela de atualização do ECODROP.")
     tentativas = 3
 
@@ -129,11 +186,11 @@ def atualizar():
             "O que você deseja atualizar na sua conta? (dados conta / dados pessoais): ").strip().lower()
 
         if question1 in ["dados conta", "conta", "dados da conta", "conta dados"]:
-            email_valido()
+            email_valido(email_login,senha_login)
             return
 
         elif question1 in ["dados pessoais", "pessoais", "informações pessoais", "info pessoais"]:
-            atualizar_pessoais()
+            atualizar_pessoais(email_login,senha_login)
             return
 
         else:
@@ -146,101 +203,85 @@ def atualizar():
     #pass
 
 
-
-
-
-
-
-
-
-
-
-def atualizar_pessoais():
+#FEITO E TESTADO(CONCLUÍDO)
+def atualizar_pessoais(email_login,senha_login):
     # Carregar os dados do arquivo
     with open(r"D:/github/PERÍODO 1/projetova1/projetova1/banco_dados.JSON", "r", encoding="utf-8") as arquivo:
-        dados = json.load(arquivo)
+        arquivo_lido = json.load(arquivo)
+        dados_conta = arquivo_lido["senha"]
+        dados_familia = arquivo_lido["familia"]
+        dados_quantidade = arquivo_lido["membros"]
+        dados_pontos = arquivo_lido["pontos"]
+        dados_apartamento = arquivo_lido["apartamento"]
+        dados_codigov = arquivo_lido["verificador"]
 
-    while True:
-        try:
-            membros_novos = int(input("Digite a quantidade de membros na família (Quantidade em numeral):"))
-            break
-        except ValueError:
-            print("Valor inválido. Digite apenas números inteiros.")
+
+
+        while True:
+            try:
+                membros_novos = int(input("Digite a quantidade de membros na família (Quantidade em numeral):"))
+                break
+            except ValueError:
+                print("Valor inválido. Digite apenas números inteiros.")
     
-    nome_novo = input("Digite o nome da sua família (Ficará registrado no ranking da forma que você escrever):")
-    print(f"Dados atualizados:\nQuantidade de pessoas na família: {membros_novos}\nNome da família: {nome_novo}")
+        nome_novo = input("Digite o nome da sua família (Ficará registrado no ranking da forma que você escrever):")
+        print(f"Dados atualizados:\nQuantidade de pessoas na família: {membros_novos}\nNome da família: {nome_novo}")
+
     
-    confirmar = input("Deseja confirmar a atualização dos dados? (sim/não): ").strip().lower()
-    if confirmar in ["sim", "si", "confirmar", "confirma", "confirmo"]:
-        print("DIGITE SEUS DADOS NOVAMENTE PARA A SEGURANÇA DA SUA CONTA")
-        email = input("Digite seu e-mail (ex:nome123@gmail.com): ")
-        senha = input("Digite sua senha: ")
+    
+        print("Cuidado⚠️!!Caso você confirme essa atualização deve ficar ciente que os antigos dados serão atualizados e não poderão ser "
+        "acessados novamente")
+        time.sleep(1)
+    
+        tentativas = 3
+        while tentativas != 0:
+            confirmar = input("Deseja confirmar a atualização dos dados? (sim/não): ").strip().lower()
+            if confirmar in ["sim", "si", "confirmar", "confirma", "confirmo"]:
         
-        # Verifica se o e-mail existe e se a senha está correta
-        if email in dados["senha"]:
-            if dados["senha"][email] == senha:
-                # Atualiza os dados
-                dados["familia"][email] = nome_novo
-                dados["membros"][email] = membros_novos
-                print("Dados atualizados com sucesso!")
+                
+                dados_conta[email_login] = senha_login
+                dados_familia[email_login] = nome_novo
+                dados_quantidade[email_login] = membros_novos
+                dados_pontos[email_login] = dados_pontos[email_login]
+                dados_apartamento[email_login] = dados_apartamento[email_login]
+                dados_codigov[email_login] = dados_codigov[email_login]
+        
+        
+        
+      
                 
                 # Salva os dados modificados no arquivo
                 with open(r"D:/github/PERÍODO 1/projetova1/projetova1/banco_dados.JSON", "w", encoding="utf-8") as arquivo:
-                    json.dump({
-                        "senha": dados["senha"],
-                        "familia": dados["familia"],
-                        "membros": dados["membros"],
-                        "pontos": dados["pontos"],
-                        "apartamento": dados["apartamento"],
-                        "verificador": dados["verificador"]
-                    }, arquivo, indent=4, ensure_ascii=False)
+                    json.dump({"senha": dados_conta, "familia": dados_familia,"membros": dados_quantidade, "pontos": dados_pontos,"apartamento": dados_apartamento,
+                               "verificador": dados_codigov
+                               }, arquivo, indent=4, ensure_ascii=False)
+                print("ATUALIZAÇÃO FEITA COM SUCESSO \n"
+                    "REDIRECIONANDO PARA MENU")
+                time.sleep(1)
+                menu(email_login,senha_login)
+                return
+
+        
+
+            elif confirmar in ["não", "nao", "cancelar", "cancelo", "cancela"]:
+                print("Cancelando operação... Voltando para o menu inicial.")
+                menu(email_login,senha_login)  # Substitua com sua função de menu, caso necessário
                 return
             else:
-                print("E-mail ou senha incorretos.")
-                tentativas = 2
-                while tentativas > 0:
-                    email = input("Digite seu e-mail (nome123@gmail.com): ")
-                    senha = input("Digite sua senha: ")
-                    if dados["senha"].get(email) == senha:
-                        dados["familia"][email] = nome_novo
-                        dados["membros"][email] = membros_novos
-                        print("Dados atualizados com sucesso!")
-                        # Salva os dados modificados no arquivo
-                        with open(r"D:/github/PERÍODO 1/projetova1/projetova1/banco_dados.JSON", "w", encoding="utf-8") as arquivo:
-                            json.dump({
-                                "senha": dados["senha"],
-                                "familia": dados["familia"],
-                                "membros": dados["membros"],
-                                "pontos": dados["pontos"],
-                                "apartamento": dados["apartamento"],
-                                "verificador": dados["verificador"]
-                            }, arquivo, indent=4, ensure_ascii=False)
-                        return
-                    else:
-                        print("E-mail ou senha incorretos.")
-                        tentativas -= 1
-                        print(f"Tentativas restantes: {tentativas}")
-                print("Número de tentativas excedido. Tente novamente mais tarde.")
-                sys.exit()
+                print("Opção inválida. Cancelando operação.")
+                tentativas-=1
+                print(f"Tentativas restantes {tentativas}")
         else:
-            print("E-mail não encontrado no banco de dados.")
+            print("Limite de tentativas atingido")
+            print("Reinicie o sistema")
             sys.exit()
 
-    elif confirmar in ["não", "nao", "cancelar", "cancelo", "cancela"]:
-        print("Cancelando operação... Voltando para o menu inicial.")
-        menu()  # Substitua com sua função de menu, caso necessário
-    else:
-        print("Opção inválida. Cancelando operação.")
-        menu()
 
 # Exemplo de chamada da função
 #atualizar_pessoais()
 
-def email_valido():
-
-    
-        
-
+#CÓDIGO PARA APÓS INSERIR EMAIL,RESOLVER
+def email_valido(email_login,senha_login):
 
     dominios_validos = [
             'gmail.com', 'outlook.com', 'hotmail.com',
@@ -257,7 +298,6 @@ def email_valido():
             email_novo = input("Digite novamente seu email: ").strip()
             tentativas_email -= 1
             print(f"Tentativas restantes: {tentativas_email}")
-
             continue  # volta pro início do while para validar de novo,caso esteja correto,irá passar pelo verificador
 
             # VERIFICA APENAS O DOMÍNIO,SEPARA TODO O RESTO E PEGA APENAS A PARTE DO DOMÍNIO
@@ -272,157 +312,194 @@ def email_valido():
             continue
 
         # Se chegou aqui, formato e domínio estão corretos
-        break
+        
+        return conferir_email(email_novo,email_login,senha_login)
 
     else:
         print("Limite de tentativas atingido. Encerrando o processo de cadastro.")
-        return
+        # Agora verifica se email já está cadastrado
+        #conferir_email(email_novo)
+        #return acabará com a função email válido e para deixar apenas a função conferir email válida
+        return None
 
-        conferir_email()
-
-    # Agora verifica se email já está cadastrado
-def conferir_email(email_novo):
-    tentativas_email = 3
-    while tentativas_email != 0:
-            # VERIFICA SE O FORMATO DO EMAIL ESTÁ ESCRITO CORRETAMENTE
-        if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',email_novo):
-            print("FORMATO DE EMAIL INVÁLIDO, UTILIZE UM DOMÍNIO VÁLIDO")
-            email_novo = input("Digite novamente seu email: ").strip()
-            tentativas_email -= 1
-            print(f"Tentativas restantes: {tentativas_email}")
-
-            continue  # volta pro início do while para validar de novo,caso esteja correto,irá passar pelo verificador
-
-            # VERIFICA APENAS O DOMÍNIO,SEPARA TODO O RESTO E PEGA APENAS A PARTE DO DOMÍNIO
-        dominio = email_novo.split('@')[1].lower()
-        if dominio not in dominios_validos:
-            print("Domínio não aceito. Use: Gmail, Outlook, Yahoo, iCloud, etc.")
-            email_novo = input("Digite novamente seu email: ").strip()
-            tentativas_email -= 1
-            print(f"Tentativas restantes: {tentativas_email}")
-
-                # continuar o loop sem parar
-            continue
-
-        # Se chegou aqui, formato e domínio estão corretos
-        break
-
-    else:
-        print("Limite de tentativas atingido. Encerrando o processo de cadastro.")
-        return
-
-    conferir_email()
+        
 
     # Agora verifica se email já está cadastrado
-def conferir_email(email_novo):
 
-    if email_novo in dados_conta:
-        print("EMAIL JÁ POSSUI UMA CONTA.")
-        tentativas = 3
-        while tentativas != 0:
-            resposta1 = input(
+
+    # Agora verifica se email já está cadastrado
+
+def conferir_email(email_novo,email_login,senha_login):
+    with open(r"D:/github/PERÍODO 1/projetova1/projetova1/banco_dados.JSON", "r", encoding="utf-8") as arquivo:
+    # quando usa json.load o arquivo json é transformado em dicionário python
+        arquivo_lido = json.load(arquivo)
+        dados_conta = arquivo_lido["senha"]
+        dados_familia = arquivo_lido["familia"]
+        dados_quantidade = arquivo_lido["membros"]
+        dados_pontos = arquivo_lido["pontos"]
+        dados_apartamento = arquivo_lido["apartamento"]
+        dados_codigov = arquivo_lido["verificador"]
+
+
+        if email_novo in dados_conta:
+            print("EMAIL JÁ POSSUI UMA CONTA.")
+            tentativas = 3
+            while tentativas != 0:
+                resposta1 = input(
                 "Deseja tentar refazer a conta ou ir para tela de login caso já possua conta? (refazer/login) ").strip().lower()
-            if resposta1 in ["login", "tela de login", "logi"]:
-                login()
-                return
-            elif resposta1 in ["refazer", "retentar", "conta", "refazer conta"]:
+                if resposta1 in ["login", "tela de login", "logi"]:
+                    login()
+                    return
+                elif resposta1 in ["refazer", "retentar", "conta", "refazer conta"]:
 
-                email = input("Digite novamente seu email: ").strip()
-                conferir_email()
+                
 
-                email_novo = input("Digite novamente seu email: ").strip()
-                conferir_email()
+                    email_novo = input("Digite novamente seu email: ")
+                
+                    conferir_email(email_novo)
 
-                return
+                    return
+                else:
+                    print("Resposta inválida")
+                    tentativas -= 1
+                    print(f"Tentativas restantes {tentativas}")
             else:
-                print("Resposta inválida")
-                tentativas -= 1
-                print(f"Tentativas restantes {tentativas}")
+                print("Limite de tentativas atingido. Encerrando o processo de cadastro.")
+                return
         else:
-            print("Limite de tentativas atingido. Encerrando o processo de cadastro.")
-            return
-    else:
-            atualizar_conta()  # Continua o processo normalmente
+                atualizar_conta(email_novo, email_login, senha_login)  # Continua o processo normalmente
 
+def atualizar_conta(email_novo,email_login,senha_login):
+    
 
+    with open(r"D:/github/PERÍODO 1/projetova1/projetova1/banco_dados.JSON", "r", encoding="utf-8") as arquivo_lido_json:
+        arquivo_lido = json.load(arquivo_lido_json)
 
-def atualizar_conta(novo_email):
-   #ajustar o email novo pois teria que mudar todos os dicionários
+    dados_conta = arquivo_lido["senha"]
+    dados_familia = arquivo_lido["familia"]
+    dados_quantidade = arquivo_lido["membros"]
+    dados_pontos = arquivo_lido["pontos"]
+    dados_apartamento = arquivo_lido["apartamento"]
+    dados_codigov = arquivo_lido["verificador"]
 
-    senha_nova=input("Digite sua nova senha:")
-    print(f"Dados atualizados:\nNovo email cadastrado: {novo_email}\nNova senha:{senha_nova}")
+    senha_nova = input("Digite sua nova senha: ")
+    print(f"Dados atualizados:\nNovo email cadastrado: {email_novo}\nNova senha: {senha_nova}")
+    print("Cuidado⚠️!!Caso você confirme essa atualização deve ficar ciente que os antigos dados serão atualizados e não poderão ser "
+        "acessados novamente")
+    time.sleep(1)
 
-    confirmar = input("Deseja confirmar a atualização dos dados? (sim/não): ").strip().lower()
-    if confirmar in ["sim", "si", "confirmar", "confirma", "confirmo"]:
-        print("DIGITE SEUS DADOS ATUAIS PARA A VERIFICAÇÃO DA SUA CONTA.")
-        email = input("Digite seu e-mail (ex:nome123@gmail.com): ")
-        senha = input("Digite sua senha: ")
+    tentativas=3
+    while tentativas!=0:
+        confirmar = input("Deseja confirmar a atualização dos dados? (sim/não): ").strip().lower()
+        
+       
+        if confirmar in ["sim", "si", "confirmar", "confirma", "confirmo"]:
+        
 
-        # Verifica se o e-mail existe e se a senha está correta
-        if email in arquivo_lido["senha"]:
-            #verifica se o email e senha batem para ter a mudança de senha
-            if dados_conta[email] == senha:
-                # Atualiza os dados
-                
-                
+            if email_login in dados_conta and dados_conta[email_login] == senha_login:
+                # Copia os dados para o novo e-mail
+                dados_conta[email_novo] = senha_nova
+                dados_familia[email_novo] = dados_familia[email_login]
+                dados_quantidade[email_novo] = dados_quantidade[email_login]
+                dados_pontos[email_novo] = dados_pontos[email_login]
+                dados_apartamento[email_novo] = dados_apartamento[email_login]
+                dados_codigov[email_novo] = dados_codigov[email_login]
 
-                # Salva os dados modificados no arquivo
+            # Remove o antigo e-mail
+                del dados_conta[email_login]
+                del dados_familia[email_login]
+                del dados_quantidade[email_login]
+                del dados_pontos[email_login]
+                del dados_apartamento[email_login]
+                del dados_codigov[email_login]
+
+            # Salva os dados atualizados
                 with open(r"D:/github/PERÍODO 1/projetova1/projetova1/banco_dados.JSON", "w", encoding="utf-8") as arquivo:
                     json.dump({
-                        "senha": dados_conta["senha"],
-                        "familia": dados_familia["familia"],
-                        "membros": dados_quantidade["membros"],
-                        "pontos": dados_pontos["pontos"],
-                        "apartamento": dados_apartamento["apartamento"],
-                        "verificador": dados_codigov["verificador"]
+                        "senha": dados_conta,
+                        "familia": dados_familia,
+                        "membros": dados_quantidade,
+                        "pontos": dados_pontos,
+                        "apartamento": dados_apartamento,
+                        "verificador": dados_codigov
                     }, arquivo, indent=4, ensure_ascii=False)
-                return
-            else:
-                print("E-mail ou senha incorretos.")
-                tentativas = 2
-                while tentativas > 0:
-                    email = input("Digite seu e-mail (nome123@gmail.com): ")
-                    senha = input("Digite sua senha: ")
-                    if dados["senha"].get(email) == senha:
-                        dados["familia"][email] = nome_novo
-                        dados["membros"][email] = membros_novos
-                        print("Dados atualizados com sucesso!")
-                        # Salva os dados modificados no arquivo
-                        with open(r"D:/github/PERÍODO 1/projetova1/projetova1/banco_dados.JSON", "w", encoding="utf-8") as arquivo:
-                            json.dump({
-                                "senha": dados["senha"],
-                                "familia": dados["familia"],
-                                "membros": dados["membros"],
-                                "pontos": dados["pontos"],
-                                "apartamento": dados["apartamento"],
-                                "verificador": dados["verificador"]
-                            }, arquivo, indent=4, ensure_ascii=False)
-                        return
-                    else:
-                        print("E-mail ou senha incorretos.")
-                        tentativas -= 1
-                        print(f"Tentativas restantes: {tentativas}")
-                print("Número de tentativas excedido. Tente novamente mais tarde.")
-                sys.exit()
-        else:
-            print("E-mail não encontrado no banco de dados.Confira se o email escrito está na forma correta.")
-            print("Voltando para o menu principal")
+
+                print(f"Dados da conta {email_novo} atualizados com sucesso!")
+                print("Voltando para tela de login...")
+                login()
+
+            
+            #sys.exit()
+        
+        
+
+        elif confirmar in ["não", "nao", "cancelar", "cancelo", "cancela"]:
+            print("Cancelando operação... Voltando para o menu inicial.")
             time.sleep(1)
             menu()
-    elif confirmar in ["não", "nao", "cancelar", "cancelo", "cancela"]:
-        print("Cancelando operação... Voltando para o menu inicial.")
-        time.sleep(1)
-        menu()  # Substitua com sua função de menu, caso necessário
+            return
+        else:
+            print("Opção inválida. ")
+            tentativas-=1
+            print(f"Quantidade de tentativas restantes={tentativas}")
+            
+            
     else:
-        print("Opção inválida. Cancelando operação.")
-        menu()
+        print("Limite de tentativas atingido")
+        print("Reinicie o sistema")
+        sys.exit()
 
 
-def deletar():
-    # usar arquivo csv para guardar as possíveis reclamações
-    # usar a biblioteca time para capturar a data
-    # usuário e motivo
-    pass
+   
+
+def deletar(email_login,senha_login):
+    with open(r"D:/github/PERÍODO 1/projetova1/projetova1/banco_dados.JSON", "r", encoding="utf-8") as arquivo_lido_json:
+        arquivo_lido = json.load(arquivo_lido_json)
+        dados_conta = arquivo_lido["senha"]
+        dados_familia = arquivo_lido["familia"]
+        dados_quantidade = arquivo_lido["membros"]
+        dados_pontos = arquivo_lido["pontos"]
+        dados_apartamento = arquivo_lido["apartamento"]
+        dados_codigov = arquivo_lido["verificador"]
+        print("ATENÇÃO⚠️\n" \
+    "Você está na aba de deleção de conta,tome cuidado para não fazer algo indesejado.")
+        tentativas=3
+        while tentativas!=0:
+            confirmar_deletar=input(f"Você deseja deletar sua conta({email_login}) do sistema ECODROP condomínio village ??(sim/não):").strip().lower()
+            if confirmar_deletar in ["sim","yes","si","confirmar"]:
+                #removerá todos os dados relacionados a email_login
+                del dados_conta[email_login]
+                del dados_familia[email_login]
+                del dados_quantidade[email_login]
+                del dados_pontos[email_login]
+                del dados_apartamento[email_login]
+                del dados_codigov[email_login]
+                with open(r"D:/github/PERÍODO 1/projetova1/projetova1/banco_dados.JSON","w", encoding="utf-8") as arquivo_salvo_json:
+                    json.dump(arquivo_lido, arquivo_salvo_json, indent=4, ensure_ascii=False)
+
+                print("Seus dados foram retirados do sistema.")
+                print("Tenha um bom dia!")
+                sys.exit()
+            elif confirmar_deletar in ["não", "nao", "cancelar", "cancelo", "cancela"]:
+                print("Cancelando operação... Voltando para o menu inicial.")
+                time.sleep(1)
+                menu(email_login,senha_login)
+                
+                return
+            else:
+                print("Opção inválida. ")
+                tentativas-=1
+                print(f"Quantidade de tentativas restantes={tentativas}")
+            
+            
+        else:
+            print("Limite de tentativas atingido")
+            print("Reinicie o sistema")
+            sys.exit()
+
+
+
+    
 
 
 def feedback():
@@ -485,8 +562,8 @@ def ranking():
 # pass
 
 
-def resgatar():
-    def resgatar_premio(litros_economizados):
+#def resgatar():
+def resgatar_premio(litros_economizados):
     if litros_economizados >= 1000:
         premio = "Viagem para uma reserva ecológica por 1 final de semana"
     elif litros_economizados >= 500:
@@ -506,7 +583,8 @@ def resgatar():
 
 def calculo():
     # Função para calcular os pontos com base na economia de água em litros
-def calcular_pontos_por_litros(litros_economizados):
+
+#def calcular_pontos_por_litros(litros_economizados):
     # Definir uma relação entre litros economizados e pontos
     pontos_por_litro = 0.5  # Cada litro economizado gera 0.5 ponto
     pontos_totais = litros_economizados * pontos_por_litro
@@ -543,45 +621,6 @@ def resgatar_pontos(pontos):
 
 
 
-def menu():
-    tentativas = 3
-    print("BEM VINDO AO MENU PRINCIPAL DO ECODROP💧.")
-    #mensagem estilo minecraft
-    print(random.choice(mensagens_agua))
-    time.sleep(1)
-    while tentativas != 0:
-        resposta2 = input(
-            "Qual tipo de função você deseja ?? (Ranking/Calcular pontos/Atualizar conta/Deletar conta/Feedback/Resgatar recompensas) ").strip().lower()
-
-        if resposta2 in ["ver ranking", "ranking"]:
-            ranking()
-            return
-
-        elif resposta2 in ["calcular pontos", "calcular", "calculo", "pontos"]:
-            calculo()
-            return
-
-        elif resposta2 in ["atualizar", "atualização", "atualizar conta", "atualiza conta"]:
-            atualizar()
-            return
-
-        elif resposta2 in ["deletar", "deletar conta", "excluir", "excluir conta", "apagar conta"]:
-            deletar()
-            return
-
-        elif resposta2 in ["feedback", "enviar feedback", "sugestao", "sugestão", "critica", "crítica"]:
-            feedback()
-            return
-        elif resposta2 in ["resgatar", "recompensa", "resgatar recompensa", "prêmios", "premio"]:
-            resgatar()
-            return
-
-        else:
-            print("Resposta inválida")
-            tentativas -= 1
-
-    else:
-        print("Limite de tentativas atingido. Reinicie o programa.")
 
 
 class Cadastro:
@@ -703,13 +742,18 @@ class Cadastro:
             # Aqui, estamos criando um dicionário com duas chaves:
             json.dump({"senha": dados_conta, "familia": dados_familia, "membros": dados_quantidade, "pontos": dados_pontos,
                        "apartamento": dados_apartamento, "verificador": dados_codigov}, arquivo, indent=4, ensure_ascii=False)
-        menu()
+        print("Conta cadastrada com sucesso.")
+        print("Redirecionando para tela de login...")
+        time.sleep(1)
+        login()
 
 
  # Essa parte que vai realmente começar o código
  # Esse código tem que ser escrito de cima pra baixo,mas para puxar ele tem que ser lá embaixo,pois só assim para o código
  # conseguir usar todas as funções
  #
+
+
 print("OLÁ,BEM VINDO AO SISTEMA ECODROP💧 do condomínio Village")
 
 tentativas = 3  # Por exemplo, 3 tentativas permitidas
