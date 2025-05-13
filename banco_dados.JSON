@@ -4,41 +4,59 @@
         "maria.souza@email.com": "73562",
         "carlos.pereira@email.com": "92847",
         "ana.costa@email.com": "61385",
-        "theus1903@gmail.com": "0830"
+        "gabriel.escobar@gmail.com": "0345",
+        "matheus1903@gmail.com": "1234567",
+        "samuel.andrade@gmail.com": "353232",
+        "viniciuscastro@gmail.com": "432425"
     },
     "familia": {
         "joao.silva@email.com": "Silva",
         "maria.souza@email.com": "Souza",
         "carlos.pereira@email.com": "Pereira",
         "ana.costa@email.com": "Costa",
-        "theus1903@gmail.com": "Castro"
+        "gabriel.escobar@gmail.com": "Escobar",
+        "matheus1903@gmail.com": "Castro",
+        "samuel.andrade@gmail.com": "Andrade",
+        "viniciuscastro@gmail.com": "Castro"
     },
     "membros": {
         "joao.silva@email.com": 4,
         "maria.souza@email.com": 3,
         "carlos.pereira@email.com": 5,
         "ana.costa@email.com": 2,
-        "theus1903@gmail.com": 4
+        "gabriel.escobar@gmail.com": 4,
+        "matheus1903@gmail.com": 4,
+        "samuel.andrade@gmail.com": 110,
+        "viniciuscastro@gmail.com": 4
     },
     "pontos": {
         "joao.silva@email.com": 150,
         "maria.souza@email.com": 200,
         "carlos.pereira@email.com": 120,
         "ana.costa@email.com": 180,
-        "theus1903@gmail.com": 0
+        "gabriel.escobar@gmail.com": 0,
+        "matheus1903@gmail.com": 0,
+        "samuel.andrade@gmail.com": 0,
+        "viniciuscastro@gmail.com": 0
     },
     "apartamento": {
         "joao.silva@email.com": 101,
         "maria.souza@email.com": 202,
         "carlos.pereira@email.com": 303,
         "ana.costa@email.com": 404,
-        "theus1903@gmail.com": 105
+        "gabriel.escobar@gmail.com": 109,
+        "matheus1903@gmail.com": 105,
+        "samuel.andrade@gmail.com": 110,
+        "viniciuscastro@gmail.com": 203
     },
     "verificador": {
         "joao.silva@email.com": 83456,
         "maria.souza@email.com": 19283,
         "carlos.pereira@email.com": 47592,
         "ana.costa@email.com": 65921,
-        "theus1903@gmail.com": "0758830"
+        "gabriel.escobar@gmail.com": "434252",
+        "matheus1903@gmail.com": "0758830",
+        "samuel.andrade@gmail.com": "53252",
+        "viniciuscastro@gmail.com": "524525"
     }
 }

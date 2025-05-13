@@ -5,13 +5,11 @@ import re
 import random
 import os
 
-# RESOLVER EMAIL
-# LOGIN
-# ATUALIZAR
-# DELETAR
+#ANOTAÇÃO IMPORTANTE
+#Se uma função chama outra função que precisa de argumentos, ela também precisa receber esses argumentos ou criá-los.
 
 
-with open(r"D:/github/PERÍODO 1/projetova1/projetova1/banco_dados.JSON", "r", encoding="utf-8") as arquivo:
+with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
     # quando usa json.load o arquivo json é transformado em dicionário python
     arquivo_lido = json.load(arquivo)
     dados_conta = arquivo_lido["senha"]
@@ -44,7 +42,7 @@ def limpar_tela():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def login():
-    with open(r"D:/github/PERÍODO 1/projetova1/projetova1/banco_dados.JSON", "r", encoding="utf-8") as arquivo:
+    with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
         # quando usa json.load o arquivo json é transformado em dicionário python
         arquivo_lido = json.load(arquivo)
         
@@ -206,7 +204,7 @@ def atualizar(email_login,senha_login):
 #FEITO E TESTADO(CONCLUÍDO)
 def atualizar_pessoais(email_login,senha_login):
     # Carregar os dados do arquivo
-    with open(r"D:/github/PERÍODO 1/projetova1/projetova1/banco_dados.JSON", "r", encoding="utf-8") as arquivo:
+    with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
         arquivo_lido = json.load(arquivo)
         dados_conta = arquivo_lido["senha"]
         dados_familia = arquivo_lido["familia"]
@@ -251,7 +249,7 @@ def atualizar_pessoais(email_login,senha_login):
       
                 
                 # Salva os dados modificados no arquivo
-                with open(r"D:/github/PERÍODO 1/projetova1/projetova1/banco_dados.JSON", "w", encoding="utf-8") as arquivo:
+                with open(r"banco_dados.JSON", "w", encoding="utf-8") as arquivo:
                     json.dump({"senha": dados_conta, "familia": dados_familia,"membros": dados_quantidade, "pontos": dados_pontos,"apartamento": dados_apartamento,
                                "verificador": dados_codigov
                                }, arquivo, indent=4, ensure_ascii=False)
@@ -277,10 +275,7 @@ def atualizar_pessoais(email_login,senha_login):
             sys.exit()
 
 
-# Exemplo de chamada da função
-#atualizar_pessoais()
 
-#CÓDIGO PARA APÓS INSERIR EMAIL,RESOLVER
 def email_valido(email_login,senha_login):
 
     dominios_validos = [
@@ -330,7 +325,7 @@ def email_valido(email_login,senha_login):
     # Agora verifica se email já está cadastrado
 
 def conferir_email(email_novo,email_login,senha_login):
-    with open(r"D:/github/PERÍODO 1/projetova1/projetova1/banco_dados.JSON", "r", encoding="utf-8") as arquivo:
+    with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
     # quando usa json.load o arquivo json é transformado em dicionário python
         arquivo_lido = json.load(arquivo)
         dados_conta = arquivo_lido["senha"]
@@ -367,12 +362,32 @@ def conferir_email(email_novo,email_login,senha_login):
                 print("Limite de tentativas atingido. Encerrando o processo de cadastro.")
                 return
         else:
-                atualizar_conta(email_novo, email_login, senha_login)  # Continua o processo normalmente
+            conferir_senha(email_novo, email_login, senha_login)
+               # atualizar_conta(email_novo, email_login, senha_login)  # Continua o processo normalmente
 
-def atualizar_conta(email_novo,email_login,senha_login):
+
+def conferir_senha(email_novo, email_login, senha_login):
+    senha_nova=input("Digite sua senha(No mínimo 4 caracteres no máximo 20):")
+    tentativas = 3
+    while tentativas > 0:
+        if 4 <= len(senha_nova) <= 20:
+            #print("Senha aceita.")
+            atualizar_conta(email_novo,senha_nova,email_login,senha_login)  # Chama o próximo passo do cadastro
+            #return para a função que estava sendo rodada e deixa rodando apenas a função que rodará
+            return
+        else:
+            print("Número de caracteres inválido. Sua senha deve ter entre 4 e 20 caracteres.")
+            senha_nova = input("Digite sua senha novamente: ").strip()
+            tentativas -= 1
+            print(f"Tentativas restantes: {tentativas}")
+
+    print("Número máximo de tentativas atingido. Tente novamente mais tarde.")
+
+
+def atualizar_conta(email_novo,senha_nova,email_login,senha_login):
     
 
-    with open(r"D:/github/PERÍODO 1/projetova1/projetova1/banco_dados.JSON", "r", encoding="utf-8") as arquivo_lido_json:
+    with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo_lido_json:
         arquivo_lido = json.load(arquivo_lido_json)
 
     dados_conta = arquivo_lido["senha"]
@@ -382,7 +397,7 @@ def atualizar_conta(email_novo,email_login,senha_login):
     dados_apartamento = arquivo_lido["apartamento"]
     dados_codigov = arquivo_lido["verificador"]
 
-    senha_nova = input("Digite sua nova senha: ")
+    #senha_nova = input("Digite sua nova senha: ")
     print(f"Dados atualizados:\nNovo email cadastrado: {email_novo}\nNova senha: {senha_nova}")
     print("Cuidado⚠️!!Caso você confirme essa atualização deve ficar ciente que os antigos dados serão atualizados e não poderão ser "
         "acessados novamente")
@@ -414,7 +429,7 @@ def atualizar_conta(email_novo,email_login,senha_login):
                 del dados_codigov[email_login]
 
             # Salva os dados atualizados
-                with open(r"D:/github/PERÍODO 1/projetova1/projetova1/banco_dados.JSON", "w", encoding="utf-8") as arquivo:
+                with open(r"banco_dados.JSON", "w", encoding="utf-8") as arquivo:
                     json.dump({
                         "senha": dados_conta,
                         "familia": dados_familia,
@@ -450,10 +465,8 @@ def atualizar_conta(email_novo,email_login,senha_login):
         sys.exit()
 
 
-   
-
 def deletar(email_login,senha_login):
-    with open(r"D:/github/PERÍODO 1/projetova1/projetova1/banco_dados.JSON", "r", encoding="utf-8") as arquivo_lido_json:
+    with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo_lido_json:
         arquivo_lido = json.load(arquivo_lido_json)
         dados_conta = arquivo_lido["senha"]
         dados_familia = arquivo_lido["familia"]
@@ -474,7 +487,7 @@ def deletar(email_login,senha_login):
                 del dados_pontos[email_login]
                 del dados_apartamento[email_login]
                 del dados_codigov[email_login]
-                with open(r"D:/github/PERÍODO 1/projetova1/projetova1/banco_dados.JSON","w", encoding="utf-8") as arquivo_salvo_json:
+                with open(r"banco_dados.JSON","w", encoding="utf-8") as arquivo_salvo_json:
                     json.dump(arquivo_lido, arquivo_salvo_json, indent=4, ensure_ascii=False)
 
                 print("Seus dados foram retirados do sistema.")
@@ -623,24 +636,67 @@ def resgatar_pontos(pontos):
 
 
 
+
+
+
+
+
+
 class Cadastro:
     def __init__(self):
         self.email = input(
             "Digite o email que você gostaria de vincular sua conta:")
         self.quantidade = int(
             input("Informe a quantidade de pessoas na sua residência:"))
-        self.senha = input("Digite sua senha(Coloque uma senha forte):")
+        self.senha = input("Digite sua senha(No mínimo 4 caracteres no máximo 20):").strip()
         self.nome_familia = input(
             "Digite o nome que ficará cadastrado sua família(COLOQUE 1 OU DOIS SOBRENOMES):")
         self.pontos = 0
         self.apartamento = int(input("Digite o número do seu apartamento:"))
         self.verificador = input("Digite seu código verificador:\n"
-                                 "ATENÇÃO,GUARDE ESSE CÓDIGO DE UMA FORMA SEGURA,CASO VOCÊ ESQUEÇA A SENHA ELE É A ÚNICA FORMA DE CONSEGUIR ACESSAR A CONTA:")
-        self.email_valido()
+                                 "ATENÇÃO,GUARDE ESSE CÓDIGO DE UMA FORMA SEGURA,CASO VOCÊ ESQUEÇA A SENHA ELE É A ÚNICA FORMA DE CONSEGUIR ACESSAR A CONTA:").strip()
+        self.conferir_codigo()
 
     # precisa passar o self como parâmetro para conseguir pegar as info do init
+    def conferir_codigo(self):
+        limpar_tela()
+
+        tentativas = 3
+        while tentativas > 0:
+            #codigo_digitado = input("Digite novamente seu código verificador para confirmar: ")
+
+            if len(self.verificador)>=4 and  len(self.verificador)<=20:
+                self.conferir_senha()
+                return  # Código está correto, pode continuar
+            else:
+                print("Número de caracteres inválidos para código verificador. Seu código  deve ter entre 4 a 20 caracteres.")
+                self.verificador = input("Digite sua senha novamente: ").strip()
+                tentativas -= 1
+                print(f"Tentativas restantes: {tentativas}")
+
+        print("Número máximo de tentativas atingido. Tente novamente mais tarde.")
+
+
+    def conferir_senha(self):
+        #limpar_tela()  
+        
+        tentativas = 3
+        while tentativas > 0:
+            if 4 <= len(self.senha) <= 20:
+                #print("Senha aceita.")
+                self.email_valido()  # Chama o próximo passo do cadastro
+            #return para a função que estava sendo rodada e deixa rodando apenas a função que rodará
+                return
+            else:
+                print("Número de caracteres inválido. Sua senha deve ter entre 4 e 20 caracteres.")
+                self.senha = input("Digite sua senha novamente: ").strip()
+                tentativas -= 1
+                print(f"Tentativas restantes: {tentativas}")
+
+        print("Número máximo de tentativas atingido. Tente novamente mais tarde.")
 
     def email_valido(self):
+        
         dominios_validos = [
             'gmail.com', 'outlook.com', 'hotmail.com',
             'yahoo.com', 'icloud.com'
@@ -679,29 +735,38 @@ class Cadastro:
 
     # Agora verifica se email já está cadastrado
     def conferir_email(self):
-        if self.email in dados_conta:
-            print("EMAIL JÁ POSSUI UMA CONTA.")
-            tentativas = 3
-            while tentativas != 0:
-                resposta1 = input(
+        with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
+            arquivo_lido = json.load(arquivo)
+            dados_conta = arquivo_lido["senha"]
+            dados_familia = arquivo_lido["familia"]
+            dados_quantidade = arquivo_lido["membros"]
+            dados_pontos = arquivo_lido["pontos"]
+            dados_apartamento = arquivo_lido["apartamento"]
+            dados_codigov = arquivo_lido["verificador"]
+
+            if self.email in dados_conta:
+                print("EMAIL JÁ POSSUI UMA CONTA.")
+                tentativas = 3
+                while tentativas != 0:
+                    resposta1 = input(
                     "Deseja tentar refazer a conta ou ir para tela de login caso já possua conta? (refazer/login) ").strip().lower()
-                if resposta1 in ["login", "tela de login", "logi"]:
-                    login()
-                    return
-                elif resposta1 in ["refazer", "retentar", "conta", "refazer conta"]:
-                    self.email = input("Digite novamente seu email: ").strip()
-                    self.conferir_email()
-                    return
+                    if resposta1 in ["login", "tela de login", "logi"]:
+                        login()
+                        return
+                    elif resposta1 in ["refazer", "retentar", "conta", "refazer conta"]:
+                        self.email = input("Digite novamente seu email: ").strip()
+                        self.conferir_email()
+                        return
+                    else:
+                        print("Resposta inválida")
+                        tentativas -= 1
+                        print(f"Tentativas restantes {tentativas}")
                 else:
-                    print("Resposta inválida")
-                    tentativas -= 1
-                    print(f"Tentativas restantes {tentativas}")
-            else:
-                print(
+                    print(
                     "Limite de tentativas atingido. Encerrando o processo de cadastro.")
-                return
-        else:
-            self.conferir_ap()  # Continua o processo normalmente
+                    return
+            else:
+                self.conferir_ap()  # Continua o processo normalmente
 
     def conferir_ap(self):
         # dessa forma oq estará sendo analisado será o valor e não a chave
@@ -738,7 +803,7 @@ class Cadastro:
         dados_codigov[self.email] = self.verificador
 
         # PARA ARQUIVO TIPO JSON É MELHOR USAR "w" pois qualquer errinho de formatação pode quebrar o sistema
-        with open(r"D:/github/PERÍODO 1/projetova1/projetova1/banco_dados.JSON", "w", encoding="utf-8") as arquivo:
+        with open(r"banco_dados.JSON", "w", encoding="utf-8") as arquivo:
             # Aqui, estamos criando um dicionário com duas chaves:
             json.dump({"senha": dados_conta, "familia": dados_familia, "membros": dados_quantidade, "pontos": dados_pontos,
                        "apartamento": dados_apartamento, "verificador": dados_codigov}, arquivo, indent=4, ensure_ascii=False)
