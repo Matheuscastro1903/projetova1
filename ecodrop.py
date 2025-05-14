@@ -345,7 +345,7 @@ pass
 
 
 def resgatar():
-    print("===Tabela de recompensas")
+    print("===Tabela de recompensas===")
 
 	if saldo suficiente:
 	print("Resgate seu prêmio")
