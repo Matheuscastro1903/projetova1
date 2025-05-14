@@ -336,8 +336,8 @@ def ranking():
 	            print("Encerrando o programa.")
 	            import sys
 	            sys.exit()
-			else:
-				print("Opção inválida")
+		else:
+		    print("Opção inválida")
 	                
 
     
