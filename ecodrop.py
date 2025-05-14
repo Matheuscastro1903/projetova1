@@ -359,8 +359,8 @@ def resgatar():
 			premio= milhas
 		else:
 			print("Encerrando o programa.")
-	            import sys
-	            sys.exit()
+	            	import sys
+	            	sys.exit()
 	   def salvar_dados(dados):
     	with open("dados.csv", "w") as f:
         f.write(dados)
@@ -381,7 +381,7 @@ pass
 def calculo():
     if dia do mês == 28:
 		with open(ARQUIVO_JSON, "r", encoding="utf-8") as arquivo:
-        json.dump(dados, arquivo, indent=4, ensure_ascii=False)
+        	json.dump(dados, arquivo, indent=4, ensure_ascii=False)
 		calculo = int(input("[quantidade de pessoas*quantidade de dias*consumo individual]/[média mundial de consumo individual])
 			if calculo < media_mundial_de_consumo_individual:
 				print("Parabéns, você acumulou pontos!!)
@@ -390,26 +390,26 @@ def calculo():
 	print("Você deseja ver seu ranking? (s/n)"
 			if resposta == "s":
 				print("🏆 RANKING DOS USUÁRIOS POR PONTOS:\n")
-	        	for posicao, (email, ponto) in enumerate(ranking, start=1):
-	            familia = dados['familia'].get(email, 'Desconhecido')
-	            ap = dados['apartamento'].get(email, '???')
-	            print(f"{posicao}º lugar: Família {familia} (Apt {ap}) - {ponto} pontos")	
+	        		for posicao, (email, ponto) in enumerate(ranking, start=1):
+	           		familia = dados['familia'].get(email, 'Desconhecido')
+	            		ap = dados['apartamento'].get(email, '???')
+	            		print(f"{posicao}º lugar: Família {familia} (Apt {ap}) - {ponto} pontos")	
 			elif == "n":
 				print("Encerrando o programa.")
-	            import sys
-	            sys.exit()
-		   else:
+	            		import sys
+	            		sys.exit()
+		   	else:
 		  		print("Opção inválida"
 				  
 	else:
 		print("Você deseja ver seu ranking? (s/n)"
-			  if resposta == "s":
+			if resposta == "s":
 				print("🏆 RANKING DOS USUÁRIOS POR PONTOS:\n")
-	        	for posicao, (email, ponto) in enumerate(ranking, start=1):
-	            familia = dados['familia'].get(email, 'Desconhecido')
-	            ap = dados['apartamento'].get(email, '???')
-	            print(f"{posicao}º lugar: Família {familia} (Apt {ap}) - {ponto} pontos")
-			  else: 
+	        		for posicao, (email, ponto) in enumerate(ranking, start=1):
+	            		familia = dados['familia'].get(email, 'Desconhecido')
+	            		ap = dados['apartamento'].get(email, '???')
+	           		print(f"{posicao}º lugar: Família {familia} (Apt {ap}) - {ponto} pontos")
+			else: 
 				print("Retornando ao menu")  
 				
 				
