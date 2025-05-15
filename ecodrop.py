@@ -967,19 +967,18 @@ def calculo():
 				print("Parabéns, você acumulou pontos!!)
 			else:
 				print("Você não pontuou")
-	print("Você deseja ver seu ranking? (s/n)"
+		print("Você deseja ver seu ranking? (s/n)"
 			if resposta == "s":
 				print("🏆 RANKING DOS USUÁRIOS POR PONTOS:\n")
 	        		for posicao, (email, ponto) in enumerate(ranking, start=1):
 	           		familia = dados['familia'].get(email, 'Desconhecido')
 	            		ap = dados['apartamento'].get(email, '???')
 	            		print(f"{posicao}º lugar: Família {familia} (Apt {ap}) - {ponto} pontos")	
-			elif == "n":
+			else:
 				print("Encerrando o programa.")
 	            		import sys
 	            		sys.exit()
-		   	else:
-		  		print("Opção inválida"
+		   	
 				  
 	else:
 		print("Você deseja ver seu ranking? (s/n)"
