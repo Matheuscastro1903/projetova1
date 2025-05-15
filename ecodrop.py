@@ -11,6 +11,7 @@ import os
 
 with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
     # quando usa json.load o arquivo json é transformado em dicionário python
+	"""o objetivo dessa parte do código é abrir o arquivo json e salvar os dicionários em python,facilitando a manipulação"""
     arquivo_lido = json.load(arquivo)
     dados_conta = arquivo_lido["senha"]
     dados_familia = arquivo_lido["familia"]
@@ -19,7 +20,7 @@ with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
     dados_apartamento = arquivo_lido["apartamento"]
     dados_codigov = arquivo_lido["verificador"]
 
-
+#OBJETIVO DESSA MENSAGEM É SER UMA MENSAGEM DIÁRIA ALEATÓRIA,VISANDO FICAR MAIS INTERATIVO COM O USUÁRIO
 mensagens_agua = [
     "💧 Cada gota conta. Economize água!",
     "🚿 Banhos curtos, planeta mais saudável.",
@@ -39,10 +40,15 @@ mensagens_agua = [
 ]
 
 def limpar_tela():
+	"""objetivo dessa função é limpar a tela sempre que passar para outra seção,deixando o projeto mais real"""
     #FUNÇÃO UTILIZADO PARA LIMPAR O TERMINAL,DEIXANDO O SISTEMA MAIS "REAL"
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def login():
+	"""
+ 	objetivo dessa função é o usuário poder entrar no sistema colocando seus dados da conta.Caso ele não possua conta será redirecionado para página de cadastro.Caso ele
+ 	esqueça a senha poderá utilizar o código verificador(definido no cadastro) para recuperar a conta
+ 	"""
     #FUNÇÃO UTILIZADA PARA O USUÁRIO CONSEGUIR FAZER LOGIN
     with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
         # quando usa json.load o arquivo json é transformado em dicionário python
@@ -137,6 +143,9 @@ def login():
 
 
 def menu(email_login,senha_login):
+	"""
+ 	Essa função é utilizada para ir para tela de menu,assim que o usuário entrar no sistema.Aqui ele poderá ver quais opções de serviço ele tem.
+ 	"""
     #FUNÇÃO UTILIZADA PARA CONSEGUIR VER AS OPÇOES DE FUNÇÕES
     limpar_tela()
     tentativas = 3
@@ -186,7 +195,10 @@ def menu(email_login,senha_login):
 
 
 def mostrar_dados(email_login,senha_login):
-    #FUNÇÃO UTILIZADA PARA MOSTRAR OS DADOS DA CONTA
+    """
+	Nessa função o usuário poderá ver seus dados da conta,como o email vinculado,quantidade de membros,pontos acumulados,apartamento cadastrado e o nome da família
+    """
+	#FUNÇÃO UTILIZADA PARA MOSTRAR OS DADOS DA CONTA
     limpar_tela()
     with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
     # quando usa json.load o arquivo json é transformado em dicionário python
@@ -234,7 +246,11 @@ def mostrar_dados(email_login,senha_login):
 
 def atualizar(email_login,senha_login):
     #FUNÇÃO UTILIZADA PARA MOSTRAR AS OPÇOES DE ATUALIZAÇÃO(ATUALIZAR DADOS PESSOAIS OU DADOS DA CONTA)   
-    limpar_tela()
+    """
+	Essa função irá dar a opção do usuário atualizar os dados da conta(email,senha) ou os dados pessoais(quantidade de membros,apartamento cadastrado e o nome da família),.A partir da sua resposta,ele será 
+ 	encaminhado para outra aba
+    """
+	limpar_tela()
     print("Bem-vindo à tela de atualização do ECODROP.")
     tentativas = 3
 
@@ -262,7 +278,11 @@ def atualizar(email_login,senha_login):
 
 
 def atualizar_pessoais(email_login,senha_login):
-    #FUNÇÃO UTILIZADA PARA ATUALIZAR OS DADOS PESSOAIS RELACIONADOS A UMA CONTA
+    """
+	Essa função será utilizada para atualizar os dados pessoais em relação a conta cadastrada
+    """
+	
+	#FUNÇÃO UTILIZADA PARA ATUALIZAR OS DADOS PESSOAIS RELACIONADOS A UMA CONTA
     # Carregar os dados do arquivo
     with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
         arquivo_lido = json.load(arquivo)
@@ -337,7 +357,11 @@ def atualizar_pessoais(email_login,senha_login):
 
 
 def email_valido(email_login,senha_login):
-    ##FUNÇÃO UTILIZADA PARA CONFERIR SE O NOVO EMAIL QUE SERÁ CADASTRADO É VÁLIDO OU NÇAO(ESSA FUNÇÃO SÓ SERÁ CHAMADA 
+    """
+	Essa função será chamada caso o usuário deseje atualizar os dados da conta(email,senha).Ela tem a função de verificar se o email novo 
+ 	 que será utilizado é válido ou não.Caso seja válido será chamada outra função para continuar o fluxo.
+    """
+	##FUNÇÃO UTILIZADA PARA CONFERIR SE O NOVO EMAIL QUE SERÁ CADASTRADO É VÁLIDO OU NÇAO(ESSA FUNÇÃO SÓ SERÁ CHAMADA 
     #CASO O USUÁRIO QUEIRA ATUALIZAR OS DADOS DA CONTA)
 
     dominios_validos = [
@@ -387,7 +411,10 @@ def email_valido(email_login,senha_login):
     # Agora verifica se email já está cadastrado
 
 def conferir_email(email_novo,email_login,senha_login):
-    ##FUNÇÃO UTILIZADA PARA CONFERIR SE O NOVO EMAIL JÁ EXISTE NO BANCO DE DADOS OU NÃO
+	"""
+ 	Essa função será utilizada para conferir se o email novo já está cadastrado ou não no banco de dados.Caso não esteja cadastrado será chamada a próxima função
+  	"""
+	##FUNÇÃO UTILIZADA PARA CONFERIR SE O NOVO EMAIL JÁ EXISTE NO BANCO DE DADOS OU NÃO
     with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
     # quando usa json.load o arquivo json é transformado em dicionário python
         arquivo_lido = json.load(arquivo)
@@ -430,7 +457,10 @@ def conferir_email(email_novo,email_login,senha_login):
 
 
 def conferir_senha(email_novo, email_login, senha_login):
-    #FUNÇÃO UTILIZADA PARA CONFERIR SE A SENHA NOVA PODE SER CADASTRADA
+    """
+    Essa função será utilizada para evitar que a nova senha que será cadastrada(ou mantida) terá um tamanho compatível
+    """
+	#FUNÇÃO UTILIZADA PARA CONFERIR SE A SENHA NOVA PODE SER CADASTRADA
     senha_nova=input("Digite sua senha(No mínimo 4 caracteres no máximo 20):")
     tentativas = 3
     while tentativas > 0:
