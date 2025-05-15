@@ -480,7 +480,7 @@ def conferir_senha(email_novo, email_login, senha_login):
 
 def atualizar_conta(email_novo,senha_nova,email_login,senha_login):
     #ATUALIZAÇÃO DOS DADOS DA CONTA NO BANCO DE DADOS JSON
-    
+    """essa função será utilizada para atualizar a conta do usuário,podendo atualizar apenas o email,apenas a senha ou atualizar ambos os dados"""
 
     with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo_lido_json:
         arquivo_lido = json.load(arquivo_lido_json)
@@ -736,7 +736,8 @@ def atualizar_conta(email_novo,senha_nova,email_login,senha_login):
 
 
 def deletar(email_login,senha_login):
-    #FUNÇÃO UTILIZADA PARA DELETAR CONTAS
+    #FUNÇÃO UTILIZADA  PARA DELETAR CONTAS
+	"""Essa funçao será utilizada para deletar a conta do usuário,caso seja da vontade dele"""
     limpar_tela()
     with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo_lido_json:
         arquivo_lido = json.load(arquivo_lido_json)
