@@ -243,7 +243,7 @@ def atualizar(email_login,senha_login):
             "O que você deseja atualizar na sua conta? (dados conta / dados pessoais): ").strip().lower()
 
         if question1 in ["dados conta", "conta", "dados da conta", "conta dados"]:
-            email_valido(email_login,senha_login)
+            tipo_atualizacao(email_login,senha_login)
             return
 
         elif question1 in ["dados pessoais", "pessoais", "informações pessoais", "info pessoais"]:
@@ -334,8 +334,33 @@ def atualizar_pessoais(email_login,senha_login):
             print("Reinicie o sistema")
             sys.exit()
 
+def tipo_atualizacao(email_login,senha_login):
+    tentativas=3
+    while tentativas!=0:
+        opcao=input("O que você deseja atualizar ??(apenas email/apenas senha/ambos)").strip().lower()
+        if opcao in ["email","apenas email","só email"]:
+            valido_apenas_email(email_login, senha_login)
+            return
+        elif opcao in ["senha","apenas senha","só senha"]:
+            valido_apenas_senha(email_login)
+            return
+        elif opcao in ["email e senha","ambos","ambas","os dois"]:
+            email_valido(email_login,senha_login)
+            return
+        else:
+            print("OPÇÃO INVÁLIDA")
+            tentativas-=1
+            print(f"Tentativas restantes={tentativas}")
+    else:
+        print("Número de tentativas extrapolaram.")
+        print("Reinicie o sistema.")
+        sys.exit()
 
 
+
+
+##############################################################################################################
+#Conjunto de funções para atualizar ambos(email,senha)
 def email_valido(email_login,senha_login):
     ##FUNÇÃO UTILIZADA PARA CONFERIR SE O NOVO EMAIL QUE SERÁ CADASTRADO É VÁLIDO OU NÇAO(ESSA FUNÇÃO SÓ SERÁ CHAMADA 
     #CASO O USUÁRIO QUEIRA ATUALIZAR OS DADOS DA CONTA)
@@ -462,55 +487,56 @@ def atualizar_conta(email_novo,senha_nova,email_login,senha_login):
     dados_apartamento = arquivo_lido["apartamento"]
     dados_codigov = arquivo_lido["verificador"]
 
-    #senha_nova = input("Digite sua nova senha: ")
-    opcao=input("Você deseja atualizar apenas o email,apenas a senha ou ambos ??(email,senha,ambos):").strip().lower()
-    
-    #ALTERA APENAS O EMAIL
-    if opcao in ["email","alterar email","apenas email"]:
-        print(f"Dados atualizados:\nNovo email cadastrado:{email_novo}")
-        
-        print("Cuidado⚠️!!Caso você confirme essa atualização deve ficar ciente que os antigos dados serão atualizados e não poderão ser "
+
+
+    print(f"Dados atualizados:\nNovo email cadastrado: {email_novo}\nNova senha: {senha_nova}")
+    print("Cuidado⚠️!!Caso você confirme essa atualização deve ficar ciente que os antigos dados serão atualizados e não poderão ser "
         "acessados novamente")
-        time.sleep(1)
+    time.sleep(1)
 
-        tentativas=3
-        while tentativas!=0:
-            confirmar = input("Deseja confirmar a atualização dos dados? (sim/não): ").strip().lower()
-            if confirmar in ["sim", "si", "confirmar", "confirma", "confirmo"]:
+    tentativas=3
+    while tentativas!=0:
+        confirmar = input("Deseja confirmar a atualização dos dados? (sim/não): ").strip().lower()
+        
+       
+        if confirmar in ["sim", "si", "confirmar", "confirma", "confirmo"]:
+        
+
                 
-                    # Copia os dados para o novo email (mantendo a senha antiga)
-                dados_conta[email_novo] = senha_login  # Mantém a senha antiga
-                dados_familia[email_novo] = dados_familia[email_login]
-                dados_quantidade[email_novo] = dados_quantidade[email_login]
-                dados_pontos[email_novo] = dados_pontos[email_login]
-                dados_apartamento[email_novo] = dados_apartamento[email_login]
-                dados_codigov[email_novo] = dados_codigov[email_login]
+                # Copia os dados para o novo e-mail
+            dados_conta[email_novo] = senha_nova
+            dados_familia[email_novo] = dados_familia[email_login]
+            dados_quantidade[email_novo] = dados_quantidade[email_login]
+            dados_pontos[email_novo] = dados_pontos[email_login]
+            dados_apartamento[email_novo] = dados_apartamento[email_login]
+            dados_codigov[email_novo] = dados_codigov[email_login]
 
-                    # Remove o antigo                    
-                del dados_conta[email_login]
-                del dados_familia[email_login]
-                del dados_quantidade[email_login]
-                del dados_pontos[email_login]
-                del dados_apartamento[email_login]
-                del dados_codigov[email_login]
+            # Remove o antigo e-mail
+            del dados_conta[email_login]
+            del dados_familia[email_login]
+            del dados_quantidade[email_login]
+            del dados_pontos[email_login]
+            del dados_apartamento[email_login]
+            del dados_codigov[email_login]
 
-                    # Salva os dados atualizados
-                with open(r"banco_dados.JSON", "w", encoding="utf-8") as arquivo:
-                    json.dump({
-                        "senha": dados_conta,
-                        "familia": dados_familia,
-                        "membros": dados_quantidade,
-                        "pontos": dados_pontos,
-                        "apartamento": dados_apartamento,
-                        "verificador": dados_codigov
-                    }, arquivo, indent=4, ensure_ascii=False)
+            # Salva os dados atualizados
+            with open(r"banco_dados.JSON", "w", encoding="utf-8") as arquivo:
+                json.dump({
+                    "senha": dados_conta,
+                    "familia": dados_familia,
+                    "membros": dados_quantidade,
+                    "pontos": dados_pontos,
+                    "apartamento": dados_apartamento,
+                    "verificador": dados_codigov
+                }, arquivo, indent=4, ensure_ascii=False)
 
-                print(f"Email da conta atualizado para {email_novo} com sucesso!")
+                print(f"Dados da conta {email_novo} atualizados com sucesso!")
                 print("Conta cadastrada com sucesso.")
                 time.sleep(1)
                 tentativas = 3  # Máximo de tentativas permitidas
+
                 while tentativas != 0:
-                    opcao = input("Deseja ir para o login ou sair do sistema?(Login/sair): ").strip().lower()
+                    opcao = input("Deseja ir para o login ou sair do sistema ??(Login/sair): ").strip().lower()
 
                     if opcao in ["login","logi"]:
                         login()
@@ -530,27 +556,201 @@ def atualizar_conta(email_novo,senha_nova,email_login,senha_login):
                 else:
                     print("Limite de tentativas atingido. Sistema encerrado automaticamente.")
 
+            
+        
+        
+
+        elif confirmar in ["não", "nao", "cancelar", "cancelo", "cancela"]:
+            print("Cancelando operação... Voltando para o menu inicial.")
+            time.sleep(1)
+            menu()
+            return
+        else:
+            print("Opção inválida. ")
+            tentativas-=1
+            print(f"Quantidade de tentativas restantes={tentativas}")
+
+    else:
+        print("Limite de tentativas atingido")
+        print("Reinicie o sistema")
+        sys.exit()
+
+###############################################################################################################
+#Parte do código voltado para atualização apenas do email
+
+def valido_apenas_email(email_login, senha_login):
+    dominios_validos = ['gmail.com', 'outlook.com', 'hotmail.com', 'yahoo.com', 'icloud.com']
+    tentativas_email = 5
+    
+    while tentativas_email > 0:
+        email_novo = input("Digite seu novo email: ").strip()
+        
+        # Verifica formato
+        if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email_novo):
+            print("FORMATO DE EMAIL INVÁLIDO, UTILIZE UM DOMÍNIO VÁLIDO")
+            tentativas_email -= 1
+            print(f"Tentativas restantes: {tentativas_email}")
+            continue
+
+        # Verifica domínio
+        dominio = email_novo.split('@')[1].lower()
+        if dominio not in dominios_validos:
+            print("Domínio não aceito. Use: Gmail, Outlook, Yahoo, iCloud, etc.")
+            tentativas_email -= 1
+            print(f"Tentativas restantes: {tentativas_email}")
+            conferir_apenas_email(email_novo,email_login,senha_login)  
+            continue
+
+        return conferir_apenas_email(email_novo,email_login,senha_login)  
+
+    print("Limite de tentativas atingido.")
+    print("Reinicie o sistema.")
+    sys.exit
+
+def conferir_apenas_email(email_novo,email_login, senha_login):
+    # Carrega dados uma única vez
+    with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
+        dados = json.load(arquivo)
+        dados_conta = dados["senha"]
+    
+    # Valida email
+
+    # Verifica se email já existe
+    if email_novo in dados_conta:
+        print("EMAIL JÁ POSSUI UMA CONTA.")
+        tentativas = 3
+        while tentativas > 0:
+            resposta = input("Deseja tentar novamente ou ir para login? (refazer/login): ").strip().lower()
+            
+            if resposta in ["login", "tela de login", "logi"]:
+                login()
+                return
+            elif resposta in ["refazer", "retentar"]:
+                return valido_apenas_email(email_login, senha_login)  # Reinicia o processo
+            else:
+                tentativas -= 1
+                print(f"Tentativas restantes: {tentativas}")
+        
+        print("Limite de tentativas atingido.")
+        return
+    
+    # Se tudo ok, prossegue para atualização
+    atualizar_apenas_email(email_novo, email_login, senha_login)
+
+def atualizar_apenas_email(email_novo, email_login, senha_login):
+    with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo_lido_json:
+        arquivo_lido = json.load(arquivo_lido_json)
+
+        dados_conta = arquivo_lido["senha"]
+        dados_familia = arquivo_lido["familia"]
+        dados_quantidade = arquivo_lido["membros"]
+        dados_pontos = arquivo_lido["pontos"]
+        dados_apartamento = arquivo_lido["apartamento"]
+        dados_codigov = arquivo_lido["verificador"]
+
+        print(f"Dados atualizados:\nNovo email cadastrado: {email_novo}")
+        print("Cuidado⚠️!! Caso você confirme essa atualização deve ficar ciente que os antigos dados serão atualizados e não poderão ser acessados novamente")
+        time.sleep(1)
+
+        tentativas = 3
+        while tentativas != 0:
+            confirmar = input("Deseja confirmar a atualização dos dados? (sim/não): ").strip().lower()
+        
+            if confirmar in ["sim", "si", "confirmar", "confirma", "confirmo"]:
+                dados_conta[email_novo] = senha_login
+                dados_familia[email_novo] = dados_familia[email_login]
+                dados_quantidade[email_novo] = dados_quantidade[email_login]
+                dados_pontos[email_novo] = dados_pontos[email_login]
+                dados_apartamento[email_novo] = dados_apartamento[email_login]
+                dados_codigov[email_novo] = dados_codigov[email_login]
+
+                del dados_conta[email_login]
+                del dados_familia[email_login]
+                del dados_quantidade[email_login]
+                del dados_pontos[email_login]
+                del dados_apartamento[email_login]
+                del dados_codigov[email_login]
+
+                with open(r"banco_dados.JSON", "w", encoding="utf-8") as arquivo:
+                    json.dump({
+                        "senha": dados_conta,
+                        "familia": dados_familia,
+                        "membros": dados_quantidade,
+                        "pontos": dados_pontos,
+                        "apartamento": dados_apartamento,
+                        "verificador": dados_codigov
+                    }, arquivo, indent=4, ensure_ascii=False)
+
+                print(f"Email da conta atualizado para {email_novo} com sucesso!")
+                time.sleep(1)
+            
+                tentativas = 3
+                while tentativas != 0:
+                    opcao = input("Deseja ir para o login ou sair do sistema? (Login/sair): ").strip().lower()
+
+                    if opcao in ["login", "logi"]:
+                        login()
+                        return
+
+                    elif opcao in ["sair", "sai", "sair sistema", "sai sistema"]:
+                        print("Sistema encerrado pelo usuário.")
+                        sys.exit()
+
+                    else:
+                        tentativas -= 1
+                        print("Opção inválida. Por favor, tente novamente.")
+                        print(f"Tentativas restantes: {tentativas}")
+            
+                print("Limite de tentativas atingido. Sistema encerrado automaticamente.")
+                sys.exit()
+
             elif confirmar in ["não", "nao", "cancelar", "cancelo", "cancela"]:
                 print("Cancelando operação... Voltando para o menu inicial.")
                 time.sleep(1)
-                menu()
+                menu(email_login,senha_login)
                 return
+
             else:
                 print("Opção inválida.")
                 tentativas -= 1
                 print(f"Quantidade de tentativas restantes = {tentativas}")
-        
+    
+        print("Limite de tentativas atingido")
+        print("Reinicie o sistema")
+        sys.exit()
+
+######################################################################################################################
+#Parte do código voltado apenas para atualização da senha
+def valido_apenas_senha(email_login, ):
+    senha_nova=input("Digite sua senha(No mínimo 4 caracteres no máximo 20):")
+    tentativas = 3
+    while tentativas > 0:
+        if 4 <= len(senha_nova) <= 20:
+            #print("Senha aceita.")
+            atualizar_apenas_senha(senha_nova,email_login)  # Chama o próximo passo do cadastro
+            #return para a função que estava sendo rodada e deixa rodando apenas a função que rodará
+            return
         else:
-            print("Limite de tentativas atingido")
-            print("Reinicie o sistema")
-            sys.exit()
+            print("Número de caracteres inválido. Sua senha deve ter entre 4 e 20 caracteres.")
+            senha_nova = input("Digite sua senha novamente: ").strip()
+            tentativas -= 1
+            print(f"Tentativas restantes: {tentativas}")
 
+    print("Número máximo de tentativas atingido. Tente novamente mais tarde.")
 
-    elif opcao in ["senha","apenas a senha","alterar senha"]:
+def atualizar_apenas_senha(senha_nova,email_login):
+    with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo_lido_json:
+        arquivo_lido = json.load(arquivo_lido_json)
 
+        dados_conta = arquivo_lido["senha"]
+        dados_familia = arquivo_lido["familia"]
+        dados_quantidade = arquivo_lido["membros"]
+        dados_pontos = arquivo_lido["pontos"]
+        dados_apartamento = arquivo_lido["apartamento"]
+        dados_codigov = arquivo_lido["verificador"]
+    
         print(f"Dados atualizados\nNova senha:{senha_nova}")
-        print("Cuidado⚠️!!Caso você confirme essa atualização deve ficar ciente que os antigos dados serão atualizados e não poderão ser "
-        "acessados novamente")
+        print("Cuidado⚠️!!Caso você confirme essa atualização deve ficar ciente que os antigos dados serão atualizados e não poderão ser acessados novamente")
         time.sleep(1)
 
         tentativas=3
@@ -612,99 +812,11 @@ def atualizar_conta(email_novo,senha_nova,email_login,senha_login):
             print("Limite de tentativas atingido")
             print("Reinicie o sistema")
             sys.exit()
-    
 
-    elif opcao in ["ambas","alterar ambas","atualizar email e senha","alterar ambos","ambos"]:
+#########################################################################
 
-
-
-        print(f"Dados atualizados:\nNovo email cadastrado: {email_novo}\nNova senha: {senha_nova}")
-        print("Cuidado⚠️!!Caso você confirme essa atualização deve ficar ciente que os antigos dados serão atualizados e não poderão ser "
-        "acessados novamente")
-        time.sleep(1)
-
-        tentativas=3
-        while tentativas!=0:
-            confirmar = input("Deseja confirmar a atualização dos dados? (sim/não): ").strip().lower()
-        
-       
-            if confirmar in ["sim", "si", "confirmar", "confirma", "confirmo"]:
-        
-
-                
-                # Copia os dados para o novo e-mail
-                dados_conta[email_novo] = senha_nova
-                dados_familia[email_novo] = dados_familia[email_login]
-                dados_quantidade[email_novo] = dados_quantidade[email_login]
-                dados_pontos[email_novo] = dados_pontos[email_login]
-                dados_apartamento[email_novo] = dados_apartamento[email_login]
-                dados_codigov[email_novo] = dados_codigov[email_login]
-
-            # Remove o antigo e-mail
-                del dados_conta[email_login]
-                del dados_familia[email_login]
-                del dados_quantidade[email_login]
-                del dados_pontos[email_login]
-                del dados_apartamento[email_login]
-                del dados_codigov[email_login]
-
-            # Salva os dados atualizados
-                with open(r"banco_dados.JSON", "w", encoding="utf-8") as arquivo:
-                    json.dump({
-                        "senha": dados_conta,
-                        "familia": dados_familia,
-                        "membros": dados_quantidade,
-                        "pontos": dados_pontos,
-                        "apartamento": dados_apartamento,
-                        "verificador": dados_codigov
-                    }, arquivo, indent=4, ensure_ascii=False)
-
-                print(f"Dados da conta {email_novo} atualizados com sucesso!")
-                print("Conta cadastrada com sucesso.")
-                time.sleep(1)
-                tentativas = 3  # Máximo de tentativas permitidas
-
-                while tentativas != 0:
-                    opcao = input("Deseja ir para o login ou sair do sistema ??(Login/sair): ").strip().lower()
-
-                    if opcao in ["login","logi"]:
-                        login()
-                        break  #Sai do loop e chama a função login
-
-                    elif opcao in ["sair","sai","sair sistema","sai sistema"]:
-                        print("Sistema encerrado pelo usuário.")
-                        sys.exit()
-                        break  # Sai do loop e fecha o sistema
-
-                    else:
-                        tentativas -= 1
-                        print("Opção inválida. Por favor, tente novamente.")
-                        print(f"Tentativas restantes: {tentativas}")
-                #caso o usuártio escreva erado
-
-                else:
-                    print("Limite de tentativas atingido. Sistema encerrado automaticamente.")
-
-            
-        
-        
-
-            elif confirmar in ["não", "nao", "cancelar", "cancelo", "cancela"]:
-                print("Cancelando operação... Voltando para o menu inicial.")
-                time.sleep(1)
-                menu()
-                return
-            else:
-                print("Opção inválida. ")
-                tentativas-=1
-                print(f"Quantidade de tentativas restantes={tentativas}")
-
-        else:
-            print("Limite de tentativas atingido")
-            print("Reinicie o sistema")
-            sys.exit()
-
-
+##############################################################
+#parte do código para deletar conta
 def deletar(email_login,senha_login):
     #FUNÇÃO UTILIZADA PARA DELETAR CONTAS
     limpar_tela()
@@ -717,7 +829,7 @@ def deletar(email_login,senha_login):
         dados_apartamento = arquivo_lido["apartamento"]
         dados_codigov = arquivo_lido["verificador"]
         print("ATENÇÃO⚠️\n" \
-    "Você está na aba de deleção de conta,tome cuidado para não fazer algo indesejado.")
+        "Você está na aba de deleção de conta,tome cuidado para não fazer algo indesejado.")
         tentativas=3
         while tentativas!=0:
             confirmar_deletar=input(f"Você deseja deletar sua conta({email_login}) do sistema ECODROP condomínio village ??(sim/não):").strip().lower()
@@ -1111,3 +1223,4 @@ while tentativas != 0:
 else:
     #LIMITE DE OPÇÕES ATINGIDO
     print("Limite de tentativas atingido. Reinicie o programa.")
+    
