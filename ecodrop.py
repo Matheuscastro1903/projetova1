@@ -4,7 +4,7 @@ import time
 import re
 import random
 import os
-
+import pyfiglet
 #ANOTAÇÃO IMPORTANTE
 #Se uma função chama outra função que precisa de argumentos, ela também precisa receber esses argumentos ou criá-los.
 
@@ -37,6 +37,24 @@ mensagens_agua = [
     "👶 Ensine as crianças a cuidar da água.",
     "💙 Água limpa é direito de todos. Preserve!"
 ]
+
+import time
+import sys
+
+def barra_progresso():
+    print("Salvando dados")
+    for i in range(1, 11):
+        blocos = "■" * i
+        espacos = "□" * (10 - i)
+        porcentagem = i * 10
+        sys.stdout.write(f"\r[{blocos}{espacos}] {porcentagem}%")
+        sys.stdout.flush()
+        time.sleep(0.3)  # tempo entre cada etapa
+
+    print(" ✅ Concluído!")
+
+# Exemplo de uso
+
 
 def limpar_tela():
     #FUNÇÃO UTILIZADO PARA LIMPAR O TERMINAL,DEIXANDO O SISTEMA MAIS "REAL"
@@ -142,47 +160,68 @@ def menu(email_login,senha_login):
     tentativas = 3
     print("BEM VINDO AO MENU PRINCIPAL DO ECODROP💧.")
     #mensagem estilo minecraft
-    print(f"MENSAGEM DIÁRIA:{random.choice(mensagens_agua)}")
-    time.sleep(1)
+    print("ECOMENSAGEM DIÁRIA 💧:")
+    print("-"*60)
+    print(random.choice(mensagens_agua))
+    print("-"*60)
+    
+    time.sleep(2)
+    print("\n╔════════════════════════════════════════════════════════════╗")
+    print("║ 🌍 ESCOLHA UMA OPÇÃO NUMÉRICA                              ║")
+    print("╠════════════════════════════════════════════════════════════╣")
+    print("║ 1. Ver Ranking 🏆                                          ║")
+    print("║ 2. Calcular Pontos 💧                                      ║")
+    print("║ 3. Atualizar Dados 🔄                                      ║")
+    print("║ 4. Deletar Conta ❌                                        ║")
+    print("║ 5. Enviar Feedback ✉️                                       ║")
+    print("║ 6. Resgatar Recompensas 🎁                                 ║")
+    print("║ 7. Visualizar Dados 📊                                     ║")
+    print("║ 8. Sair do Sistema 🚪                                      ║")
+    print("╚════════════════════════════════════════════════════════════╝")
+    #resposta2 = input("Digite o número da opção desejada: ").strip()
+    
     while tentativas != 0:
-        resposta2 = input("Qual tipo de função você deseja ?? (Ranking/Calcular pontos/Atualizar dados/Deletar conta/Feedback/Resgatar recompensas/Visualizar dados/sair sistema):").strip().lower()
+        
+        resposta2 = input("Digite o número da opção desejada: ").strip()
 
-        if resposta2 in ["ver ranking", "ranking"]:
+        if resposta2 == "1":
             ranking()
             return
 
-        elif resposta2 in ["calcular pontos", "calcular", "calculo", "pontos"]:
+        elif resposta2 == "2":
             calculo()
             return
 
-        elif resposta2 in ["atualizar", "atualização", "atualizar dados", "atualiza dados"]:
-            atualizar(email_login,senha_login)
+        elif resposta2 == "3":
+            atualizar(email_login, senha_login)
             return
 
-        elif resposta2 in ["deletar", "deletar conta", "excluir", "excluir conta", "apagar conta"]:
-            deletar(email_login,senha_login)
+        elif resposta2 == "4":
+            deletar(email_login, senha_login)
             return
 
-        elif resposta2 in ["feedback", "enviar feedback", "sugestao", "sugestão", "critica", "crítica"]:
+        elif resposta2 == "5":
             feedback()
             return
-        elif resposta2 in ["resgatar", "recompensa", "resgatar recompensa", "prêmios", "premio"]:
+
+        elif resposta2 == "6":
             resgatar_premio()
             return
-        elif resposta2 in ["sair","sai","sair sistema","sai sistema","quit"]:
-            print("Tenha um bom dia!!")
-            sys.exit()
-        elif resposta2 in ["visualizar dados","ver dados","conferir dados"]:
-            mostrar_dados(email_login,senha_login)
+
+        elif resposta2 == "7":
+            mostrar_dados(email_login, senha_login)
             return
 
+        elif resposta2 == "8":
+            print("Tenha um bom dia!!")
+            sys.exit()
+
         else:
-            print("Resposta inválida")
+            print("❌ Opção inválida. Tente novamente.")
             tentativas -= 1
 
-    else:
-        print("Limite de tentativas atingido. Reinicie o programa.")
-        sys.exit()
+    print("❗ Limite de tentativas atingido. Reinicie o programa.")
+    sys.exit()
 
 
 def mostrar_dados(email_login,senha_login):
@@ -205,26 +244,33 @@ def mostrar_dados(email_login,senha_login):
         print(f"• NOME DA FAMÍLIA: {dados_familia[email_login]}")
         time.sleep(1)
         tentativas = 3  # Máximo de tentativas permitidas
+
+        print("\n╔════════════════════════════════════════════════════╗")
+        print("║ O que você deseja fazer agora?                    ║")
+        print("║ 1. Ir para o Menu 💧                              ║")
+        print("║ 2. Sair do Sistema 🚪                              ║")
+        print("╚════════════════════════════════════════════════════╝")
+
         while tentativas != 0:
-            opcao = input("Deseja ir para o login ou sair do sistema?(Login/sair): ").strip().lower()
+            opcao = input("Digite o número da opção desejada: ").strip()
 
-            if opcao in ["login","logi"]:
-                login()
-                break  #Sai do loop e chama a função login
+            if opcao == "1":
+                menu(email_login, senha_login)
+                break
 
-            elif opcao in ["sair","sai","sair sistema","sai sistema"]:
-                print("Sistema encerrado pelo usuário.")
+            elif opcao == "2":
+                print("\n📢 Sistema encerrado pelo usuário. Até logo!")
                 sys.exit()
-                break  # Sai do loop e fecha o sistema
 
             else:
                 tentativas -= 1
-                print("Opção inválida. Por favor, tente novamente.")
-                print(f"Tentativas restantes: {tentativas}")
-                #caso o usuártio escreva erado
+                print("\n❌ Opção inválida. Por favor, escolha 1 ou 2.")
+                print(f"🔁 Tentativas restantes: {tentativas}")
 
         else:
-            print("Limite de tentativas atingido. Sistema encerrado automaticamente.")
+            print("\n⚠️ Limite de tentativas atingido. Sistema encerrado automaticamente.")
+            sys.exit()
+
         
 
 
@@ -235,18 +281,24 @@ def mostrar_dados(email_login,senha_login):
 def atualizar(email_login,senha_login):
     #FUNÇÃO UTILIZADA PARA MOSTRAR AS OPÇOES DE ATUALIZAÇÃO(ATUALIZAR DADOS PESSOAIS OU DADOS DA CONTA)   
     limpar_tela()
-    print("Bem-vindo à tela de atualização do ECODROP.")
+    print("╔════════════════════════════════════════════════╗")
+    print("║ 🔄 BEM-VINDO À TELA DE ATUALIZAÇÃO DO ECODROP ║")
+    print("╚════════════════════════════════════════════════╝")
     tentativas = 3
+    print("OPÇÕES DE ATUALIZAÇÃO")
+    print("╔════════════════════════════╗")
+    print("║ 1. Dados da Conta 🔐       ║")
+    print("║ 2. Dados Pessoais 👤       ║")
+    print("╚════════════════════════════╝")
 
     while tentativas > 0:
-        question1 = input(
-            "O que você deseja atualizar na sua conta? (dados conta / dados pessoais): ").strip().lower()
+        question1 = input("Digite o número da opção que você deseja:").strip().lower()
 
-        if question1 in ["dados conta", "conta", "dados da conta", "conta dados"]:
+        if question1=="1":
             tipo_atualizacao(email_login,senha_login)
             return
 
-        elif question1 in ["dados pessoais", "pessoais", "informações pessoais", "info pessoais"]:
+        elif question1=="2":
             atualizar_pessoais(email_login,senha_login)
             return
 
@@ -264,6 +316,7 @@ def atualizar(email_login,senha_login):
 def atualizar_pessoais(email_login,senha_login):
     #FUNÇÃO UTILIZADA PARA ATUALIZAR OS DADOS PESSOAIS RELACIONADOS A UMA CONTA
     # Carregar os dados do arquivo
+    limpar_tela()
     with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
         arquivo_lido = json.load(arquivo)
         dados_conta = arquivo_lido["senha"]
@@ -283,7 +336,15 @@ def atualizar_pessoais(email_login,senha_login):
                 print("Valor inválido. Digite apenas números inteiros.")
     
         nome_novo = input("Digite o nome da sua família (Ficará registrado no ranking da forma que você escrever):")
-        print(f"Dados atualizados:\nQuantidade de pessoas na família: {membros_novos}\nNome da família: {nome_novo}")
+        
+        #números no meio do print servem para organizar da maneira correta,dizendo que precisa de n espaços para escrever aquilo que desejo
+        #deixando todas as colunas alinhadas
+        print("\n╔════════════════════════════════════════════════════════╗")
+        print("║                     DADOS ATUALIZADOS                   ║")
+        print("╠════════════════════════════════════════════════════════╣")
+        print(f"║ Quantidade de pessoas na família: {membros_novos:<23}║")
+        print(f"║ Nome da família: {nome_novo:<38}║")
+        print("╚════════════════════════════════════════════════════════╝\n")
 
     
     
@@ -313,11 +374,31 @@ def atualizar_pessoais(email_login,senha_login):
                     json.dump({"senha": dados_conta, "familia": dados_familia,"membros": dados_quantidade, "pontos": dados_pontos,"apartamento": dados_apartamento,
                                "verificador": dados_codigov
                                }, arquivo, indent=4, ensure_ascii=False)
-                print("ATUALIZAÇÃO FEITA COM SUCESSO \n"
-                    "REDIRECIONANDO PARA MENU")
+                barra_progresso()
+                print("Conta atualizada com sucesso.")
                 time.sleep(1)
-                menu(email_login,senha_login)
-                return
+                tentativas = 3  # Máximo de tentativas permitidas
+
+                while tentativas != 0:
+                    opcao = input("Deseja ir para o login ou sair do sistema ??(Login/sair): ").strip().lower()
+
+                    if opcao in ["login","logi"]:
+                        login()
+                        break  #Sai do loop e chama a função login
+
+                    elif opcao in ["sair","sai","sair sistema","sai sistema"]:
+                        print("Sistema encerrado pelo usuário.")
+                        sys.exit()
+                        break  # Sai do loop e fecha o sistema
+
+                    else:
+                        tentativas -= 1
+                        print("❌ Opção inválida. Tente novamente.")
+                        print(f"Tentativas restantes: {tentativas}")
+                #caso o usuártio escreva erado
+
+                else:
+                    print("Limite de tentativas atingido. Sistema encerrado automaticamente.")
 
         
 
@@ -326,7 +407,7 @@ def atualizar_pessoais(email_login,senha_login):
                 menu(email_login,senha_login)  # Substitua com sua função de menu, caso necessário
                 return
             else:
-                print("Opção inválida. Cancelando operação.")
+                print("❌ Opção inválida. Cancelando operação.")
                 tentativas-=1
                 print(f"Tentativas restantes {tentativas}")
         else:
@@ -334,23 +415,31 @@ def atualizar_pessoais(email_login,senha_login):
             print("Reinicie o sistema")
             sys.exit()
 
-def tipo_atualizacao(email_login,senha_login):
-    tentativas=3
-    while tentativas!=0:
-        opcao=input("O que você deseja atualizar ??(apenas email/apenas senha/ambos)").strip().lower()
-        if opcao in ["email","apenas email","só email"]:
+def tipo_atualizacao(email_login, senha_login):
+    limpar_tela()
+    tentativas = 3
+    print("\nO que você deseja atualizar?")
+    print("╔════════════════════════════╗")
+    print("║ 1. Apenas email 📧          ║")
+    print("║ 2. Apenas senha 🔒          ║")
+    print("║ 3. Email e senha ✉️🔑      ║")
+    print("╚════════════════════════════╝")
+    while tentativas != 0:
+        opcao = input("Digite o número da opção desejada (1, 2 ou 3): ").strip()
+
+        if opcao == "1":
             valido_apenas_email(email_login, senha_login)
             return
-        elif opcao in ["senha","apenas senha","só senha"]:
+        elif opcao == "2":
             valido_apenas_senha(email_login)
             return
-        elif opcao in ["email e senha","ambos","ambas","os dois"]:
-            email_valido(email_login,senha_login)
+        elif opcao == "3":
+            email_valido(email_login, senha_login)
             return
         else:
             print("OPÇÃO INVÁLIDA")
-            tentativas-=1
-            print(f"Tentativas restantes={tentativas}")
+            tentativas -= 1
+            print(f"Tentativas restantes = {tentativas}")
     else:
         print("Número de tentativas extrapolaram.")
         print("Reinicie o sistema.")
@@ -359,9 +448,11 @@ def tipo_atualizacao(email_login,senha_login):
 
 
 
+
 ##############################################################################################################
 #Conjunto de funções para atualizar ambos(email,senha)
 def email_valido(email_login,senha_login):
+    limpar_tela()
     ##FUNÇÃO UTILIZADA PARA CONFERIR SE O NOVO EMAIL QUE SERÁ CADASTRADO É VÁLIDO OU NÇAO(ESSA FUNÇÃO SÓ SERÁ CHAMADA 
     #CASO O USUÁRIO QUEIRA ATUALIZAR OS DADOS DA CONTA)
 
@@ -475,6 +566,7 @@ def conferir_senha(email_novo, email_login, senha_login):
 
 def atualizar_conta(email_novo,senha_nova,email_login,senha_login):
     #ATUALIZAÇÃO DOS DADOS DA CONTA NO BANCO DE DADOS JSON
+    limpar_tela()
     
 
     with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo_lido_json:
@@ -489,9 +581,17 @@ def atualizar_conta(email_novo,senha_nova,email_login,senha_login):
 
 
 
-    print(f"Dados atualizados:\nNovo email cadastrado: {email_novo}\nNova senha: {senha_nova}")
-    print("Cuidado⚠️!!Caso você confirme essa atualização deve ficar ciente que os antigos dados serão atualizados e não poderão ser "
-        "acessados novamente")
+    print("\n╔════════════════════════════════════════════════════════╗")
+    print("║                    DADOS ATUALIZADOS                   ║")
+    print("╠════════════════════════════════════════════════════════╣")
+    print(f"║ Novo email cadastrado: {email_novo:<29}║")
+    print(f"║ Nova senha: {senha_nova:<38}║")
+    print("╠════════════════════════════════════════════════════════╣")
+    print("║ ⚠️ Cuidado! Caso confirme essa atualização, os dados   ║")
+    print("║ antigos serão substituídos e não poderão ser acessados.║")
+    print("╚════════════════════════════════════════════════════════╝\n")
+    
+
     time.sleep(1)
 
     tentativas=3
@@ -529,7 +629,7 @@ def atualizar_conta(email_novo,senha_nova,email_login,senha_login):
                     "apartamento": dados_apartamento,
                     "verificador": dados_codigov
                 }, arquivo, indent=4, ensure_ascii=False)
-
+                barra_progresso()
                 print(f"Dados da conta {email_novo} atualizados com sucesso!")
                 print("Conta cadastrada com sucesso.")
                 time.sleep(1)
@@ -579,6 +679,7 @@ def atualizar_conta(email_novo,senha_nova,email_login,senha_login):
 #Parte do código voltado para atualização apenas do email
 
 def valido_apenas_email(email_login, senha_login):
+    limpar_tela()
     dominios_validos = ['gmail.com', 'outlook.com', 'hotmail.com', 'yahoo.com', 'icloud.com']
     tentativas_email = 5
     
@@ -638,6 +739,7 @@ def conferir_apenas_email(email_novo,email_login, senha_login):
     atualizar_apenas_email(email_novo, email_login, senha_login)
 
 def atualizar_apenas_email(email_novo, email_login, senha_login):
+    limpar_tela()
     with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo_lido_json:
         arquivo_lido = json.load(arquivo_lido_json)
 
@@ -648,8 +750,14 @@ def atualizar_apenas_email(email_novo, email_login, senha_login):
         dados_apartamento = arquivo_lido["apartamento"]
         dados_codigov = arquivo_lido["verificador"]
 
-        print(f"Dados atualizados:\nNovo email cadastrado: {email_novo}")
-        print("Cuidado⚠️!! Caso você confirme essa atualização deve ficar ciente que os antigos dados serão atualizados e não poderão ser acessados novamente")
+        print("\n╔════════════════════════════════════════════════════════╗")
+        print("║                    DADOS ATUALIZADOS                   ║")
+        print("╠════════════════════════════════════════════════════════╣")
+        print(f"║ Novo email cadastrado: {email_novo:<29}║")
+        print("╠════════════════════════════════════════════════════════╣")
+        print("║ ⚠️ Cuidado! Ao confirmar, os dados anteriores serão     ║")
+        print("║ atualizados e não poderão ser recuperados.             ║")
+        print("╚════════════════════════════════════════════════════════╝\n")
         time.sleep(1)
 
         tentativas = 3
@@ -680,7 +788,7 @@ def atualizar_apenas_email(email_novo, email_login, senha_login):
                         "apartamento": dados_apartamento,
                         "verificador": dados_codigov
                     }, arquivo, indent=4, ensure_ascii=False)
-
+                barra_progresso()
                 print(f"Email da conta atualizado para {email_novo} com sucesso!")
                 time.sleep(1)
             
@@ -722,6 +830,7 @@ def atualizar_apenas_email(email_novo, email_login, senha_login):
 ######################################################################################################################
 #Parte do código voltado apenas para atualização da senha
 def valido_apenas_senha(email_login, ):
+    limpar_tela()
     senha_nova=input("Digite sua senha(No mínimo 4 caracteres no máximo 20):")
     tentativas = 3
     while tentativas > 0:
@@ -749,9 +858,16 @@ def atualizar_apenas_senha(senha_nova,email_login):
         dados_apartamento = arquivo_lido["apartamento"]
         dados_codigov = arquivo_lido["verificador"]
     
-        print(f"Dados atualizados\nNova senha:{senha_nova}")
-        print("Cuidado⚠️!!Caso você confirme essa atualização deve ficar ciente que os antigos dados serão atualizados e não poderão ser acessados novamente")
+        print("\n╔════════════════════════════════════════════════════════╗")
+        print("║                    DADOS ATUALIZADOS                   ║")
+        print("╠════════════════════════════════════════════════════════╣")
+        print(f"║ Nova senha: {senha_nova:<39}║")
+        print("╠════════════════════════════════════════════════════════╣")
+        print("║ ⚠️ Cuidado! Ao confirmar, os dados anteriores serão     ║")
+        print("║ atualizados e não poderão ser recuperados.             ║")
+        print("╚════════════════════════════════════════════════════════╝\n")
         time.sleep(1)
+
 
         tentativas=3
         while tentativas!=0:
@@ -772,6 +888,7 @@ def atualizar_apenas_senha(senha_nova,email_login):
                         "verificador": dados_codigov
                     }, arquivo, indent=4, ensure_ascii=False)
 
+                barra_progresso()
                 print("Senha atualizada com sucesso!")
                 
                 time.sleep(1)
@@ -828,8 +945,13 @@ def deletar(email_login,senha_login):
         dados_pontos = arquivo_lido["pontos"]
         dados_apartamento = arquivo_lido["apartamento"]
         dados_codigov = arquivo_lido["verificador"]
-        print("ATENÇÃO⚠️\n" \
-        "Você está na aba de deleção de conta,tome cuidado para não fazer algo indesejado.")
+        print("\n╔══════════════════════════════════════════════════════════════╗")
+        print("║                       ⚠️  ATENÇÃO IMPORTANTE  ⚠️              ║")
+        print("╠══════════════════════════════════════════════════════════════╣")
+        print("║ Você está na aba de deleção de conta.                       ║")
+        print("║ Tome cuidado para não realizar uma ação indesejada!         ║")
+        print("╚══════════════════════════════════════════════════════════════╝\n")
+
         tentativas=3
         while tentativas!=0:
             confirmar_deletar=input(f"Você deseja deletar sua conta({email_login}) do sistema ECODROP condomínio village ??(sim/não):").strip().lower()
@@ -1198,7 +1320,12 @@ class Cadastro:
 
 
 
-#Início do sistema  
+#Início do sistema 
+import pyfiglet
+
+ascii_banner = pyfiglet.figlet_format("ECODROP")
+print(ascii_banner)
+ 
 print("OLÁ,BEM VINDO AO SISTEMA ECODROP💧 do condomínio Village")
 
 tentativas = 3  #  3 tentativas permitidas
