@@ -11,6 +11,7 @@ import pyfiglet
 
 with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
     # quando usa json.load o arquivo json é transformado em dicionário python
+	"""o objetivo dessa parte do código é abrir o arquivo json e salvar os dicionários em python,facilitando a manipulação"""
     arquivo_lido = json.load(arquivo)
     dados_conta = arquivo_lido["senha"]
     dados_familia = arquivo_lido["familia"]
@@ -19,7 +20,7 @@ with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
     dados_apartamento = arquivo_lido["apartamento"]
     dados_codigov = arquivo_lido["verificador"]
 
-
+#OBJETIVO DESSA MENSAGEM É SER UMA MENSAGEM DIÁRIA ALEATÓRIA,VISANDO FICAR MAIS INTERATIVO COM O USUÁRIO
 mensagens_agua = [
     "💧 Cada gota conta. Economize água!",
     "🚿 Banhos curtos, planeta mais saudável.",
@@ -57,10 +58,15 @@ def barra_progresso():
 
 
 def limpar_tela():
+	"""objetivo dessa função é limpar a tela sempre que passar para outra seção,deixando o projeto mais real"""
     #FUNÇÃO UTILIZADO PARA LIMPAR O TERMINAL,DEIXANDO O SISTEMA MAIS "REAL"
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def login():
+	"""
+ 	objetivo dessa função é o usuário poder entrar no sistema colocando seus dados da conta.Caso ele não possua conta será redirecionado para página de cadastro.Caso ele
+ 	esqueça a senha poderá utilizar o código verificador(definido no cadastro) para recuperar a conta
+ 	"""
     #FUNÇÃO UTILIZADA PARA O USUÁRIO CONSEGUIR FAZER LOGIN
     with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
         # quando usa json.load o arquivo json é transformado em dicionário python
@@ -155,6 +161,9 @@ def login():
 
 
 def menu(email_login,senha_login):
+	"""
+ 	Essa função é utilizada para ir para tela de menu,assim que o usuário entrar no sistema.Aqui ele poderá ver quais opções de serviço ele tem.
+ 	"""
     #FUNÇÃO UTILIZADA PARA CONSEGUIR VER AS OPÇOES DE FUNÇÕES
     limpar_tela()
     tentativas = 3
@@ -225,7 +234,10 @@ def menu(email_login,senha_login):
 
 
 def mostrar_dados(email_login,senha_login):
-    #FUNÇÃO UTILIZADA PARA MOSTRAR OS DADOS DA CONTA
+    """
+	Nessa função o usuário poderá ver seus dados da conta,como o email vinculado,quantidade de membros,pontos acumulados,apartamento cadastrado e o nome da família
+    """
+	#FUNÇÃO UTILIZADA PARA MOSTRAR OS DADOS DA CONTA
     limpar_tela()
     with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
     # quando usa json.load o arquivo json é transformado em dicionário python
@@ -280,10 +292,17 @@ def mostrar_dados(email_login,senha_login):
 
 def atualizar(email_login,senha_login):
     #FUNÇÃO UTILIZADA PARA MOSTRAR AS OPÇOES DE ATUALIZAÇÃO(ATUALIZAR DADOS PESSOAIS OU DADOS DA CONTA)   
+     """
+	Essa função irá dar a opção do usuário atualizar os dados da conta(email,senha) ou os dados pessoais(quantidade de membros,apartamento cadastrado e o nome da família),.A partir da sua resposta,ele será 
+ 	encaminhado para outra aba
+    """
+
     limpar_tela()
     print("╔════════════════════════════════════════════════╗")
     print("║ 🔄 BEM-VINDO À TELA DE ATUALIZAÇÃO DO ECODROP ║")
     print("╚════════════════════════════════════════════════╝")
+
+	
     tentativas = 3
     print("OPÇÕES DE ATUALIZAÇÃO")
     print("╔════════════════════════════╗")
@@ -314,7 +333,11 @@ def atualizar(email_login,senha_login):
 
 
 def atualizar_pessoais(email_login,senha_login):
-    #FUNÇÃO UTILIZADA PARA ATUALIZAR OS DADOS PESSOAIS RELACIONADOS A UMA CONTA
+    """
+	Essa função será utilizada para atualizar os dados pessoais em relação a conta cadastrada
+    """
+	
+	#FUNÇÃO UTILIZADA PARA ATUALIZAR OS DADOS PESSOAIS RELACIONADOS A UMA CONTA
     # Carregar os dados do arquivo
     limpar_tela()
     with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
@@ -452,8 +475,16 @@ def tipo_atualizacao(email_login, senha_login):
 ##############################################################################################################
 #Conjunto de funções para atualizar ambos(email,senha)
 def email_valido(email_login,senha_login):
+   """
+	Essa função será chamada caso o usuário deseje atualizar os dados da conta(email,senha).Ela tem a função de verificar se o email novo 
+ 	 que será utilizado é válido ou não.Caso seja válido será chamada outra função para continuar o fluxo.
+    """
+
     limpar_tela()
     ##FUNÇÃO UTILIZADA PARA CONFERIR SE O NOVO EMAIL QUE SERÁ CADASTRADO É VÁLIDO OU NÇAO(ESSA FUNÇÃO SÓ SERÁ CHAMADA 
+
+	##FUNÇÃO UTILIZADA PARA CONFERIR SE O NOVO EMAIL QUE SERÁ CADASTRADO É VÁLIDO OU NÇAO(ESSA FUNÇÃO SÓ SERÁ CHAMADA 
+
     #CASO O USUÁRIO QUEIRA ATUALIZAR OS DADOS DA CONTA)
 
     dominios_validos = [
@@ -503,7 +534,10 @@ def email_valido(email_login,senha_login):
     # Agora verifica se email já está cadastrado
 
 def conferir_email(email_novo,email_login,senha_login):
-    ##FUNÇÃO UTILIZADA PARA CONFERIR SE O NOVO EMAIL JÁ EXISTE NO BANCO DE DADOS OU NÃO
+	"""
+ 	Essa função será utilizada para conferir se o email novo já está cadastrado ou não no banco de dados.Caso não esteja cadastrado será chamada a próxima função
+  	"""
+	##FUNÇÃO UTILIZADA PARA CONFERIR SE O NOVO EMAIL JÁ EXISTE NO BANCO DE DADOS OU NÃO
     with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
     # quando usa json.load o arquivo json é transformado em dicionário python
         arquivo_lido = json.load(arquivo)
@@ -546,7 +580,10 @@ def conferir_email(email_novo,email_login,senha_login):
 
 
 def conferir_senha(email_novo, email_login, senha_login):
-    #FUNÇÃO UTILIZADA PARA CONFERIR SE A SENHA NOVA PODE SER CADASTRADA
+    """
+    Essa função será utilizada para evitar que a nova senha que será cadastrada(ou mantida) terá um tamanho compatível
+    """
+	#FUNÇÃO UTILIZADA PARA CONFERIR SE A SENHA NOVA PODE SER CADASTRADA
     senha_nova=input("Digite sua senha(No mínimo 4 caracteres no máximo 20):")
     tentativas = 3
     while tentativas > 0:
@@ -566,8 +603,11 @@ def conferir_senha(email_novo, email_login, senha_login):
 
 def atualizar_conta(email_novo,senha_nova,email_login,senha_login):
     #ATUALIZAÇÃO DOS DADOS DA CONTA NO BANCO DE DADOS JSON
+     """essa função será utilizada para atualizar a conta do usuário,podendo atualizar apenas o email,apenas a senha ou atualizar ambos os dados"""
+
     limpar_tela()
     
+
 
     with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo_lido_json:
         arquivo_lido = json.load(arquivo_lido_json)
@@ -935,7 +975,8 @@ def atualizar_apenas_senha(senha_nova,email_login):
 ##############################################################
 #parte do código para deletar conta
 def deletar(email_login,senha_login):
-    #FUNÇÃO UTILIZADA PARA DELETAR CONTAS
+    #FUNÇÃO UTILIZADA  PARA DELETAR CONTAS
+	"""Essa funçao será utilizada para deletar a conta do usuário,caso seja da vontade dele"""
     limpar_tela()
     with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo_lido_json:
         arquivo_lido = json.load(arquivo_lido_json)
@@ -992,11 +1033,13 @@ def deletar(email_login,senha_login):
 
 
 def feedback():
-    print("======Sistema de avaliação========")
+
+    print("========Sistema de avaliação========")
+
 
     print("O que você achou do nosso serviço?")
-    nome = input("Digite seu nome: ")
-    nota = float(input("Qual sua nota (0 a 10)? "))
+    nome = (input("Digite seu nome: ")
+    nota = float(input("Qual nota você nos dá (0 a 10)? "))
     
     # Verifica se a nota está dentro do intervalo permitido
     if nota < 0 or nota > 10:
@@ -1020,36 +1063,109 @@ def exibir_feedbacks():
     if not feedbacks:
         print("Ainda não há feedbacks registrados.\n")
         return
-    
-    print("\n📋 Lista de Feedbacks Recebidos:")
-    for i, f in enumerate(feedbacks, start=1):
-        print(f"\n{i} - Nome: {f['nome']}")
-        print(f"Nota: {f['nota']}/10")
-        print(f"Comentário: {f['comentario']}")
 
+ def salvar_dados(dados):
+    with open("dados.csv", "w") as f:
+        f.write(dados)
+    atualizar_dados()
+
+def atualizar_dados():
+    print("Atualizando os dados com as últimas alterações...")
+
+print("Você deseja retornar ao menu? (s/n)")
+    if resposta == "s":
+        print("Retornando ao menu...")
+        # Aqui podemos chamar a função do menu, por exemplo:
+        # mostrar_menu()
+    elif resposta == "n":
+        print("Encerrando o programa.")
+        import sys
+        sys.exit()
+    else:
+        print("Opção inválida. Tente novamente.")
+
+pass
 
 
 def ranking():
-    import json
+   if dia do mês 28:
+	    import json
+	    
+	    # Lê os dados do arquivo JSON
+	    with open('dados_usuarios.json', 'r', encoding='utf-8') as arquivo:
+	        dados = json.load(arquivo)
+	    
+	    # Extrai os pontos
+	        pontos = dados['pontos']
+	    
+	    # Gera uma lista de tuplas com email e pontos
+	        ranking = sorted(pontos.items(), key=lambda item: item[1], reverse=True)
+	    
+	    # Mostra o ranking com outros dados (nome da família e apartamento)
+	        print("🏆 RANKING DOS USUÁRIOS POR PONTOS:\n")
+	        for posicao, (email, ponto) in enumerate(ranking, start=1):
+	            familia = dados['familia'].get(email, 'Desconhecido')
+	            ap = dados['apartamento'].get(email, '???')
+	            print(f"{posicao}º lugar: Família {familia} (Apt {ap}) - {ponto} pontos")
+		print("Você deseja ver os rankings passados? (s/n)")
+			if resposta == "s":
+	            print("\n--- Rankings Passados ---")
+    			for ranking in rankings_passados:
+       				 print(ranking)
+	        elif resposta == "n":
+	            print("Encerrando o programa.")
+	            import sys
+	            sys.exit()
+  	else:
+        print("Você deseja ver os rankings passados? (s/n)")
+	        if resposta == "s":
+	             print("\n--- Rankings Passados ---")
+    			for ranking in rankings_passados:
+       				 print(ranking)
+	        elif resposta == "n":
+	            print("Encerrando o programa.")
+	            import sys
+	            sys.exit()
+		else:
+		    print("Opção inválida")
+	                
 
-    # Lê os dados do arquivo JSON
-    with open('dados_usuarios.json', 'r', encoding='utf-8') as arquivo:
-        dados = json.load(arquivo)
+    
+pass
 
-    # Extrai os pontos
-        pontos = dados['pontos']
 
-    # Gera uma lista de tuplas com email e pontos
-        ranking = sorted(pontos.items(), key=lambda item: item[1], reverse=True)
 
-    # Mostra o ranking com outros dados (nome da família e apartamento)
-        print("🏆 RANKING DOS USUÁRIOS POR PONTOS:\n")
-        for posicao, (email, ponto) in enumerate(ranking, start=1):
-            familia = dados['familia'].get(email, 'Desconhecido')
-            ap = dados['apartamento'].get(email, '???')
-            print(f"{posicao}º lugar: Família {familia} (Apt {ap}) - {ponto} pontos")
-# pass
+def resgatar():
+    print("===Tabela de recompensas===")
 
+	if saldo suficiente:
+	print("Resgate seu prêmio")
+		if voucher:
+			premio = voucher
+		elif cupons:
+			premio = cupons
+		elif descontos:
+			premio = descontos
+		elif milhas:
+			premio= milhas
+		else:
+			print("Encerrando o programa.")
+	            	import sys
+	            	sys.exit()
+	   def salvar_dados(dados):
+    	with open("dados.csv", "w") as f:
+        f.write(dados)
+    	atualizar_dados()
+
+	                
+	 else: 
+		print("Saldo insuficiente")
+		print("Encerrando o programa.")
+	            import sys
+	            sys.exit()
+	
+	                
+			
 
 #def resgatar():
 def resgatar_premio(litros_economizados):
@@ -1069,8 +1185,59 @@ def resgatar_premio(litros_economizados):
     print("\n🎁 Resgate de Prêmios:")
     print(f"Você pode resgatar: {premio}")
 
+ if pontos >= 200:
+        recompensa = recompensas[200]
+    elif pontos >= 100:
+        recompensa = recompensas[100]
+    elif pontos >= 50:
+        recompensa = recompensas[50]
+    elif pontos >= 20:
+        recompensa = recompensas[20]
+    else:
+        recompensa = "Você não tem pontos suficientes para resgatar recompensas."
+    
+    print(f"Você pode resgatar: {recompensa}")
+
+
+pass
+
 
 def calculo():
+
+    if dia do mês == 28:
+		with open(ARQUIVO_JSON, "r", encoding="utf-8") as arquivo:
+        	json.dump(dados, arquivo, indent=4, ensure_ascii=False)
+		calculo = int(input("[quantidade de pessoas*quantidade de dias*consumo individual]/[média mundial de consumo individual])
+			if calculo < media_mundial_de_consumo_individual:
+				print("Parabéns, você acumulou pontos!!)
+			else:
+				print("Você não pontuou")
+		print("Você deseja ver seu ranking? (s/n)"
+			if resposta == "s":
+				print("🏆 RANKING DOS USUÁRIOS POR PONTOS:\n")
+	        		for posicao, (email, ponto) in enumerate(ranking, start=1):
+	           		familia = dados['familia'].get(email, 'Desconhecido')
+	            		ap = dados['apartamento'].get(email, '???')
+	            		print(f"{posicao}º lugar: Família {familia} (Apt {ap}) - {ponto} pontos")	
+			else:
+				print("Encerrando o programa.")
+	            		import sys
+	            		sys.exit()
+		   	
+				  
+	else:
+		print("Você deseja ver seu ranking? (s/n)"
+			if resposta == "s":
+				print("🏆 RANKING DOS USUÁRIOS POR PONTOS:\n")
+	        		for posicao, (email, ponto) in enumerate(ranking, start=1):
+	            		familia = dados['familia'].get(email, 'Desconhecido')
+	            		ap = dados['apartamento'].get(email, '???')
+	           		print(f"{posicao}º lugar: Família {familia} (Apt {ap}) - {ponto} pontos")
+			else: 
+				print("Retornando ao menu")  
+				
+				
+
     # Função para calcular os pontos com base na economia de água em litros
 
 #def calcular_pontos_por_litros(litros_economizados):
@@ -1085,30 +1252,8 @@ def exibir_resultado(pontos):
     print(f"Você economizou {pontos/0.5} litros de água e acumulou {pontos:.2f} pontos!")
     return pontos
 
-# Função para resgatar recompensas com base nos pontos
-def resgatar_pontos(pontos):
-    recompensas = {
-        20: "Desconto em um produto de limpeza ecológico",
-        50: "Cartão presente de R$50",
-        100: "Assinatura de um serviço de streaming por 3 meses",
-        200: "Viagem para uma reserva ecológica por 1 final de semana"
-    }
 
-    print("\n🎁 Resgate de Pontos:")
-    if pontos >= 200:
-        recompensa = recompensas[200]
-    elif pontos >= 100:
-        recompensa = recompensas[100]
-    elif pontos >= 50:
-        recompensa = recompensas[50]
-    elif pontos >= 20:
-        recompensa = recompensas[20]
-    else:
-        recompensa = "Você não tem pontos suficientes para resgatar recompensas."
-    
-    print(f"Você pode resgatar: {recompensa}")
-
-
+pass
 
 
 
