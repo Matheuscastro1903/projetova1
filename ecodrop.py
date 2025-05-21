@@ -766,13 +766,20 @@ def feedback():
     nome = (input("Digite seu nome: ")
     nota = float(input("Qual nota você nos dá (0 a 10)? "))
     
-    # Verifica se a nota está dentro do intervalo permitido
+#Nota
     if nota < 0 or nota > 10:
         print("Nota inválida. Por favor, digite uma nota entre 0 e 10.")
-        return
+    else:
+	print("Nota armazenada com sucesso")
+	
+"""
+Logo abaixo é verificado se a nota está dentro do intervalo permitido
+"""	
+	
+return
     
     comentario = input("Deixe seu comentário: ")
-    
+
     # Armazenar o feedback como um dicionário
     feedback = {
         "nome": nome,
