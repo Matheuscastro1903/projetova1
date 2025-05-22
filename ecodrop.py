@@ -759,26 +759,27 @@ def deletar(email_login,senha_login):
 
 def feedback():
 
-    print("========Sistema de avaliação========")
+	print("========Sistema de avaliação========")
 
 
-    print("O que você achou do nosso serviço?")
-    nome = (input("Digite seu nome: ")
-    nota = float(input("Qual nota você nos dá (0 a 10)? "))
+    	print("O que você achou do nosso serviço?")
+    	nome = str(input("Digite seu nome: "))
+    	nota = float(input("Qual nota você nos dá (0 a 10)? "))
     
 #Nota
-    if nota < 0 or nota > 10:
-        print("Nota inválida. Por favor, digite uma nota entre 0 e 10.")
-    else:
-	print("Nota armazenada com sucesso")
+    	if nota < 0 or nota > 10:
+        	print("Nota inválida. Por favor, digite uma nota entre 0 e 10.")
+    	else:
+		print("Nota armazenada com sucesso")
 	
 """
-Logo abaixo é verificado se a nota está dentro do intervalo permitido
+Logo acima, na parte de avaliação por parte do usuário,
+é verificado se a nota está dentro do intervalo permitido
 """	
 	
 return
     
-    comentario = input("Deixe seu comentário: ")
+    comentario = str(input("Deixe seu comentário: "))
 
     # Armazenar o feedback como um dicionário
     feedback = {
@@ -790,88 +791,96 @@ return
     feedbacks.append(feedback)
     print("\n✅ Feedback registrado com sucesso!\n")
 
+
 # Função para exibir todos os feedbacks
 def exibir_feedbacks():
-    if not feedbacks:
-        print("Ainda não há feedbacks registrados.\n")
+	if not feedbacks:
+        	print("Ainda não há feedbacks registrados.\n")
         return
 
  def salvar_dados(dados):
-    with open("dados.csv", "w") as f:
-        f.write(dados)
-    atualizar_dados()
+    	with open("dados.csv", "w") as f:
+        	f.write(dados)
+    	atualizar_dados()
 
 def atualizar_dados():
-    print("Atualizando os dados com as últimas alterações...")
+	print("Atualizando os dados com as últimas alterações...")
 
-print("Você deseja retornar ao menu? (s/n)")
-    if resposta == "s":
-        print("Retornando ao menu...")
-        # Aqui podemos chamar a função do menu, por exemplo:
-        # mostrar_menu()
-    elif resposta == "n":
-        print("Encerrando o programa.")
-        import sys
-        sys.exit()
-    else:
-        print("Opção inválida. Tente novamente.")
+	print("Você deseja retornar ao menu? (s/n)")
+    	if resposta == "s":
+        	print("Retornando ao menu...")
+        	# Aqui podemos chamar a função do menu, por exemplo:
+        	# mostrar_menu()
+    	elif resposta == "n":
+        	print("Encerrando o programa.")
+        	import sys
+        	sys.exit()
+    	else:
+        	print("Opção inválida. Tente novamente.")
+
+"""
+Também é armazenado o comentário que o usuário faz sobre o serviço
+"""
 
 pass
 
 
 def ranking():
-   if dia do mês 28:
-	    import json
+	if dia do mês 28:
+		import json
 	    
 	    # Lê os dados do arquivo JSON
-	    with open('dados_usuarios.json', 'r', encoding='utf-8') as arquivo:
-	        dados = json.load(arquivo)
+	    	with open('dados_usuarios.json', 'r', encoding='utf-8') as arquivo:
+	        	dados = json.load(arquivo)
 	    
 	    # Extrai os pontos
 	        pontos = dados['pontos']
 	    
 	    # Gera uma lista de tuplas com email e pontos
-	        ranking = sorted(pontos.items(), key=lambda item: item[1], reverse=True)
+		ranking = sorted(pontos.items(), key=lambda item: item[1], reverse=True)
 	    
 	    # Mostra o ranking com outros dados (nome da família e apartamento)
 	        print("🏆 RANKING DOS USUÁRIOS POR PONTOS:\n")
 	        for posicao, (email, ponto) in enumerate(ranking, start=1):
-	            familia = dados['familia'].get(email, 'Desconhecido')
-	            ap = dados['apartamento'].get(email, '???')
-	            print(f"{posicao}º lugar: Família {familia} (Apt {ap}) - {ponto} pontos")
+	        	familia = dados['familia'].get(email, 'Desconhecido')
+	        	ap = dados['apartamento'].get(email, '???')
+	        	print(f"{posicao}º lugar: Família {familia} (Apt {ap}) - {ponto} pontos")
 		print("Você deseja ver os rankings passados? (s/n)")
 			if resposta == "s":
-	            print("\n--- Rankings Passados ---")
+	            		print("\n--- Rankings Passados ---")
     			for ranking in rankings_passados:
        				 print(ranking)
-	        elif resposta == "n":
-	            print("Encerrando o programa.")
+	elif resposta == "n":
+		print("Encerrando o programa.")
 	            import sys
 	            sys.exit()
   	else:
-        print("Você deseja ver os rankings passados? (s/n)")
+        	print("Você deseja ver os rankings passados? (s/n)")
 	        if resposta == "s":
-	             print("\n--- Rankings Passados ---")
+	        	print("\n--- Rankings Passados ---")
     			for ranking in rankings_passados:
        				 print(ranking)
 	        elif resposta == "n":
-	            print("Encerrando o programa.")
-	            import sys
-	            sys.exit()
+	            	print("Encerrando o programa.")
+	            	import sys
+	            	sys.exit()
 		else:
-		    print("Opção inválida")
+		    	print("Opção inválida")
 	                
-
+"""
+O código acima indica a posição do usuário, em relação a outros, de acordo
+com o que foi gasto por mês de água
+"""
     
 pass
 
 
 
 def resgatar():
-    print("===Tabela de recompensas===")
+	print("===Tabela de recompensas===")
 
 	if saldo suficiente:
-	print("Resgate seu prêmio")
+		print("Resgate seu prêmio")
 		if voucher:
 			premio = voucher
 		elif cupons:
@@ -896,7 +905,10 @@ def resgatar():
 	            import sys
 	            sys.exit()
 	
-	                
+"""
+Acima o código leva em conta se há saldo suficiete para o usuário adquirir determinado prêmio, 
+havendo inúmeras opções de premiação
+"""
 			
 
 #def resgatar():
@@ -933,10 +945,14 @@ def resgatar_premio(litros_economizados):
 
 pass
 
-
+"""
+Logo abaixo é realizado o cálculo de pontos ao usuário, sendo possível ver sua posição
+logo após o acúmulo de pontos. Esse cálculo é realizado todo final de semana, sendo que 
+a distribuição de pontos é realizada no final de todo mês
+"""
 def calculo():
 
-    if dia do mês == 28:
+	if dia do mês == 28:
 		with open(ARQUIVO_JSON, "r", encoding="utf-8") as arquivo:
         	json.dump(dados, arquivo, indent=4, ensure_ascii=False)
 		calculo = int(input("[quantidade de pessoas*quantidade de dias*consumo individual]/[média mundial de consumo individual])
@@ -951,12 +967,11 @@ def calculo():
 	           		familia = dados['familia'].get(email, 'Desconhecido')
 	            		ap = dados['apartamento'].get(email, '???')
 	            		print(f"{posicao}º lugar: Família {familia} (Apt {ap}) - {ponto} pontos")	
-			elif == "n":
+			else:
 				print("Encerrando o programa.")
 	            		import sys
 	            		sys.exit()
-		   	else:
-		  		print("Opção inválida"
+		   
 				  
 	else:
 		print("Você deseja ver seu ranking? (s/n)"
@@ -968,8 +983,7 @@ def calculo():
 	           		print(f"{posicao}º lugar: Família {familia} (Apt {ap}) - {ponto} pontos")
 			else: 
 				print("Retornando ao menu")  
-				
-				
+								  
 
     # Função para calcular os pontos com base na economia de água em litros
 
