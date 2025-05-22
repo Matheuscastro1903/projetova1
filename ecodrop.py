@@ -11,7 +11,9 @@ import pyfiglet
 
 with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
     # quando usa json.load o arquivo json é transformado em dicionário python
-	"""o objetivo dessa parte do código é abrir o arquivo json e salvar os dicionários em python,facilitando a manipulação"""
+    """
+    o objetivo dessa parte do código é abrir o arquivo json e salvar os dicionários em python,facilitando a manipulação
+    """
     arquivo_lido = json.load(arquivo)
     dados_conta = arquivo_lido["senha"]
     dados_familia = arquivo_lido["familia"]
@@ -39,8 +41,8 @@ mensagens_agua = [
     "💙 Água limpa é direito de todos. Preserve!"
 ]
 
-import time
-import sys
+
+
 
 def barra_progresso():
     print("Salvando dados")
@@ -58,16 +60,19 @@ def barra_progresso():
 
 
 def limpar_tela():
-	"""objetivo dessa função é limpar a tela sempre que passar para outra seção,deixando o projeto mais real"""
+	
+    """objetivo dessa função é limpar a tela sempre que passar para outra seção,deixando o projeto mais real"""
     #FUNÇÃO UTILIZADO PARA LIMPAR O TERMINAL,DEIXANDO O SISTEMA MAIS "REAL"
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def login():
-	"""
- 	objetivo dessa função é o usuário poder entrar no sistema colocando seus dados da conta.Caso ele não possua conta será redirecionado para página de cadastro.Caso ele
- 	esqueça a senha poderá utilizar o código verificador(definido no cadastro) para recuperar a conta
- 	"""
-    #FUNÇÃO UTILIZADA PARA O USUÁRIO CONSEGUIR FAZER LOGIN
+    """
+    objetivo dessa função é o usuário poder entrar no sistema colocando seus dados da conta.
+    Caso ele não possua conta será redirecionado para página de cadastro.Caso ele
+    esqueça a senha poderá utilizar o código verificador(definido no cadastro) para recuperar a conta
+    """
+#FUNÇÃO UTILIZADA PARA O USUÁRIO CONSEGUIR FAZER LOGIN
+    
     with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
         # quando usa json.load o arquivo json é transformado em dicionário python
         arquivo_lido = json.load(arquivo)
@@ -99,7 +104,7 @@ def login():
                     if dados_conta[email_login] == senha_login:
                         limpar_tela()
                         menu(email_login,senha_login)
-                        # return serve para interromper a função login de continuar rodando e deixar apenas a função menu
+                        
                         return
                     else:
                         print("SENHA OU EMAIL INCORRETO.")
@@ -161,9 +166,10 @@ def login():
 
 
 def menu(email_login,senha_login):
-	"""
+    """
  	Essa função é utilizada para ir para tela de menu,assim que o usuário entrar no sistema.Aqui ele poderá ver quais opções de serviço ele tem.
- 	"""
+ 	
+    """
     #FUNÇÃO UTILIZADA PARA CONSEGUIR VER AS OPÇOES DE FUNÇÕES
     limpar_tela()
     tentativas = 3
@@ -198,7 +204,7 @@ def menu(email_login,senha_login):
             return
 
         elif resposta2 == "2":
-            calculo()
+            calculo(email_login,senha_login)
             return
 
         elif resposta2 == "3":
@@ -210,7 +216,7 @@ def menu(email_login,senha_login):
             return
 
         elif resposta2 == "5":
-            feedback()
+            feedback(email_login)
             return
 
         elif resposta2 == "6":
@@ -292,7 +298,7 @@ def mostrar_dados(email_login,senha_login):
 
 def atualizar(email_login,senha_login):
     #FUNÇÃO UTILIZADA PARA MOSTRAR AS OPÇOES DE ATUALIZAÇÃO(ATUALIZAR DADOS PESSOAIS OU DADOS DA CONTA)   
-     """
+    """
 	Essa função irá dar a opção do usuário atualizar os dados da conta(email,senha) ou os dados pessoais(quantidade de membros,apartamento cadastrado e o nome da família),.A partir da sua resposta,ele será 
  	encaminhado para outra aba
     """
@@ -439,6 +445,10 @@ def atualizar_pessoais(email_login,senha_login):
             sys.exit()
 
 def tipo_atualizacao(email_login, senha_login):
+    """
+    Essa função tem o objetivo de definir o que será atualizado em relação aos dados da conta(email,senha,ambos)
+    """
+    
     limpar_tela()
     tentativas = 3
     print("\nO que você deseja atualizar?")
@@ -475,17 +485,15 @@ def tipo_atualizacao(email_login, senha_login):
 ##############################################################################################################
 #Conjunto de funções para atualizar ambos(email,senha)
 def email_valido(email_login,senha_login):
-   """
+    """
 	Essa função será chamada caso o usuário deseje atualizar os dados da conta(email,senha).Ela tem a função de verificar se o email novo 
- 	 que será utilizado é válido ou não.Caso seja válido será chamada outra função para continuar o fluxo.
+ 	que será utilizado é válido ou não.Caso seja válido será chamada outra função para continuar o fluxo.
+    
     """
 
     limpar_tela()
-    ##FUNÇÃO UTILIZADA PARA CONFERIR SE O NOVO EMAIL QUE SERÁ CADASTRADO É VÁLIDO OU NÇAO(ESSA FUNÇÃO SÓ SERÁ CHAMADA 
+     
 
-	##FUNÇÃO UTILIZADA PARA CONFERIR SE O NOVO EMAIL QUE SERÁ CADASTRADO É VÁLIDO OU NÇAO(ESSA FUNÇÃO SÓ SERÁ CHAMADA 
-
-    #CASO O USUÁRIO QUEIRA ATUALIZAR OS DADOS DA CONTA)
 
     dominios_validos = [
             'gmail.com', 'outlook.com', 'hotmail.com',
@@ -534,7 +542,7 @@ def email_valido(email_login,senha_login):
     # Agora verifica se email já está cadastrado
 
 def conferir_email(email_novo,email_login,senha_login):
-	"""
+    """
  	Essa função será utilizada para conferir se o email novo já está cadastrado ou não no banco de dados.Caso não esteja cadastrado será chamada a próxima função
   	"""
 	##FUNÇÃO UTILIZADA PARA CONFERIR SE O NOVO EMAIL JÁ EXISTE NO BANCO DE DADOS OU NÃO
@@ -603,7 +611,9 @@ def conferir_senha(email_novo, email_login, senha_login):
 
 def atualizar_conta(email_novo,senha_nova,email_login,senha_login):
     #ATUALIZAÇÃO DOS DADOS DA CONTA NO BANCO DE DADOS JSON
-     """essa função será utilizada para atualizar a conta do usuário,podendo atualizar apenas o email,apenas a senha ou atualizar ambos os dados"""
+    """
+     essa função será utilizada para atualizar a conta do usuário,atualizazando email e senha
+    """
 
     limpar_tela()
     
@@ -719,6 +729,10 @@ def atualizar_conta(email_novo,senha_nova,email_login,senha_login):
 #Parte do código voltado para atualização apenas do email
 
 def valido_apenas_email(email_login, senha_login):
+    """
+    Essa função tem o objetivo de verificar se o email que será atualizado é valido ou não,caso seja válido poderá continuar 
+    para a próxima etapa
+    """
     limpar_tela()
     dominios_validos = ['gmail.com', 'outlook.com', 'hotmail.com', 'yahoo.com', 'icloud.com']
     tentativas_email = 5
@@ -749,7 +763,9 @@ def valido_apenas_email(email_login, senha_login):
     sys.exit
 
 def conferir_apenas_email(email_novo,email_login, senha_login):
-    # Carrega dados uma única vez
+    """
+    Essa função tem o objetivo de conferir se o email que a pessoa está querendo atualizar já está no banco de dados ou não
+    """
     with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
         dados = json.load(arquivo)
         dados_conta = dados["senha"]
@@ -779,6 +795,9 @@ def conferir_apenas_email(email_novo,email_login, senha_login):
     atualizar_apenas_email(email_novo, email_login, senha_login)
 
 def atualizar_apenas_email(email_novo, email_login, senha_login):
+    """
+    Essa função tem o objetivo de atualizar um novo email relacionado a conta,excluindo o email passado.
+    """
     limpar_tela()
     with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo_lido_json:
         arquivo_lido = json.load(arquivo_lido_json)
@@ -870,6 +889,10 @@ def atualizar_apenas_email(email_novo, email_login, senha_login):
 ######################################################################################################################
 #Parte do código voltado apenas para atualização da senha
 def valido_apenas_senha(email_login, ):
+    """
+    Essa função tem o objetivo de verificar se a senha que o usuário deseja cadastrar é valida ou não,caso seja válida poderá continuar para
+    a atualização
+    """
     limpar_tela()
     senha_nova=input("Digite sua senha(No mínimo 4 caracteres no máximo 20):")
     tentativas = 3
@@ -888,6 +911,9 @@ def valido_apenas_senha(email_login, ):
     print("Número máximo de tentativas atingido. Tente novamente mais tarde.")
 
 def atualizar_apenas_senha(senha_nova,email_login):
+    """
+    Essa função tem o objetivo de atualizar apenas a senha em relação a conta do login
+    """
     with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo_lido_json:
         arquivo_lido = json.load(arquivo_lido_json)
 
@@ -976,7 +1002,9 @@ def atualizar_apenas_senha(senha_nova,email_login):
 #parte do código para deletar conta
 def deletar(email_login,senha_login):
     #FUNÇÃO UTILIZADA  PARA DELETAR CONTAS
-	"""Essa funçao será utilizada para deletar a conta do usuário,caso seja da vontade dele"""
+    """
+    Essa funçao será utilizada para deletar a conta do usuário,caso seja da vontade dele
+    """
     limpar_tela()
     with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo_lido_json:
         arquivo_lido = json.load(arquivo_lido_json)
@@ -1032,71 +1060,106 @@ def deletar(email_login,senha_login):
     
 
 
-def feedback():
+def feedback(email_login,senha_login):
 
     print("========Sistema de avaliação========")
-
-
     print("O que você achou do nosso serviço?")
-    nome = (input("Digite seu nome: ")
-    nota = float(input("Qual nota você nos dá (0 a 10)? "))
+    
+    
+   
+    tentativas_coment=3
+    while tentativas_coment!=0:
+        comentario = input("Deixe seu comentário(Digite apenas 140 caracteres): ").strip()
+        if len(comentario)>140 or len(comentario)==0:
+            print("Seu texto é grande demais.Não passe de 140 caracteres.")
+            tentativas_coment-=1
+        elif len(comentario)!=0 and len(comentario)<=140:
+            break
+    else:
+        tentativas = 3
+        while tentativas != 0:
+            opcao = input("Deseja ir para o login ou sair do sistema? (Menu/sair): ").strip().lower()
+
+            if opcao in ["menu", "ver menu"]:
+                menu(email_login,senha_login)
+                return
+
+            elif opcao in ["sair", "sai", "sair sistema", "sai sistema"]:
+                print("Sistema encerrado pelo usuário.")
+                sys.exit()
+
+            else:
+                tentativas -= 1
+                print("Opção inválida. Por favor, tente novamente.")
+                print(f"Tentativas restantes: {tentativas}")
+            
+        print("Limite de tentativas atingido. Sistema encerrado automaticamente.")
+        sys.exit()
+
+        
+            
+
     
     # Verifica se a nota está dentro do intervalo permitido
-    if nota < 0 or nota > 10:
-        print("Nota inválida. Por favor, digite uma nota entre 0 e 10.")
-        return
-    
-    comentario = input("Deixe seu comentário: ")
-    
-    # Armazenar o feedback como um dicionário
-    feedback = {
-        "nome": nome,
-        "nota": nota,
-        "comentario": comentario
-    }
-    
-    feedbacks.append(feedback)
-    print("\n✅ Feedback registrado com sucesso!\n")
-
-# Função para exibir todos os feedbacks
-def exibir_feedbacks():
-    if not feedbacks:
-        print("Ainda não há feedbacks registrados.\n")
-        return
-
- def salvar_dados(dados):
-    with open("dados.csv", "w") as f:
-        f.write(dados)
-    atualizar_dados()
-
-def atualizar_dados():
-    print("Atualizando os dados com as últimas alterações...")
-
-print("Você deseja retornar ao menu? (s/n)")
-    if resposta == "s":
-        print("Retornando ao menu...")
-        # Aqui podemos chamar a função do menu, por exemplo:
-        # mostrar_menu()
-    elif resposta == "n":
-        print("Encerrando o programa.")
-        import sys
-        sys.exit()
+    tentativas_nota=3
+    while tentativas_nota!=0:
+        nota = float(input("Qual nota você nos dá (0 a 10)? "))
+        if nota < 0 and nota > 10:
+            print("Nota inválida. Por favor, digite uma nota entre 0 e 10.")
+            nota = float(input("Qual nota você nos dá (0 a 10)? "))
+            tentativas_nota-=1
+        elif nota>0 and nota<10:
+            salvar_feedback(email_login,comentario,nota)
     else:
-        print("Opção inválida. Tente novamente.")
+        tentativas = 3
+        while tentativas != 0:
+            opcao = input("Deseja ir para o login ou sair do sistema? (Menu/sair): ").strip().lower()
 
-pass
+            if opcao in ["menu", "ver menu"]:
+                menu(email_login,senha_login)
+                return
+
+            elif opcao in ["sair", "sai", "sair sistema", "sai sistema"]:
+                print("Sistema encerrado pelo usuário.")
+                sys.exit()
+
+            else:
+                tentativas -= 1
+                print("Opção inválida. Por favor, tente novamente.")
+                print(f"Tentativas restantes: {tentativas}")
+            
+        print("Limite de tentativas atingido. Sistema encerrado automaticamente.")
+        sys.exit()
+    
+
+
+    
+   
+    
+def salvar_feedback(email_login,comentario,nota):
+    with open("feedback.csv", mode="a", newline="", encoding="utf-8") as arquivo:
+        escritor = csv.writer(arquivo)
+        escritor.writerow([email_login, comentario, nota])
+    print("Obrigado pelo seu feedback!")
+    
+    
+
+    
+
+
 
 
 def ranking():
-   if dia do mês 28:
-	    import json
+   dias_do_mes=time.strftime("%d/%m/%Y", time.localtime())
+   if dia_do_mes==28:
+        import json
 	    
 	    # Lê os dados do arquivo JSON
 	    with open('dados_usuarios.json', 'r', encoding='utf-8') as arquivo:
 	        dados = json.load(arquivo)
 	    
 	    # Extrai os pontos
-	        pontos = dados['pontos']
+	    pontos = dados['pontos']
 	    
 	    # Gera uma lista de tuplas com email e pontos
 	        ranking = sorted(pontos.items(), key=lambda item: item[1], reverse=True)
@@ -1152,7 +1215,7 @@ def resgatar():
 			print("Encerrando o programa.")
 	            	import sys
 	            	sys.exit()
-	   def salvar_dados(dados):
+def salvar_dados(dados):
     	with open("dados.csv", "w") as f:
         f.write(dados)
     	atualizar_dados()
@@ -1169,6 +1232,7 @@ def resgatar():
 
 #def resgatar():
 def resgatar_premio(litros_economizados):
+    
     if litros_economizados >= 1000:
         premio = "Viagem para uma reserva ecológica por 1 final de semana"
     elif litros_economizados >= 500:
@@ -1202,7 +1266,7 @@ def resgatar_premio(litros_economizados):
 pass
 
 
-def calculo():
+def calculo(email_login,senha_login):
 
     if dia do mês == 28:
 		with open(ARQUIVO_JSON, "r", encoding="utf-8") as arquivo:
@@ -1264,6 +1328,10 @@ pass
 
 
 class Cadastro:
+    """
+    Essa Classe tem o objetivo de cadastrar os usuários,recebendo os dados básicos para ser possível fazer a conta,conferir se os dados são permitidos
+    e assim cadastrar a conta
+    """
     def __init__(self):
         #RECEBE OS DADOS NECESSÁRIOS PARA CADASTRAR UMA CONTA
         self.email = input("Digite o email que você gostaria de vincular sua conta:")
