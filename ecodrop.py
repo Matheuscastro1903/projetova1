@@ -762,14 +762,14 @@ def feedback():
 	print("========Sistema de avaliação========")
 
 
-    	print("O que você achou do nosso serviço?")
-    	nome = str(input("Digite seu nome: "))
-    	nota = float(input("Qual nota você nos dá (0 a 10)? "))
+print("O que você achou do nosso serviço?")
+nome = str(input("Digite seu nome: "))
+nota = float(input("Qual nota você nos dá (0 a 10)? "))
     
 #Nota
-    	if nota < 0 or nota > 10:
+if nota < 0 or nota > 10:
         	print("Nota inválida. Por favor, digite uma nota entre 0 e 10.")
-    	else:
+else:
 		print("Nota armazenada com sucesso")
 	
 """
@@ -779,7 +779,7 @@ Logo acima, na parte de avaliação por parte do usuário,
 	
 return
     
-    comentario = str(input("Deixe seu comentário: "))
+comentario = str(input("Deixe seu comentário: "))
 
     # Armazenar o feedback como um dicionário
     feedback = {
@@ -804,9 +804,9 @@ def exibir_feedbacks():
     	atualizar_dados()
 
 def atualizar_dados():
-	print("Atualizando os dados com as últimas alterações...")
+print("Atualizando os dados com as últimas alterações...")
 
-	print("Você deseja retornar ao menu? (s/n)")
+print("Você deseja retornar ao menu? (s/n)")
     	if resposta == "s":
         	print("Retornando ao menu...")
         	# Aqui podemos chamar a função do menu, por exemplo:
@@ -829,23 +829,23 @@ def ranking():
 	if dia do mês 28:
 		import json
 	    
-	    # Lê os dados do arquivo JSON
+# Lê os dados do arquivo JSON
 	    	with open('dados_usuarios.json', 'r', encoding='utf-8') as arquivo:
 	        	dados = json.load(arquivo)
 	    
-	    # Extrai os pontos
-	        pontos = dados['pontos']
+# Extrai os pontos
+		pontos = dados['pontos']
 	    
-	    # Gera uma lista de tuplas com email e pontos
+# Gera uma lista de tuplas com email e pontos
 		ranking = sorted(pontos.items(), key=lambda item: item[1], reverse=True)
 	    
-	    # Mostra o ranking com outros dados (nome da família e apartamento)
-	        print("🏆 RANKING DOS USUÁRIOS POR PONTOS:\n")
+# Mostra o ranking com outros dados (nome da família e apartamento)
+	print("🏆 RANKING DOS USUÁRIOS POR PONTOS:\n")
 	        for posicao, (email, ponto) in enumerate(ranking, start=1):
 	        	familia = dados['familia'].get(email, 'Desconhecido')
 	        	ap = dados['apartamento'].get(email, '???')
 	        	print(f"{posicao}º lugar: Família {familia} (Apt {ap}) - {ponto} pontos")
-		print("Você deseja ver os rankings passados? (s/n)")
+	print("Você deseja ver os rankings passados? (s/n)")
 			if resposta == "s":
 	            		print("\n--- Rankings Passados ---")
     			for ranking in rankings_passados:
