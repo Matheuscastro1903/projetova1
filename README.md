@@ -18,7 +18,7 @@ Função Menu=Nessa opção o usuário será recebido em nosso menu e poderá es
 
 Função mostrar dados=A função mostrar dados printará os principais dados(menos a senha e o código verificador,por serem confidenciais) na tela para o usuário que deseja conferir algo.
 
-Função Tipo de atualização=
+Função atualização=Nessa função o usuário terá a opção de escolher qual tipo de atualização deseja,atualizar dados da conta(email ou senha) ou dados pessoais(nome da família,quantidade de membros,apartamento).Dependendo da opção que ele escolher irá puxar outras funções mais específicas.Cada uma tendo um tratamento de erro para caso o usuário coloque uma opção inválida ou já cadastrada no email.O objetivo é o usuário ter de forma simples e fácil a opção de atualizar seus dados,de forma segura.
 
 Função deletar=Nessa função o usuário poderá deletar sua conta caso deseje.Se ele concluir essa ação,não poderá mais acessar aquela conta,necessitando fazer outro cadastro para entrar no sistema.
 
