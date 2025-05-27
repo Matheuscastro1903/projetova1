@@ -216,7 +216,7 @@ def menu(email_login,senha_login):
             return
 
         elif resposta2 == "5":
-            feedback(email_login)
+            feedback(email_login,senha_login)
             return
 
         elif resposta2 == "6":
@@ -1078,7 +1078,7 @@ def feedback(email_login,senha_login):
     else:
         tentativas = 3
         while tentativas != 0:
-            opcao = input("Deseja ir para o login ou sair do sistema? (Menu/sair): ").strip().lower()
+            opcao = input("Deseja ir para o Menu ou sair do sistema? (Menu/sair): ").strip().lower()
 
             if opcao in ["menu", "ver menu"]:
                 menu(email_login,senha_login)
@@ -1108,8 +1108,9 @@ def feedback(email_login,senha_login):
             print("Nota inválida. Por favor, digite uma nota entre 0 e 10.")
             nota = float(input("Qual nota você nos dá (0 a 10)? "))
             tentativas_nota-=1
-        elif nota>0 and nota<10:
+        elif nota>0 or nota<10:
             salvar_feedback(email_login,comentario,nota)
+            return
     else:
         tentativas = 3
         while tentativas != 0:
@@ -1136,12 +1137,43 @@ def feedback(email_login,senha_login):
     
    
     
+<<<<<<< Updated upstream
 def salvar_feedback(email_login,comentario,nota):
     with open("feedback.csv", mode="a", newline="", encoding="utf-8") as arquivo:
         escritor = csv.writer(arquivo)
         escritor.writerow([email_login, comentario, nota])
     print("Obrigado pelo seu feedback!")
     
+=======
+def salvar_feedback(email_login, comentario, nota,senha_login):
+    with open("feedback.csv", mode="a", newline="", encoding="utf-8") as arquivo:
+        escritor = csv.writer(arquivo)
+        escritor.writerow([email_login, comentario, nota])
+
+    print("\n╔══════════════════════════════════════════════════════════════╗")
+    print("║                🙏 OBRIGADO PELO SEU FEEDBACK!                ║")
+    print("╚══════════════════════════════════════════════════════════════╝\n")
+    tentativas = 3
+    while tentativas != 0:
+        opcao = input("Deseja ir para o Menu ou sair do sistema? (Menu/sair): ").strip().lower()
+
+        if opcao in ["menu", "ver menu"]:
+            menu(email_login,senha_login)
+            return
+
+        elif opcao in ["sair", "sai", "sair sistema", "sai sistema"]:
+            print("Sistema encerrado pelo usuário.")
+            sys.exit()
+
+        else:
+            tentativas -= 1
+            print("Opção inválida. Por favor, tente novamente.")
+            print(f"Tentativas restantes: {tentativas}")
+            
+    print("Limite de tentativas atingido. Sistema encerrado automaticamente.")
+    sys.exit()
+
+>>>>>>> Stashed changes
     
 
     
@@ -1150,6 +1182,7 @@ def salvar_feedback(email_login,comentario,nota):
 
 
 def ranking():
+<<<<<<< Updated upstream
    dias_do_mes=time.strftime("%d/%m/%Y", time.localtime())
    if dia_do_mes==28:
         import json
@@ -1191,6 +1224,72 @@ def ranking():
 	            sys.exit()
 		else:
 		    print("Opção inválida")
+=======
+    dia_do_mes = time.strftime("%d", time.localtime())
+
+    # Lê os dados do arquivo JSON
+    with open('banco_dados.JSON', 'r', encoding='utf-8') as arquivo:
+        dados = json.load(arquivo)
+
+    # Simulação de rankings passados (substituir por leitura de arquivo se desejar)
+    try:
+        with open('rankings_passados.json', 'r', encoding='utf-8') as file:
+            rankings_passados = json.load(file)
+    except FileNotFoundError:
+        rankings_passados = []
+
+    if dia_do_mes == "28":
+        exibir_ranking_atual(dados)
+
+        resposta = input("\n📜 Deseja ver os rankings passados? (s/n): ").strip().lower()
+
+        if resposta == "s":
+            exibir_rankings_passados(rankings_passados)
+        else:
+            print("✅ Encerrando o programa.")
+            sys.exit()
+
+    else:
+        resposta = input("\nHoje não é dia 28. Deseja ver os rankings passados? (s/n): ").strip().lower()
+
+        if resposta == "s":
+            exibir_rankings_passados(rankings_passados)
+        else:
+            print("✅ Encerrando o programa.")
+            sys.exit()
+
+
+def exibir_ranking_atual(dados):
+    print("\n╔══════════════════════════════════════════════════════════════╗")
+    print("║                    🏆 RANKING ATUAL DE PONTOS                ║")
+    print("╠══════════════════════════════════════════════════════════════╣")
+
+    pontos = dados['pontos']
+    ranking_atual = sorted(pontos.items(), key=lambda item: item[1], reverse=True)
+
+    for posicao, (email, ponto) in enumerate(ranking_atual, start=1):
+        familia = dados['familia'].get(email, 'Desconhecido')
+        ap = dados['apartamento'].get(email, '???')
+        linha = f"{posicao}º - Família {familia} (Apt {ap}) - {ponto} pontos"
+        print(f"║ {linha.ljust(60)}║")
+
+    print("╚══════════════════════════════════════════════════════════════╝")
+
+
+def exibir_rankings_passados(rankings_passados):
+    print("\n╔══════════════════════════════════════════════════════════════╗")
+    print("║                    📜 RANKINGS PASSADOS                      ║")
+    print("╠══════════════════════════════════════════════════════════════╣")
+
+    if rankings_passados:
+        for idx, ranking in enumerate(rankings_passados, start=1):
+            linha = f"{idx}º Ranking: {ranking}"
+            print(f"║ {linha.ljust(60)}║")
+    else:
+        print("║ 🚫 Nenhum ranking passado disponível.                       ║")
+
+    print("╚══════════════════════════════════════════════════════════════╝")
+>>>>>>> Stashed changes
 	                
 
     
@@ -1230,6 +1329,7 @@ def salvar_dados(dados):
 	                
 			
 
+<<<<<<< Updated upstream
 #def resgatar():
 def resgatar_premio(litros_economizados):
     
@@ -1243,6 +1343,61 @@ def resgatar_premio(litros_economizados):
         premio = "Cartão presente de R$50"
     elif litros_economizados >= 50:
         premio = "Garrafa d'água ecológica"
+=======
+
+
+
+
+'''
+Abaixo o código orienta a realização do cálculo de pontos,
+ou seja, ocorre a conversão da quantidade de água economizada 
+em pontos
+'''
+import time
+import json
+import sys
+import datetime
+# Variáveis globais
+#ARQUIVO_JSON = "dados_usuarios.json"
+media_mundial_de_consumo_individual = 150  # Exemplo de média (litros)
+
+def calculo(email_login, senha_login):
+    dia_do_mes = time.strftime("%d", time.localtime())
+
+    # Abrir os dados
+    with open("banco_dados.JSON", "r", encoding="utf-8") as arquivo:
+        dados = json.load(arquivo)
+
+    if dia_do_mes == "28":
+        try:
+            print("\n╔══════════════════════════════════════════════════════════════╗")
+            print("║                 💧 CÁLCULO DE ECONOMIA DE ÁGUA                ║")
+            print("╠══════════════════════════════════════════════════════════════╣")
+            print("║ Fórmula:                                                     ║")
+            print("║ (Qtd Pessoas * Qtd Dias * Consumo Individual) / Média Mundial║")
+            print("╚══════════════════════════════════════════════════════════════╝\n")
+
+            calculo = int(input("🔢 Digite o resultado do seu cálculo: "))
+
+            if calculo < media_mundial_de_consumo_individual:
+                print("\n🎉 Parabéns, você acumulou pontos!!")
+                # Aqui poderia somar pontos ao usuário no JSON.
+            else:
+                print("\n🚫 Você não pontuou dessa vez.")
+
+        except ValueError:
+            print("\n❌ Valor inválido. Insira um número.")
+            sys.exit()
+
+        resposta = input("\n📊 Deseja ver seu ranking? (s/n): ").lower()
+
+        if resposta == "s":
+            exibir_ranking(dados)
+        else:
+            print("\n🚪 Encerrando o programa.")
+            sys.exit()
+
+>>>>>>> Stashed changes
     else:
         premio = "Você ainda não tem pontos suficientes para resgatar prêmios."
 
@@ -1343,7 +1498,7 @@ class Cadastro:
         self.verificador = input("Digite seu código verificador:\n"
                                  "ATENÇÃO,GUARDE ESSE CÓDIGO DE UMA FORMA SEGURA,CASO VOCÊ ESQUEÇA A SENHA ELE É A ÚNICA FORMA DE CONSEGUIR ACESSAR A CONTA:").strip()
         #chama função conferir código
-        self.conferir_codigo()
+        self.conferir_codigo(self)
 
     # precisa passar o self como parâmetro para conseguir pegar as informações  do init
     def conferir_codigo(self):
@@ -1382,6 +1537,7 @@ class Cadastro:
                 print(f"Tentativas restantes: {tentativas}")
 
         print("Número máximo de tentativas atingido. Tente novamente mais tarde.")
+        sys.exit()
 
     def email_valido(self):
         #FUNÇÃO UTILIZADA PARA CONFERIR SE O EMAIL É VÁLIDO OU NÃO
@@ -1394,7 +1550,7 @@ class Cadastro:
         while tentativas_email != 0:
             # VERIFICA SE O FORMATO DO EMAIL ESTÁ ESCRITO CORRETAMENTE
             if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', self.email):
-                print("FORMATO DE EMAIL INVÁLIDO, UTILIZE UM DOMÍNIO VÁLIDO")
+                print("FORMATO DE EMAIL INVÁLIDO")
                 self.email = input("Digite novamente seu email: ").strip()
                 tentativas_email -= 1
                 print(f"Tentativas restantes: {tentativas_email}")
@@ -1419,7 +1575,7 @@ class Cadastro:
             print("Limite de tentativas atingido. Encerrando o processo de cadastro.")
             return
 
-        self.conferir_email()
+        self.conferir_email(self)
 
     
     def conferir_email(self):
@@ -1456,7 +1612,7 @@ class Cadastro:
                     "Limite de tentativas atingido. Encerrando o processo de cadastro.")
                     return
             else:
-                self.conferir_ap()  # Continua o processo normalmente
+                self.conferir_ap(self)  # Continua o processo normalmente
 
     def conferir_ap(self):
        #FUNÇÃO UTILIZADA PARA ANALISAR SE O APARTAMENTO JÁ ESTÁ CADASTRADO OU NÃO
@@ -1480,7 +1636,7 @@ class Cadastro:
                 print(
                     "Limite de tentativas atingido. Encerrando o processo de cadastro.")
         else:
-            self.cadastrar_conta()
+            self.cadastrar_conta(self)
 
     def cadastrar_conta(self):
         ##FUNÇÃO UTILIZADA PARA CADASTRAR CONTA NO BANCO DE DADOS
@@ -1563,4 +1719,9 @@ while tentativas != 0:
 else:
     #LIMITE DE OPÇÕES ATINGIDO
     print("Limite de tentativas atingido. Reinicie o programa.")
+<<<<<<< Updated upstream
     
+=======
+    sys.exit()
+    
+>>>>>>> Stashed changes
