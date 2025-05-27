@@ -1090,7 +1090,7 @@ def feedback(email_login, senha_login):
     while tentativas_coment!=0:
         comentario = input("Deixe seu comentário(Digite apenas 140 caracteres): ").strip()
         if len(comentario)>140 or len(comentario)==0:
-            print("Seu texto é grande demais.Não passe de 140 caracteres.")
+            print("Texto Inválido.Tente novamente")
             tentativas_coment-=1
         elif len(comentario)!=0 and len(comentario)<=140:
             break
@@ -1116,8 +1116,6 @@ def feedback(email_login, senha_login):
         sys.exit()
 
         
-            
-
     
     # Verifica se a nota está dentro do intervalo permitido
     tentativas_nota=3
@@ -1125,14 +1123,14 @@ def feedback(email_login, senha_login):
         nota = float(input("Qual nota você nos dá (0 a 10)? "))
         if nota < 0 and nota > 10:
             print("Nota inválida. Por favor, digite uma nota entre 0 e 10.")
-            nota = float(input("Qual nota você nos dá (0 a 10)? "))
+            #nota = float(input("Qual nota você nos dá (0 a 10)? "))
             tentativas_nota-=1
         elif nota>0 and nota<10:
             salvar_feedback(email_login, senha_login, comentario, nota)
     else:
         tentativas = 3
         while tentativas != 0:
-            opcao = input("Deseja ir para o login ou sair do sistema? (Menu/sair): ").strip().lower()
+            opcao = input("Deseja ir para o menu ou sair do sistema? (Menu/sair): ").strip().lower()
 
             if opcao in ["menu", "ver menu"]:
                 menu(email_login,senha_login)
