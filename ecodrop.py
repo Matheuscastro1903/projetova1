@@ -21,6 +21,7 @@ with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
     dados_pontos = arquivo_lido["pontos"]
     dados_apartamento = arquivo_lido["apartamento"]
     dados_codigov = arquivo_lido["verificador"]
+    
 
 #OBJETIVO DESSA MENSAGEM É SER UMA MENSAGEM DIÁRIA ALEATÓRIA,VISANDO FICAR MAIS INTERATIVO COM O USUÁRIO
 mensagens_agua = [
@@ -1059,14 +1060,23 @@ def deletar(email_login,senha_login):
 
     
 
+'''
+Logo abaixo o código permite com que o usuário dê uma nota
+e uma opinião quanto ao serviço utilizado, havendo um limite de 
+caracteres na aba de comentáios e, após o comentário, ele é
+registrado com a nota
+'''
+import csv
+def feedback(email_login, senha_login):
+    print("\n╔══════════════════════════════════════════════════════════════╗")
+    print("║                📝 SISTEMA DE AVALIAÇÃO DE SERVIÇO            ║")
+    print("╠══════════════════════════════════════════════════════════════╣")
+    print("║ O que você achou do nosso serviço?                           ║")
+    print("╚══════════════════════════════════════════════════════════════╝\n")
 
-def feedback(email_login,senha_login):
-
-    print("========Sistema de avaliação========")
-    print("O que você achou do nosso serviço?")
     
     
-   
+     # Comentário com até 140 caracteres
     tentativas_coment=3
     while tentativas_coment!=0:
         comentario = input("Deixe seu comentário(Digite apenas 140 caracteres): ").strip()
@@ -1136,186 +1146,279 @@ def feedback(email_login,senha_login):
     
    
     
-def salvar_feedback(email_login,comentario,nota):
+def salvar_feedback(email_login, comentario, nota):
     with open("feedback.csv", mode="a", newline="", encoding="utf-8") as arquivo:
         escritor = csv.writer(arquivo)
         escritor.writerow([email_login, comentario, nota])
-    print("Obrigado pelo seu feedback!")
-    
-    
+
+    print("\n╔══════════════════════════════════════════════════════════════╗")
+    print("║                🙏 OBRIGADO PELO SEU FEEDBACK!                ║")
+    print("╚══════════════════════════════════════════════════════════════╝\n")
 
     
 
+    
+
+'''
+Abaixo é indicado a posição do usuário em elação a outros
+quanto ao seu gasto de água ao longo do mês
+'''
 
 
 
 def ranking():
-   dias_do_mes=time.strftime("%d/%m/%Y", time.localtime())
-   if dia_do_mes==28:
-        import json
-	    
-	    # Lê os dados do arquivo JSON
-	    with open('dados_usuarios.json', 'r', encoding='utf-8') as arquivo:
-	        dados = json.load(arquivo)
-	    
-	    # Extrai os pontos
-	    pontos = dados['pontos']
-	    
-	    # Gera uma lista de tuplas com email e pontos
-	        ranking = sorted(pontos.items(), key=lambda item: item[1], reverse=True)
-	    
-	    # Mostra o ranking com outros dados (nome da família e apartamento)
-	        print("🏆 RANKING DOS USUÁRIOS POR PONTOS:\n")
-	        for posicao, (email, ponto) in enumerate(ranking, start=1):
-	            familia = dados['familia'].get(email, 'Desconhecido')
-	            ap = dados['apartamento'].get(email, '???')
-	            print(f"{posicao}º lugar: Família {familia} (Apt {ap}) - {ponto} pontos")
-		print("Você deseja ver os rankings passados? (s/n)")
-			if resposta == "s":
-	            print("\n--- Rankings Passados ---")
-    			for ranking in rankings_passados:
-       				 print(ranking)
-	        elif resposta == "n":
-	            print("Encerrando o programa.")
-	            import sys
-	            sys.exit()
-  	else:
-        print("Você deseja ver os rankings passados? (s/n)")
-	        if resposta == "s":
-	             print("\n--- Rankings Passados ---")
-    			for ranking in rankings_passados:
-       				 print(ranking)
-	        elif resposta == "n":
-	            print("Encerrando o programa.")
-	            import sys
-	            sys.exit()
-		else:
-		    print("Opção inválida")
+    dia_do_mes = time.strftime("%d", time.localtime())
+
+    # Lê os dados do arquivo JSON
+    with open('dados_usuarios.json', 'r', encoding='utf-8') as arquivo:
+        dados = json.load(arquivo)
+
+    # Simulação de rankings passados (substituir por leitura de arquivo se desejar)
+    try:
+        with open('rankings_passados.json', 'r', encoding='utf-8') as file:
+            rankings_passados = json.load(file)
+    except FileNotFoundError:
+        rankings_passados = []
+
+    if dia_do_mes == "28":
+        exibir_ranking_atual(dados)
+
+        resposta = input("\n📜 Deseja ver os rankings passados? (s/n): ").strip().lower()
+
+        if resposta == "s":
+            exibir_rankings_passados(rankings_passados)
+        else:
+            print("✅ Encerrando o programa.")
+            sys.exit()
+
+    else:
+        resposta = input("\nHoje não é dia 28. Deseja ver os rankings passados? (s/n): ").strip().lower()
+
+        if resposta == "s":
+            exibir_rankings_passados(rankings_passados)
+        else:
+            print("✅ Encerrando o programa.")
+            sys.exit()
+
+
+def exibir_ranking_atual(dados):
+    print("\n╔══════════════════════════════════════════════════════════════╗")
+    print("║                    🏆 RANKING ATUAL DE PONTOS                ║")
+    print("╠══════════════════════════════════════════════════════════════╣")
+
+    pontos = dados['pontos']
+    ranking_atual = sorted(pontos.items(), key=lambda item: item[1], reverse=True)
+
+    for posicao, (email, ponto) in enumerate(ranking_atual, start=1):
+        familia = dados['familia'].get(email, 'Desconhecido')
+        ap = dados['apartamento'].get(email, '???')
+        linha = f"{posicao}º - Família {familia} (Apt {ap}) - {ponto} pontos"
+        print(f"║ {linha.ljust(60)}║")
+
+    print("╚══════════════════════════════════════════════════════════════╝")
+
+
+def exibir_rankings_passados(rankings_passados):
+    print("\n╔══════════════════════════════════════════════════════════════╗")
+    print("║                    📜 RANKINGS PASSADOS                      ║")
+    print("╠══════════════════════════════════════════════════════════════╣")
+
+    if rankings_passados:
+        for idx, ranking in enumerate(rankings_passados, start=1):
+            linha = f"{idx}º Ranking: {ranking}"
+            print(f"║ {linha.ljust(60)}║")
+    else:
+        print("║ 🚫 Nenhum ranking passado disponível.                       ║")
+
+    print("╚══════════════════════════════════════════════════════════════╝")
 	                
 
     
 pass
 
+'''
+O código abaixo oferece inúmeras opções de prêmios ao
+usuário que acumula pontos conforme seu desempenho na
+economia de água. Dependendo do seu saldo, o usuário 
+pode escolher seu prêmio, tendo voucher e descontos, por exemplo
+'''
+import sys
+def resgatar(saldo, recompensas_disponiveis):
+    print("\n╔══════════════════════════════════════════════════════════════╗")
+    print("║                  📜  TABELA DE RECOMPENSAS  📜               ║")
+    print("╠══════════════════════════════════════════════════════════════╣")
+    print("║ -> Voucher                                                  ║")
+    print("║ -> Cupons                                                   ║")
+    print("║ -> Descontos                                                ║")
+    print("║ -> Milhas                                                   ║")
+    print("║ -> Créditos de celular                                      ║")
+    print("║ -> Desconto no condomínio                                   ║")
+    print("╚══════════════════════════════════════════════════════════════╝\n")
 
+    if saldo >= 1:  # Verifica se o saldo é suficiente para resgate
+        print("\n╔══════════════════════════════════════════════════════════════╗")
+        print("║                    🎁  RESGATE DE PRÊMIOS  🎁                 ║")
+        print("╠══════════════════════════════════════════════════════════════╣")
+        print("║ Verificando prêmios disponíveis...                           ║")
+        print("╚══════════════════════════════════════════════════════════════╝\n")
 
-def resgatar():
-    print("===Tabela de recompensas===")
+        if "voucher" in recompensas_disponiveis:
+            premio = "voucher"
+        elif "cupons" in recompensas_disponiveis:
+            premio = "cupons"
+        elif "descontos" in recompensas_disponiveis:
+            premio = "descontos"
+        elif "milhas" in recompensas_disponiveis:
+            premio = "milhas"
+        elif "créditos de celular" in recompensas_disponiveis:
+            premio = "créditos de celular"
+        elif "desconto no condomínio" in recompensas_disponiveis:
+            premio = "desconto no condomínio"
+        else:
+            print("\n╔══════════════════════════════════════════════════════════════╗")
+            print("║                 ❌  NENHUM PRÊMIO DISPONÍVEL  ❌              ║")
+            print("╠══════════════════════════════════════════════════════════════╣")
+            print("║ Infelizmente, não há prêmios disponíveis no momento.        ║")
+            print("║ Tente novamente mais tarde.                                  ║")
+            print("╚══════════════════════════════════════════════════════════════╝\n")
+            sys.exit()
 
-	if saldo suficiente:
-	print("Resgate seu prêmio")
-		if voucher:
-			premio = voucher
-		elif cupons:
-			premio = cupons
-		elif descontos:
-			premio = descontos
-		elif milhas:
-			premio= milhas
-		else:
-			print("Encerrando o programa.")
-	            	import sys
-	            	sys.exit()
+        print("\n╔══════════════════════════════════════════════════════════════╗")
+        print("║                        🎉  PARABÉNS!  🎉                      ║")
+        print("╠══════════════════════════════════════════════════════════════╣")
+        print(f"║ Você resgatou: {premio.ljust(51)}║")
+        print("╚══════════════════════════════════════════════════════════════╝\n")
+
+    else:
+        print("\n╔══════════════════════════════════════════════════════════════╗")
+        print("║                  ⚠️  SALDO INSUFICIENTE  ⚠️                   ║")
+        print("╠══════════════════════════════════════════════════════════════╣")
+        print("║ Você não possui saldo suficiente para realizar um resgate.   ║")
+        print("║ Acumule mais saldo e tente novamente.                        ║")
+        print("╚══════════════════════════════════════════════════════════════╝\n")
+        sys.exit()
+
 def salvar_dados(dados):
-    	with open("dados.csv", "w") as f:
+    with open("dados.csv", "w") as f:
         f.write(dados)
-    	atualizar_dados()
 
-	                
-	 else: 
-		print("Saldo insuficiente")
-		print("Encerrando o programa.")
-	            import sys
-	            sys.exit()
-	
-	                
-			
 
-#def resgatar():
-def resgatar_premio(litros_economizados):
-    
-    if litros_economizados >= 1000:
-        premio = "Viagem para uma reserva ecológica por 1 final de semana"
-    elif litros_economizados >= 500:
-        premio = "Assinatura de um serviço de streaming por 3 meses"
-    elif litros_economizados >= 200:
-        premio = "Desconto em um produto de limpeza ecológico"
-    elif litros_economizados >= 100:
-        premio = "Cartão presente de R$50"
-    elif litros_economizados >= 50:
-        premio = "Garrafa d'água ecológica"
+
+
+
+
+'''
+Abaixo o código orienta a realização do cálculo de pontos,
+ou seja, ocorre a conversão da quantidade de água economizada 
+em pontos
+'''
+import time
+import json
+import sys
+import datetime
+# Variáveis globais
+ARQUIVO_JSON = "dados_usuarios.json"
+media_mundial_de_consumo_individual = 150  # Exemplo de média (litros)
+
+def calculo(email_login, senha_login):
+    dia_do_mes = time.strftime("%d", time.localtime())
+
+    # Abrir os dados
+    with open(ARQUIVO_JSON, "r", encoding="utf-8") as arquivo:
+        dados = json.load(arquivo)
+
+    if dia_do_mes == "28":
+        try:
+            print("\n╔══════════════════════════════════════════════════════════════╗")
+            print("║                 💧 CÁLCULO DE ECONOMIA DE ÁGUA                ║")
+            print("╠══════════════════════════════════════════════════════════════╣")
+            print("║ Fórmula:                                                     ║")
+            print("║ (Qtd Pessoas * Qtd Dias * Consumo Individual) / Média Mundial║")
+            print("╚══════════════════════════════════════════════════════════════╝\n")
+
+            calculo = int(input("🔢 Digite o resultado do seu cálculo: "))
+
+            if calculo < media_mundial_de_consumo_individual:
+                print("\n🎉 Parabéns, você acumulou pontos!!")
+                # Aqui poderia somar pontos ao usuário no JSON.
+            else:
+                print("\n🚫 Você não pontuou dessa vez.")
+
+        except ValueError:
+            print("\n❌ Valor inválido. Insira um número.")
+            sys.exit()
+
+        resposta = input("\n📊 Deseja ver seu ranking? (s/n): ").lower()
+
+        if resposta == "s":
+            exibir_ranking(dados)
+        else:
+            print("\n🚪 Encerrando o programa.")
+            sys.exit()
+
     else:
-        premio = "Você ainda não tem pontos suficientes para resgatar prêmios."
+        resposta = input("\nHoje não é dia 28. Deseja ver seu ranking? (s/n): ").lower()
 
-    print("\n🎁 Resgate de Prêmios:")
-    print(f"Você pode resgatar: {premio}")
-
- if pontos >= 200:
-        recompensa = recompensas[200]
-    elif pontos >= 100:
-        recompensa = recompensas[100]
-    elif pontos >= 50:
-        recompensa = recompensas[50]
-    elif pontos >= 20:
-        recompensa = recompensas[20]
-    else:
-        recompensa = "Você não tem pontos suficientes para resgatar recompensas."
-    
-    print(f"Você pode resgatar: {recompensa}")
+        if resposta == "s":
+            exibir_ranking(dados)
+        else:
+            print("\n↩️ Retornando ao menu.")
 
 
-pass
+def exibir_ranking(dados):
+    print("\n🏆 RANKING DOS USUÁRIOS POR PONTOS:\n")
+    ranking = sorted(dados['pontos'].items(), key=lambda item: item[1], reverse=True)
+
+    for posicao, (email, ponto) in enumerate(ranking, start=1):
+        familia = dados['familia'].get(email, 'Desconhecido')
+        ap = dados['apartamento'].get(email, '???')
+        print(f"{posicao}º lugar: Família {familia} (Apt {ap}) - {ponto} pontos")
 
 
-def calculo(email_login,senha_login):
-
-    if dia do mês == 28:
-		with open(ARQUIVO_JSON, "r", encoding="utf-8") as arquivo:
-        	json.dump(dados, arquivo, indent=4, ensure_ascii=False)
-		calculo = int(input("[quantidade de pessoas*quantidade de dias*consumo individual]/[média mundial de consumo individual])
-			if calculo < media_mundial_de_consumo_individual:
-				print("Parabéns, você acumulou pontos!!)
-			else:
-				print("Você não pontuou")
-		print("Você deseja ver seu ranking? (s/n)"
-			if resposta == "s":
-				print("🏆 RANKING DOS USUÁRIOS POR PONTOS:\n")
-	        		for posicao, (email, ponto) in enumerate(ranking, start=1):
-	           		familia = dados['familia'].get(email, 'Desconhecido')
-	            		ap = dados['apartamento'].get(email, '???')
-	            		print(f"{posicao}º lugar: Família {familia} (Apt {ap}) - {ponto} pontos")	
-			else:
-				print("Encerrando o programa.")
-	            		import sys
-	            		sys.exit()
-		   	
-				  
-	else:
-		print("Você deseja ver seu ranking? (s/n)"
-			if resposta == "s":
-				print("🏆 RANKING DOS USUÁRIOS POR PONTOS:\n")
-	        		for posicao, (email, ponto) in enumerate(ranking, start=1):
-	            		familia = dados['familia'].get(email, 'Desconhecido')
-	            		ap = dados['apartamento'].get(email, '???')
-	           		print(f"{posicao}º lugar: Família {familia} (Apt {ap}) - {ponto} pontos")
-			else: 
-				print("Retornando ao menu")  
-				
-				
-
-    # Função para calcular os pontos com base na economia de água em litros
-
-#def calcular_pontos_por_litros(litros_economizados):
-    # Definir uma relação entre litros economizados e pontos
+# ✅ Função para calcular os pontos com base na economia de água (em litros)
+def calcular_pontos_por_litros(litros_economizados):
     pontos_por_litro = 0.5  # Cada litro economizado gera 0.5 ponto
     pontos_totais = litros_economizados * pontos_por_litro
     return pontos_totais
 
-# Função para exibir a pontuação final
+
+# ✅ Função para exibir a pontuação final
 def exibir_resultado(pontos):
-    print("\n🏅 Resultado da Economia de Água:")
-    print(f"Você economizou {pontos/0.5} litros de água e acumulou {pontos:.2f} pontos!")
+    print("\n╔══════════════════════════════════════════════════════════════╗")
+    print("║              🏅 RESULTADO DA ECONOMIA DE ÁGUA                 ║")
+    print("╠══════════════════════════════════════════════════════════════╣")
+    print(f"║ Você economizou {pontos/0.5:.0f} litros de água               ║")
+    print(f"║ e acumulou {pontos:.2f} pontos!                              ║")
+    print("╚══════════════════════════════════════════════════════════════╝\n")
     return pontos
 
+
+
+def verificar_e_registrar_calculo(email_login):
+    hoje = datetime.date.today()
+    mes_ano_atual = hoje.strftime("%Y-%m")  # Formato: "2025-05"
+    
+    # Abrir os dados
+    with open(ARQUIVO_JSON, "r", encoding="utf-8") as arquivo:
+        dados = json.load(arquivo)
+
+    # Verificar se existe o campo "ultimo_calculo" para o usuário, e qual data
+    ultimo_calculo = dados.get('ultimo_calculo', {})
+    data_usuario = ultimo_calculo.get(email_login, None)
+
+    if data_usuario == mes_ano_atual:
+        # Usuário já fez cálculo esse mês
+        return False, dados  # Não pode calcular novamente
+    else:
+        # Registrar a data atual como última feita
+        ultimo_calculo[email_login] = mes_ano_atual
+        dados['ultimo_calculo'] = ultimo_calculo
+
+        # Salvar atualização no arquivo JSON
+        with open(ARQUIVO_JSON, "w", encoding="utf-8") as arquivo:
+            json.dump(dados, arquivo, indent=4, ensure_ascii=False)
+
+        return True, dados  # Pode calcular
 
 pass
 
