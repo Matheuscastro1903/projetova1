@@ -8,7 +8,9 @@
         "matheus1903@gmail.com": "7654321",
         "samuel.andrade@gmail.com": "353232",
         "vinicastro@gmail.com": "050912",
-        "julinhacastro1907@gmail.com": "jujuba321"
+        "julinhacastro1907@gmail.com": "jujuba321",
+        "gsg@gmail.com": "jod02393",
+        "biel@gmail.com": "1234"
     },
     "familia": {
         "joao.silva@email.com": "Silva",
@@ -19,7 +21,9 @@
         "matheus1903@gmail.com": "Castro",
         "samuel.andrade@gmail.com": "Andrade",
         "vinicastro@gmail.com": "Castrin",
-        "julinhacastro1907@gmail.com": "Ferreira Castro"
+        "julinhacastro1907@gmail.com": "Ferreira Castro",
+        "gsg@gmail.com": "aversa",
+        "biel@gmail.com": "escobar"
     },
     "membros": {
         "joao.silva@email.com": 4,
@@ -30,7 +34,9 @@
         "matheus1903@gmail.com": 4,
         "samuel.andrade@gmail.com": 110,
         "vinicastro@gmail.com": 8,
-        "julinhacastro1907@gmail.com": 4
+        "julinhacastro1907@gmail.com": 4,
+        "gsg@gmail.com": 3,
+        "biel@gmail.com": 3
     },
     "pontos": {
         "joao.silva@email.com": 150,
@@ -41,7 +47,9 @@
         "matheus1903@gmail.com": 0,
         "samuel.andrade@gmail.com": 0,
         "vinicastro@gmail.com": 0,
-        "julinhacastro1907@gmail.com": 0
+        "julinhacastro1907@gmail.com": 0,
+        "gsg@gmail.com": 0,
+        "biel@gmail.com": 0
     },
     "apartamento": {
         "joao.silva@email.com": 101,
@@ -52,7 +60,9 @@
         "matheus1903@gmail.com": 105,
         "samuel.andrade@gmail.com": 110,
         "vinicastro@gmail.com": 203,
-        "julinhacastro1907@gmail.com": 2301
+        "julinhacastro1907@gmail.com": 2301,
+        "gsg@gmail.com": 802,
+        "biel@gmail.com": 2302
     },
     "verificador": {
         "joao.silva@email.com": 83456,
@@ -63,6 +73,8 @@
         "matheus1903@gmail.com": "0758830",
         "samuel.andrade@gmail.com": "53252",
         "vinicastro@gmail.com": "524525",
-        "julinhacastro1907@gmail.com": "070819"
+        "julinhacastro1907@gmail.com": "070819",
+        "gsg@gmail.com": "kdsa",
+        "biel@gmail.com": "2302"
     }
 }
