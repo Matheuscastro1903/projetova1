@@ -1,3 +1,11 @@
+
+
+ARQUIVO_JSON = 'dados_usuarios.json'
+
+# Verifica se o arquivo JSON existe. Se não, cria com uma lista vazia.
+if not os.path.exists(ARQUIVO_JSON):
+    with open(ARQUIVO_JSON, 'w', encoding='utf-8') as arquivo:
+        json.dump([], arquivo)
 import sys
 import json
 import time
@@ -10,6 +18,7 @@ import pyfiglet
 
 
 with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
+    
     # quando usa json.load o arquivo json é transformado em dicionário python
     """
     o objetivo dessa parte do código é abrir o arquivo json e salvar os dicionários em python,facilitando a manipulação
@@ -217,11 +226,11 @@ def menu(email_login,senha_login):
             return
 
         elif resposta2 == "5":
-            feedback(email_login)
+            feedback(email_login, senha_login)
             return
 
         elif resposta2 == "6":
-            resgatar_premio()
+            resgatar_premio(email_login, senha_login)
             return
 
         elif resposta2 == "7":
@@ -1119,7 +1128,7 @@ def feedback(email_login, senha_login):
             nota = float(input("Qual nota você nos dá (0 a 10)? "))
             tentativas_nota-=1
         elif nota>0 and nota<10:
-            salvar_feedback(email_login,comentario,nota)
+            salvar_feedback(email_login, senha_login, comentario, nota)
     else:
         tentativas = 3
         while tentativas != 0:
@@ -1146,10 +1155,12 @@ def feedback(email_login, senha_login):
     
    
     
-def salvar_feedback(email_login, comentario, nota,senha_login):
+import csv
+
+def salvar_feedback(email, senha, comentario, nota):
     with open("feedback.csv", mode="a", newline="", encoding="utf-8") as arquivo:
         escritor = csv.writer(arquivo)
-        escritor.writerow([email_login, comentario, nota])
+        escritor.writerow([email, comentario, nota])
 
     print("\n╔══════════════════════════════════════════════════════════════╗")
     print("║                🙏 OBRIGADO PELO SEU FEEDBACK!                ║")
@@ -1159,7 +1170,7 @@ def salvar_feedback(email_login, comentario, nota,senha_login):
         opcao = input("Deseja ir para o login ou sair do sistema? (Menu/sair): ").strip().lower()
             
         if opcao in ["menu", "ver menu"]:
-            menu(email_login,senha_login)
+            menu(email, senha)
             return
 
         elif opcao in ["sair", "sai", "sair sistema", "sai sistema"]:
@@ -1262,6 +1273,10 @@ economia de água. Dependendo do seu saldo, o usuário
 pode escolher seu prêmio, tendo voucher e descontos, por exemplo
 '''
 import sys
+def resgatar_premio(email, senha):
+    # código do resgate de prêmio
+    print("Resgate de prêmio funcionando!")
+login
 def resgatar(saldo, recompensas_disponiveis):
     print("\n╔══════════════════════════════════════════════════════════════╗")
     print("║                  📜  TABELA DE RECOMPENSAS  📜               ║")
@@ -1316,6 +1331,8 @@ def resgatar(saldo, recompensas_disponiveis):
         print("║ Acumule mais saldo e tente novamente.                        ║")
         print("╚══════════════════════════════════════════════════════════════╝\n")
         sys.exit()
+    
+            
 
 def salvar_dados(dados):
     with open("dados.csv", "w") as f:
@@ -1386,7 +1403,8 @@ def calculo(email_login, senha_login):
 
 def exibir_ranking(dados):
     print("\n🏆 RANKING DOS USUÁRIOS POR PONTOS:\n")
-    ranking = sorted(dados['pontos'].items(), key=lambda item: item[1], reverse=True)
+    ranking = sorted(dados, key=lambda item: item['pontos'], reverse=True)
+
 
     for posicao, (email, ponto) in enumerate(ranking, start=1):
         familia = dados['familia'].get(email, 'Desconhecido')
