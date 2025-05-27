@@ -8,7 +8,8 @@
         "matheus1903@gmail.com": "7654321",
         "samuel.andrade@gmail.com": "353232",
         "vinicastro@gmail.com": "050912",
-        "julinhacastro1907@gmail.com": "jujuba321"
+        "julinhacastro1907@gmail.com": "jujuba321",
+        "albuquerquegustavo@hotmail.com": "0830"
     },
     "familia": {
         "joao.silva@email.com": "Silva",
@@ -19,7 +20,8 @@
         "matheus1903@gmail.com": "Castro",
         "samuel.andrade@gmail.com": "Andrade",
         "vinicastro@gmail.com": "Castrin",
-        "julinhacastro1907@gmail.com": "Ferreira Castro"
+        "julinhacastro1907@gmail.com": "Ferreira Castro",
+        "albuquerquegustavo@hotmail.com": "castro"
     },
     "membros": {
         "joao.silva@email.com": 4,
@@ -30,7 +32,8 @@
         "matheus1903@gmail.com": 4,
         "samuel.andrade@gmail.com": 110,
         "vinicastro@gmail.com": 8,
-        "julinhacastro1907@gmail.com": 4
+        "julinhacastro1907@gmail.com": 4,
+        "albuquerquegustavo@hotmail.com": 4
     },
     "pontos": {
         "joao.silva@email.com": 150,
@@ -41,7 +44,8 @@
         "matheus1903@gmail.com": 0,
         "samuel.andrade@gmail.com": 0,
         "vinicastro@gmail.com": 0,
-        "julinhacastro1907@gmail.com": 0
+        "julinhacastro1907@gmail.com": 0,
+        "albuquerquegustavo@hotmail.com": 0
     },
     "apartamento": {
         "joao.silva@email.com": 101,
@@ -52,7 +56,8 @@
         "matheus1903@gmail.com": 105,
         "samuel.andrade@gmail.com": 110,
         "vinicastro@gmail.com": 203,
-        "julinhacastro1907@gmail.com": 2301
+        "julinhacastro1907@gmail.com": 2301,
+        "albuquerquegustavo@hotmail.com": 520
     },
     "verificador": {
         "joao.silva@email.com": 83456,
@@ -63,6 +68,7 @@
         "matheus1903@gmail.com": "0758830",
         "samuel.andrade@gmail.com": "53252",
         "vinicastro@gmail.com": "524525",
-        "julinhacastro1907@gmail.com": "070819"
+        "julinhacastro1907@gmail.com": "070819",
+        "albuquerquegustavo@hotmail.com": "0551"
     }
 }
