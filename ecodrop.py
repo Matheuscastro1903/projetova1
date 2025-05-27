@@ -596,7 +596,7 @@ def conferir_senha(email_novo, email_login, senha_login):
     senha_nova=input("Digite sua senha(No mínimo 4 caracteres no máximo 20):")
     tentativas = 3
     while tentativas > 0:
-        if 4 <= len(senha_nova) <= 20:
+        if 4 <= len(senha_nova) and  len(senha_nova)<= 20:
             #print("Senha aceita.")
             atualizar_conta(email_novo,senha_nova,email_login,senha_login)  # Chama o próximo passo do cadastro
             #return para a função que estava sendo rodada e deixa rodando apenas a função que rodará
@@ -1146,7 +1146,7 @@ def feedback(email_login, senha_login):
     
    
     
-def salvar_feedback(email_login, comentario, nota):
+def salvar_feedback(email_login, comentario, nota,senha_login):
     with open("feedback.csv", mode="a", newline="", encoding="utf-8") as arquivo:
         escritor = csv.writer(arquivo)
         escritor.writerow([email_login, comentario, nota])
@@ -1154,6 +1154,25 @@ def salvar_feedback(email_login, comentario, nota):
     print("\n╔══════════════════════════════════════════════════════════════╗")
     print("║                🙏 OBRIGADO PELO SEU FEEDBACK!                ║")
     print("╚══════════════════════════════════════════════════════════════╝\n")
+    tentativas = 3
+    while tentativas != 0:
+        opcao = input("Deseja ir para o login ou sair do sistema? (Menu/sair): ").strip().lower()
+            
+        if opcao in ["menu", "ver menu"]:
+            menu(email_login,senha_login)
+            return
+
+        elif opcao in ["sair", "sai", "sair sistema", "sai sistema"]:
+            print("Sistema encerrado pelo usuário.")
+            sys.exit()
+
+        else:
+            tentativas -= 1
+            print("Opção inválida. Por favor, tente novamente.")
+            print(f"Tentativas restantes: {tentativas}")
+            
+    print("Limite de tentativas atingido. Sistema encerrado automaticamente.")
+    sys.exit()
 
     
 
@@ -1473,7 +1492,7 @@ class Cadastro:
         #FUNÇÃO UTILIZADA PARA CONFERIR SE A SENHA É VÁLIDA OU NÃO
         tentativas = 3
         while tentativas > 0:
-            if 4 <= len(self.senha) <= 20:
+            if 4 <= len(self.senha) and len(self.senha) <= 20:
                 #print("Senha aceita.")
                 self.email_valido()  # Chama o próximo passo do cadastro
             #return para a função que estava sendo rodada e deixa rodando apenas a função que rodará
