@@ -6,12 +6,6 @@ import random
 import os
 import pyfiglet
 
-ARQUIVO_JSON = 'dados_usuarios.json'
-
-# Verifica se o arquivo JSON existe. Se não, cria com uma lista vazia.
-if not os.path.exists(ARQUIVO_JSON):
-    with open(ARQUIVO_JSON, 'w', encoding='utf-8') as arquivo:
-        json.dump([], arquivo)
 
 #ANOTAÇÃO IMPORTANTE
 #Se uma função chama outra função que precisa de argumentos, ela também precisa receber esses argumentos ou criá-los.
