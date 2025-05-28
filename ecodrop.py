@@ -55,7 +55,7 @@ mensagens_agua = [
 
 
 def barra_progresso():
-    print("Salvando dados")
+    #print("Salvando dados")
     for i in range(1, 11):
         blocos = "■" * i
         espacos = "□" * (10 - i)
@@ -68,6 +68,14 @@ def barra_progresso():
 
 # Exemplo de uso
 
+import random
+import string
+
+def gerar_codigo_resgate():
+    letras = ''.join(random.choices(string.ascii_uppercase, k=3))
+    numeros = ''.join(random.choices(string.digits, k=4))
+    print("Seu código para resgatar a recompensa:")
+    print(f"{letras}-{numeros}")
 
 def limpar_tela():
 	
@@ -210,7 +218,7 @@ def menu(email_login,senha_login):
         resposta2 = input("Digite o número da opção desejada: ").strip()
 
         if resposta2 == "1":
-            ranking()
+            ranking(email_login,senha_login)
             return
 
         elif resposta2 == "2":
@@ -230,7 +238,7 @@ def menu(email_login,senha_login):
             return
 
         elif resposta2 == "6":
-            resgatar_premio(email_login, senha_login)
+            resgatar(email_login, senha_login)
             return
 
         elif resposta2 == "7":
@@ -413,6 +421,7 @@ def atualizar_pessoais(email_login,senha_login):
                     json.dump({"senha": dados_conta, "familia": dados_familia,"membros": dados_quantidade, "pontos": dados_pontos,"apartamento": dados_apartamento,
                                "verificador": dados_codigov
                                }, arquivo, indent=4, ensure_ascii=False)
+                print("Salvando dados...")    
                 barra_progresso()
                 print("Conta atualizada com sucesso.")
                 time.sleep(1)
@@ -689,6 +698,7 @@ def atualizar_conta(email_novo,senha_nova,email_login,senha_login):
                     "apartamento": dados_apartamento,
                     "verificador": dados_codigov
                 }, arquivo, indent=4, ensure_ascii=False)
+                print("Salvando dados...")
                 barra_progresso()
                 print(f"Dados da conta {email_novo} atualizados com sucesso!")
                 print("Conta cadastrada com sucesso.")
@@ -857,6 +867,7 @@ def atualizar_apenas_email(email_novo, email_login, senha_login):
                         "apartamento": dados_apartamento,
                         "verificador": dados_codigov
                     }, arquivo, indent=4, ensure_ascii=False)
+                print("Salvando dados...")
                 barra_progresso()
                 print(f"Email da conta atualizado para {email_novo} com sucesso!")
                 time.sleep(1)
@@ -964,6 +975,7 @@ def atualizar_apenas_senha(senha_nova,email_login):
                         "verificador": dados_codigov
                     }, arquivo, indent=4, ensure_ascii=False)
 
+                print("Salvando dados...")
                 barra_progresso()
                 print("Senha atualizada com sucesso!")
                 
@@ -1194,75 +1206,58 @@ quanto ao seu gasto de água ao longo do mês
 
 
 
-def ranking():
+def ranking(email_login,senha_login):
+    limpar_tela()
+    time.sleep(1)
     dia_do_mes = time.strftime("%d", time.localtime())
+    if dia_do_mes=="28":
+        with open("banco_dados.JSON", "r", encoding="utf-8") as f:
+            banco_dados = json.load(f)
+            pontos_dict = banco_dados.get("pontos", {})
 
-    # Lê os dados do arquivo JSON
-    with open('dados_usuarios.json', 'r', encoding='utf-8') as arquivo:
-        dados = json.load(arquivo)
-
-    # Simulação de rankings passados (substituir por leitura de arquivo se desejar)
-    try:
-        with open('rankings_passados.json', 'r', encoding='utf-8') as file:
-            rankings_passados = json.load(file)
-    except FileNotFoundError:
-        rankings_passados = []
-
-    if dia_do_mes == "28":
-        exibir_ranking_atual(dados)
-
-        resposta = input("\n📜 Deseja ver os rankings passados? (s/n): ").strip().lower()
-
-        if resposta == "s":
-            exibir_rankings_passados(rankings_passados)
-        else:
-            print("✅ Encerrando o programa.")
-            sys.exit()
-
-    else:
-        resposta = input("\nHoje não é dia 28. Deseja ver os rankings passados? (s/n): ").strip().lower()
-
-        if resposta == "s":
-            exibir_rankings_passados(rankings_passados)
-        else:
-            print("✅ Encerrando o programa.")
-            sys.exit()
-
-
-def exibir_ranking_atual(dados):
-    print("\n╔══════════════════════════════════════════════════════════════╗")
-    print("║                    🏆 RANKING ATUAL DE PONTOS                ║")
-    print("╠══════════════════════════════════════════════════════════════╣")
-
-    pontos = dados['pontos']
-    ranking_atual = sorted(pontos.items(), key=lambda item: item[1], reverse=True)
-
-    for posicao, (email, ponto) in enumerate(ranking_atual, start=1):
-        familia = dados['familia'].get(email, 'Desconhecido')
-        ap = dados['apartamento'].get(email, '???')
-        linha = f"{posicao}º - Família {familia} (Apt {ap}) - {ponto} pontos"
-        print(f"║ {linha.ljust(60)}║")
-
-    print("╚══════════════════════════════════════════════════════════════╝")
-
-
-def exibir_rankings_passados(rankings_passados):
-    print("\n╔══════════════════════════════════════════════════════════════╗")
-    print("║                    📜 RANKINGS PASSADOS                      ║")
-    print("╠══════════════════════════════════════════════════════════════╣")
-
-    if rankings_passados:
-        for idx, ranking in enumerate(rankings_passados, start=1):
-            linha = f"{idx}º Ranking: {ranking}"
-            print(f"║ {linha.ljust(60)}║")
-    else:
-        print("║ 🚫 Nenhum ranking passado disponível.                       ║")
-
-    print("╚══════════════════════════════════════════════════════════════╝")
-	                
+    # Ordena o dicionário pontos por valor (pontos) decrescente, retorna lista de tuplas (email, pontos)
+        ranking_ordenado = sorted(pontos_dict.items(), key=lambda item: item[1], reverse=True)
 
     
-pass
+        ranking_ordenado_dict = dict(ranking_ordenado)
+        print("Carregando ranking...")
+        barra_progresso()
+        
+        print("Ranking dos usuários por pontos (maior para menor):")
+        print("\n╔══════════════════════════════════════════════╗")
+        print("║           🏆 RANKING DE PONTOS 🏆            ║")
+        print("╠════╦════════════════════════════╦══════════╣")
+        print("║ #  ║ Email                      ║ Pontos   ║")
+        print("╠════╬════════════════════════════╬══════════╣")
+    
+        for i, (email, pts) in enumerate(ranking_ordenado, start=1):
+            # Limita o email para caber na tabela (por exemplo, 26 caracteres)
+            email_formatado = (email[:23] + '...') if len(email) > 26 else email.ljust(26)
+            print(f"║ {str(i).ljust(2)} ║ {email_formatado} ║ {str(pts).rjust(8)} ║")
+    
+            print("╚════╩════════════════════════════╩══════════╝\n")
+    else:
+        print("Opção de ver ranking apenas é permitido no dia 28 de cada mês")
+        tentativas = 3
+        while tentativas > 0:
+            opcao = input("Deseja ir para o Menu ou sair do sistema? (Menu/sair): ").strip().lower()
+
+            if opcao in ["menu", "menuu"]:
+                menu(email_login, senha_login)
+                break
+            elif opcao in ["sair", "sai", "sair sistema", "sai sistema"]:
+                print("Sistema encerrado pelo usuário.")
+                sys.exit()
+            else:
+                tentativas -= 1
+                print("Opção inválida. Por favor, tente novamente.")
+                print(f"Tentativas restantes: {tentativas}")
+        else:
+            print("Limite de tentativas atingido. Sistema encerrado automaticamente.")
+            sys.exit()
+     
+
+
 
 '''
 O código abaixo oferece inúmeras opções de prêmios ao
@@ -1271,74 +1266,129 @@ economia de água. Dependendo do seu saldo, o usuário
 pode escolher seu prêmio, tendo voucher e descontos, por exemplo
 '''
 import sys
-def resgatar_premio(email, senha):
-    # código do resgate de prêmio
-    print("Resgate de prêmio funcionando!")
-login
-def resgatar(saldo, recompensas_disponiveis):
-    print("\n╔══════════════════════════════════════════════════════════════╗")
-    print("║                  📜  TABELA DE RECOMPENSAS  📜               ║")
-    print("╠══════════════════════════════════════════════════════════════╣")
-    print("║ -> Voucher                                                  ║")
-    print("║ -> Cupons                                                   ║")
-    print("║ -> Descontos                                                ║")
-    print("║ -> Milhas                                                   ║")
-    print("║ -> Créditos de celular                                      ║")
-    print("║ -> Desconto no condomínio                                   ║")
-    print("╚══════════════════════════════════════════════════════════════╝\n")
 
-    if saldo >= 1:  # Verifica se o saldo é suficiente para resgate
-        print("\n╔══════════════════════════════════════════════════════════════╗")
-        print("║                    🎁  RESGATE DE PRÊMIOS  🎁                 ║")
-        print("╠══════════════════════════════════════════════════════════════╣")
-        print("║ Verificando prêmios disponíveis...                           ║")
-        print("╚══════════════════════════════════════════════════════════════╝\n")
 
-        if "voucher" in recompensas_disponiveis:
-            premio = "voucher"
-        elif "cupons" in recompensas_disponiveis:
-            premio = "cupons"
-        elif "descontos" in recompensas_disponiveis:
-            premio = "descontos"
-        elif "milhas" in recompensas_disponiveis:
-            premio = "milhas"
-        elif "créditos de celular" in recompensas_disponiveis:
-            premio = "créditos de celular"
-        elif "desconto no condomínio" in recompensas_disponiveis:
-            premio = "desconto no condomínio"
+    
+def resgatar(email_login, senha_login):
+    limpar_tela()
+    time.sleep(1)
+    with open("banco_dados.JSON", "r", encoding="utf-8") as f:
+        banco_dados = json.load(f)
+        pontos_disponiveis = banco_dados["pontos"].get(email_login, 0)
+
+    print("\n╔════════════════════════════════════════════════════════════╗")
+    print("║                      🎁 TABELA DE RECOMPENSAS 🎁           ║")
+    print("╠════════════════════════════════════════════════════════════╣")
+    print("║ 1. Milhas ............................................ 150 pts ║")
+    print("║ 2. Desconto no condomínio ............................ 100 pts ║")
+    print("║ 3. Voucher ...........................................  80 pts ║")
+    print("║ 4. Cupons ............................................  60 pts ║")
+    print("║ 5. Descontos .........................................  50 pts ║")
+    print("║ 6. Créditos de celular ...............................  40 pts ║")
+    print("╚════════════════════════════════════════════════════════════╝")
+
+    custos = {
+        "1": 150,
+        "2": 100,
+        "3": 80,
+        "4": 60,
+        "5": 50,
+        "6": 40
+    }
+
+    recompensas = {
+        "1": "Milhas",
+        "2": "Desconto no condomínio",
+        "3": "Voucher",
+        "4": "Cupons",
+        "5": "Descontos",
+        "6": "Créditos de celular"
+    }
+
+    tentativas = 3
+    while tentativas > 0:
+        opcao = input("Digite o número da recompensa que deseja resgatar: ").strip()
+
+        if opcao in custos:
+            custo_recompensa = custos[opcao]
+            nome_recompensa = recompensas[opcao]
+
+            if pontos_disponiveis >= custo_recompensa:
+                pontos_disponiveis -= custo_recompensa
+                banco_dados["pontos"][email_login] = pontos_disponiveis
+
+                with open("banco_dados.JSON", "w", encoding="utf-8") as f:
+                    json.dump(banco_dados, f, indent=4, ensure_ascii=False)
+
+                print(f"\n🎉 Você resgatou: {nome_recompensa}")
+                print(f"✅ Seu novo saldo de pontos é: {pontos_disponiveis}")
+                gerar_codigo_resgate()
+                time.sleep(1)
+                tentativas_finais=3
+                while tentativas_finais > 0:
+                    escolha = input("\nDeseja ir para o menu ou sair do sistema? (Menu/sair): ").strip().lower()
+                    if escolha == "menu":
+                        menu(email_login, senha_login)
+                        break
+                    elif escolha == "sair":
+                        print("Sistema encerrado pelo usuário.")
+                        sys.exit()
+                    else:
+                        tentativas_finais -= 1
+                        print("Opção inválida. Por favor, tente novamente.")
+                        print(f"Tentativas restantes: {tentativas_finais}")
+                else:
+                    print("Limite de tentativas atingido. Sistema encerrado automaticamente.")
+                    sys.exit()
+
+                
+
+            
+            else:
+                print(f"\n⚠️ Você não possui saldo suficiente")
+                tentativas_restantes = 3
+                while tentativas_restantes > 0:
+                    opcao_final = input("Deseja ir para o menu ou sair do sistema? (Menu/sair): ").strip().lower()
+
+                    if opcao_final == "menu":
+                        menu(email_login, senha_login)
+                        break
+                    elif opcao_final == "sair":
+                        print("Sistema encerrado pelo usuário.")
+                        sys.exit()
+                    else:
+                        tentativas_restantes -= 1
+                        print("Opção inválida. Por favor, tente novamente.")
+                        print(f"Tentativas restantes: {tentativas_restantes}")
+
+                else:
+                    print("Limite de tentativas atingido. Sistema encerrado automaticamente.")
+                    sys.exit()
+
         else:
-            print("\n╔══════════════════════════════════════════════════════════════╗")
-            print("║                 ❌  NENHUM PRÊMIO DISPONÍVEL  ❌              ║")
-            print("╠══════════════════════════════════════════════════════════════╣")
-            print("║ Infelizmente, não há prêmios disponíveis no momento.        ║")
-            print("║ Tente novamente mais tarde.                                  ║")
-            print("╚══════════════════════════════════════════════════════════════╝\n")
-            sys.exit()
-
-        print("\n╔══════════════════════════════════════════════════════════════╗")
-        print("║                        🎉  PARABÉNS!  🎉                      ║")
-        print("╠══════════════════════════════════════════════════════════════╣")
-        print(f"║ Você resgatou: {premio.ljust(51)}║")
-        print("╚══════════════════════════════════════════════════════════════╝\n")
+            tentativas -= 1
+            print("Opção inválida. Por favor, tente novamente.")
+            print(f"Tentativas restantes: {tentativas}")
 
     else:
-        print("\n╔══════════════════════════════════════════════════════════════╗")
-        print("║                  ⚠️  SALDO INSUFICIENTE  ⚠️                   ║")
-        print("╠══════════════════════════════════════════════════════════════╣")
-        print("║ Você não possui saldo suficiente para realizar um resgate.   ║")
-        print("║ Acumule mais saldo e tente novamente.                        ║")
-        print("╚══════════════════════════════════════════════════════════════╝\n")
-        sys.exit()
-    
-            
+        tentativas_restantes = 3
+        while tentativas_restantes > 0:
+            opcao_final = input("Deseja ir para o menu ou sair do sistema? (Menu/sair): ").strip().lower()
 
-def salvar_dados(dados):
-    with open("dados.csv", "w") as f:
-        f.write(dados)
+            if opcao_final == "menu":
+                menu(email_login, senha_login)
+                break
+            elif opcao_final == "sair":
+                print("Sistema encerrado pelo usuário.")
+                sys.exit()
+            else:
+                tentativas_restantes -= 1
+                print("Opção inválida. Por favor, tente novamente.")
+                print(f"Tentativas restantes: {tentativas_restantes}")
 
-
-
-
+        else:
+            print("Limite de tentativas atingido. Sistema encerrado automaticamente.")
+            sys.exit()
 
 
 '''
@@ -1351,116 +1401,123 @@ import json
 import sys
 import datetime
 # Variáveis globais
-ARQUIVO_JSON = "dados_usuarios.json"
-media_mundial_de_consumo_individual = 150  # Exemplo de média (litros)
+
 
 def calculo(email_login, senha_login):
+    limpar_tela()
+    time.sleep(1)
     dia_do_mes = time.strftime("%d", time.localtime())
 
-    # Abrir os dados
-    with open(ARQUIVO_JSON, "r", encoding="utf-8") as arquivo:
-        dados = json.load(arquivo)
+    if dia_do_mes == "27":
+        with open("dados_usuarios.json", "r", encoding="utf-8") as f:
+            dados = json.load(f)
+            gasto_real = dados["consumo"].get(email_login)
+            verificar_calculo = dados["calculo_realizado"].get(email_login)
+        with open("banco_dados.JSON", "r", encoding="utf-8") as f:
+            banco_dados1=json.load(f)
+            quantidade_membros = banco_dados1["membros"].get(email_login, 0)  # retorna 0 se o email não existir
 
-    if dia_do_mes == "28":
-        try:
+        
+            
+
+        if verificar_calculo == False:
+    
+            if gasto_real is None:
+                print("❌ Gasto de água não registrado para este e-mail. Peça ao seu síndico a atualização do banco de dados.")
+                print("Voltando para o menu...")
+                menu(email_login, senha_login)
+                return
+
+            gasto_estimado = quantidade_membros * 150 * 30
+
             print("\n╔══════════════════════════════════════════════════════════════╗")
             print("║                 💧 CÁLCULO DE ECONOMIA DE ÁGUA                ║")
             print("╠══════════════════════════════════════════════════════════════╣")
-            print("║ Fórmula:                                                     ║")
-            print("║ (Qtd Pessoas * Qtd Dias * Consumo Individual) / Média Mundial║")
-            print("╚══════════════════════════════════════════════════════════════╝\n")
+            print(f"║ Membros na residência: {quantidade_membros}")
+            print(f"║ Gasto estimado (litros): {gasto_estimado}")
+            print(f"║ Gasto real (litros): {gasto_real}")
+            print("╚══════════════════════════════════════════════════════════════╝")
 
-            calculo = int(input("🔢 Digite o resultado do seu cálculo: "))
-
-            if calculo < media_mundial_de_consumo_individual:
-                print("\n🎉 Parabéns, você acumulou pontos!!")
-                # Aqui poderia somar pontos ao usuário no JSON.
+            if gasto_real < gasto_estimado:
+                print("\n🎉 Parabéns, você economizou água e ganhou pontos!")
+                #Atualizando os pontos em relação ao email
+                banco_dados1["pontos"][email_login] = banco_dados1["pontos"].get(email_login, 0) + 50
+                with open(r"banco_dados.JSON", "w", encoding="utf-8") as f:
+                    json.dump(banco_dados1, f, indent=4, ensure_ascii=False)
+                dados["calculo_realizado"][email_login]=True
+                with open(r"dados_usuarios.json", "w", encoding="utf-8") as f:
+                    json.dump(dados, f, indent=4, ensure_ascii=False)
+            
             else:
-                print("\n🚫 Você não pontuou dessa vez.")
+                print("\n🚫 Você não economizou esse mês. Continue tentando!")
+                banco_dados1["pontos"][email_login] = banco_dados1["pontos"].get(email_login, 0) + 50
+                with open(r"banco_dados.JSON", "w", encoding="utf-8") as f:
+                    json.dump(banco_dados1, f, indent=4, ensure_ascii=False)
+                dados["calculo_realizado"][email_login]=True
+                with open(r"dados_usuarios.json", "w", encoding="utf-8") as f:
+                    json.dump(dados, f, indent=4, ensure_ascii=False)
 
-        except ValueError:
-            print("\n❌ Valor inválido. Insira um número.")
-            sys.exit()
+            tentativas = 3
+            while tentativas > 0:
+                opcao = input("Deseja ir para o Menu ou sair do sistema? (Menu/sair): ").strip().lower()
 
-        resposta = input("\n📊 Deseja ver seu ranking? (s/n): ").lower()
-
-        if resposta == "s":
-            exibir_ranking(dados)
-        else:
-            print("\n🚪 Encerrando o programa.")
-            sys.exit()
-
-    else:
-        resposta = input("\nHoje não é dia 28. Deseja ver seu ranking? (s/n): ").lower()
-
-        if resposta == "s":
-            exibir_ranking(dados)
-        else:
-            print("\n↩️ Retornando ao menu.")
-
-
-def exibir_ranking(dados):
-    print("\n🏆 RANKING DOS USUÁRIOS POR PONTOS:\n")
-    ranking = sorted(dados, key=lambda item: item['pontos'], reverse=True)
-
-
-    for posicao, (email, ponto) in enumerate(ranking, start=1):
-        familia = dados['familia'].get(email, 'Desconhecido')
-        ap = dados['apartamento'].get(email, '???')
-        print(f"{posicao}º lugar: Família {familia} (Apt {ap}) - {ponto} pontos")
-
-
-# ✅ Função para calcular os pontos com base na economia de água (em litros)
-def calcular_pontos_por_litros(litros_economizados):
-    pontos_por_litro = 0.5  # Cada litro economizado gera 0.5 ponto
-    pontos_totais = litros_economizados * pontos_por_litro
-    return pontos_totais
-
-
-# ✅ Função para exibir a pontuação final
-def exibir_resultado(pontos):
-    print("\n╔══════════════════════════════════════════════════════════════╗")
-    print("║              🏅 RESULTADO DA ECONOMIA DE ÁGUA                 ║")
-    print("╠══════════════════════════════════════════════════════════════╣")
-    print(f"║ Você economizou {pontos/0.5:.0f} litros de água               ║")
-    print(f"║ e acumulou {pontos:.2f} pontos!                              ║")
-    print("╚══════════════════════════════════════════════════════════════╝\n")
-    return pontos
+                if opcao in ["menu", "menuu"]:
+                    menu(email_login, senha_login)
+                    break
+                elif opcao in ["sair", "sai", "sair sistema", "sai sistema"]:
+                    print("Sistema encerrado pelo usuário.")
+                    sys.exit()
+                else:
+                    tentativas -= 1
+                    print("Opção inválida. Por favor, tente novamente.")
+                    print(f"Tentativas restantes: {tentativas}")
+            else:
+                print("Limite de tentativas atingido. Sistema encerrado automaticamente.")
+                sys.exit()
+        if verificar_calculo==True:
+            print("Você já realizou o cálculo mensal.")
+            time.sleep(1)
+            tentativas = 3
+            while tentativas > 0:
+                opcao = input("Deseja ir para o menu ou sair do sistema? (Menu/sair): ").strip().lower()
+                if opcao == "menu":
+                    menu(email_login, senha_login)
+                    return
+                elif opcao == "sair":
+                    print("Sistema encerrado pelo usuário.")
+                    sys.exit()
+                else:
+                    tentativas -= 1
+                    print("Opção inválida. Por favor, tente novamente.")
+                    print(f"Tentativas restantes: {tentativas}")
+            else:
+                print("Limite de tentativas atingido. Sistema encerrado automaticamente.")
+                sys.exit()
 
 
 
-def verificar_e_registrar_calculo(email_login):
-    hoje = datetime.date.today()
-    mes_ano_atual = hoje.strftime("%Y-%m")  # Formato: "2025-05"
     
-    # Abrir os dados
-    with open(ARQUIVO_JSON, "r", encoding="utf-8") as arquivo:
-        dados = json.load(arquivo)
-
-    # Verificar se existe o campo "ultimo_calculo" para o usuário, e qual data
-    ultimo_calculo = dados.get('ultimo_calculo', {})
-    data_usuario = ultimo_calculo.get(email_login, None)
-
-    if data_usuario == mes_ano_atual:
-        # Usuário já fez cálculo esse mês
-        return False, dados  # Não pode calcular novamente
+    
+    
     else:
-        # Registrar a data atual como última feita
-        ultimo_calculo[email_login] = mes_ano_atual
-        dados['ultimo_calculo'] = ultimo_calculo
-
-        # Salvar atualização no arquivo JSON
-        with open(ARQUIVO_JSON, "w", encoding="utf-8") as arquivo:
-            json.dump(dados, arquivo, indent=4, ensure_ascii=False)
-
-        return True, dados  # Pode calcular
-
-pass
-
-
-
-
-
+        print("\n📅 Hoje não é dia 27, o cálculo de economia está indisponível.")
+    
+        tentativas = 3
+        while tentativas > 0:
+            opcao = input("Deseja ir para o menu ou sair do sistema? (Menu/sair): ").strip().lower()
+            if opcao == "menu":
+                menu(email_login, senha_login)
+                return
+            elif opcao == "sair":
+                print("Sistema encerrado pelo usuário.")
+                sys.exit()
+            else:
+                tentativas -= 1
+                print("Opção inválida. Por favor, tente novamente.")
+                print(f"Tentativas restantes: {tentativas}")
+        else:
+            print("Limite de tentativas atingido. Sistema encerrado automaticamente.")
+            sys.exit()
 
 
 
@@ -1682,7 +1739,7 @@ print("OLÁ,BEM VINDO AO SISTEMA ECODROP💧 do condomínio Village")
 tentativas = 3  #  3 tentativas permitidas
 while tentativas != 0:
     tipo_servico = input(
-        "QUAL TIPO DE SERVIÇO VOCÊ DESEJA ?? (LOGIN/CADASTRO) ").strip().lower()
+        "QUAL TIPO DE SERVIÇO VOCÊ DESEJA ??(LOGIN/CADASTRO) ").strip().lower()
 
     if tipo_servico in ["login", "entrar", "acessar", "fazer login"]:
         login()
