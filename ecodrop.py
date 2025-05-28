@@ -1103,7 +1103,7 @@ def feedback(email_login, senha_login):
     else:
         tentativas = 3
         while tentativas != 0:
-            opcao = input("Deseja ir para o login ou sair do sistema? (Menu/sair): ").strip().lower()
+            opcao = input("Deseja ir para o menu ou sair do sistema? (Menu/sair): ").strip().lower()
 
             if opcao in ["menu", "ver menu"]:
                 menu(email_login,senha_login)
