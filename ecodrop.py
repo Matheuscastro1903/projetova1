@@ -139,7 +139,7 @@ def login():
                                 sys.exit()
                         elif question1 in ["não", "no", "nao", "sair", "sai"]:
                             print("Tenha um bom dia.")
-                            sys.exit
+                            sys.exit()
                         else:
                             print("OPÇÃO INÁLIDA.")
                             tentativas-=1
@@ -431,7 +431,7 @@ def atualizar_pessoais(email_login,senha_login):
                     elif opcao in ["sair","sai","sair sistema","sai sistema"]:
                         print("Sistema encerrado pelo usuário.")
                         sys.exit()
-                        break  # Sai do loop e fecha o sistema
+                        
 
                     else:
                         tentativas -= 1
@@ -585,7 +585,7 @@ def conferir_email(email_novo,email_login,senha_login):
 
                     email_novo = input("Digite novamente seu email: ")
                 
-                    conferir_email(email_novo)
+                    conferir_email(email_novo,email_login,senha_login)
 
                     return
                 else:
@@ -903,7 +903,7 @@ def atualizar_apenas_email(email_novo, email_login, senha_login):
 
 ######################################################################################################################
 #Parte do código voltado apenas para atualização da senha
-def valido_apenas_senha(email_login, ):
+def valido_apenas_senha(email_login):
     """
     Essa função tem o objetivo de verificar se a senha que o usuário deseja cadastrar é valida ou não,caso seja válida poderá continuar para
     a atualização
@@ -1133,6 +1133,7 @@ def feedback(email_login, senha_login):
             tentativas_nota-=1
         elif nota>0 and nota<10:
             salvar_feedback(email_login, senha_login, comentario, nota)
+            return
     else:
         tentativas = 3
         while tentativas != 0:
