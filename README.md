@@ -22,8 +22,13 @@ Função atualização=Nessa função o usuário terá a opção de escolher qua
 
 Função deletar=Nessa função o usuário poderá deletar sua conta caso deseje.Se ele concluir essa ação,não poderá mais acessar aquela conta,necessitando fazer outro cadastro para entrar no sistema.
 
+Função feedbcack = Nessa função o usuário tem a opção de escrever a sua opinião acerca do serviço oferecido pelo sistema, comentando se gostou ou não e tendo até 140 caracteres para digitar na aba de feedback mostrada. O usuário também pode dar uma nota de 0 a 10, julgando conforme sua experiência.
 
+Função cálculo = Nessa função o sistema é direcionado a realizar um cálculo de pontos com base nos litros economizados, na quantidade de pessoas na residência e, também, no consumo médio diário de água. Ao efetuar o cálculo, o sistema concede uma certa quantidade de pontos ao usuário e esses pontos são convertidos em prêmios como: voucher, milhas, descontos, créditos de celular, descontos na residência.
 
+Função resgatar = Essa função permite com que o usuário resgate certo prêmio, analisando se o usuário apresenta saldo suficiente para resgatar determinado prêmio.
+
+Função ranking = Essa função realiza um ranqueamento de famílias com base nos litros economizados no mês. Ocupa as posições mais altas aqueles que economizaram mais água ao longo do mês, tomando como critério o consumo médio diário de água.
 
 
 
