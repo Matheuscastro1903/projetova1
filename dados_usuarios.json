@@ -1,0 +1,26 @@
+{
+    "consumo": {
+        "joao.silva@email.com": 18480,
+        "maria.souza@email.com": 13860,
+        "carlos.pereira@email.com": 23100,
+        "ana.costa@email.com": 9240,
+        "gabriel.escobar@gmail.com": 18480,
+        "matheus1903@gmail.com": 18480,
+        "samuel.andrade@gmail.com": 13860,
+        "vinicastro@gmail.com": 10960,
+        "julinhacastro1907@gmail.com": 18480,
+        "albuquerquegustavo@hotmail.com": 18480
+    },
+    "calculo_realizado": {
+        "joao.silva@email.com": false,
+        "maria.souza@email.com": false,
+        "carlos.pereira@email.com": false,
+        "ana.costa@email.com": false,
+        "gabriel.escobar@gmail.com": false,
+        "matheus1903@gmail.com": false,
+        "samuel.andrade@gmail.com": false,
+        "vinicastro@gmail.com": true,
+        "julinhacastro1907@gmail.com": false,
+        "albuquerquegustavo@hotmail.com": false
+    }
+}
