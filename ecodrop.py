@@ -1719,7 +1719,65 @@ class Cadastro:
  # Esse código tem que ser escrito de cima pra baixo,mas para puxar ele tem que ser lá embaixo,pois só assim para o código
  # conseguir usar todas as funções
  #
+class Condominio:
+    """
+    Classe para cadastrar um novo condomínio no sistema.
+    Valida o formato do email e armazena os dados no arquivo condominios.json.
+    """
 
+    def __init__(self):
+        self.email = input("Digite o email do condomínio: ").strip()
+        self.rua = input("Digite o nome da rua do condomínio: ").strip()
+        self.numero = input("Digite o número do condomínio: ").strip()
+        self.cep = input("Digite o CEP do condomínio: ").strip()
+        self.codigo = input("Digite um código identificador do condomínio: ").strip()
+
+        self.validar_emailcondominio()
+
+    def validar_emailcondominio(self):
+        
+        #FUNÇÃO UTILIZADA PARA CONFERIR SE O EMAIL É VÁLIDO OU NÃO
+        dominios_validos = [
+            'gmail.com', 'outlook.com', 'hotmail.com',
+            'yahoo.com', 'icloud.com'
+        ]
+
+        tentativas_email = 3
+        while tentativas_email != 0:
+            # VERIFICA SE O FORMATO DO EMAIL ESTÁ ESCRITO CORRETAMENTE
+            if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', self.email):
+                print("FORMATO DE EMAIL INVÁLIDO, UTILIZE UM DOMÍNIO VÁLIDO")
+                self.email = input("Digite novamente seu email: ").strip()
+                tentativas_email -= 1
+                print(f"Tentativas restantes: {tentativas_email}")
+
+                continue  # volta pro início do while para validar de novo,caso esteja correto,irá passar pelo verificador
+
+            # VERIFICA APENAS O DOMÍNIO,SEPARA TODO O RESTO E PEGA APENAS A PARTE DO DOMÍNIO
+            dominio = self.email.split('@')[1].lower()
+            if dominio not in dominios_validos:
+                print("Domínio não aceito. Use: Gmail, Outlook, Yahoo, iCloud, etc.")
+                self.email = input("Digite novamente seu email: ").strip()
+                tentativas_email -= 1
+                print(f"Tentativas restantes: {tentativas_email}")
+
+                # continuar o loop sem parar
+                continue
+
+        # Se chegou aqui, formato e domínio estão corretos
+            break
+
+        #Esse else só será puxado se o número de tentativas zerar
+        else:
+            print("Limite de tentativas atingido. Encerrando o processo de cadastro.")
+            return
+
+        self.conferir_emailcondominio()
+
+    def conferir_emailcondominio(self):
+        
+        pass
+        
 
 
 
