@@ -10,6 +10,9 @@ import pyfiglet
 #ANOTAÇÃO IMPORTANTE
 #Se uma função chama outra função que precisa de argumentos, ela também precisa receber esses argumentos ou criá-los.
 
+#corrgir erro no cadastro
+
+
 
 with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
     
@@ -1775,7 +1778,31 @@ class Condominio:
         self.conferir_emailcondominio()
 
     def conferir_emailcondominio(self):
-        
+        with open("condominios.json", "r", encoding="utf-8") as arquivo:
+            if self.email in dados_conta:
+                print("EMAIL JÁ VINCULADO A CONTA.")
+                tentativas = 3
+                while tentativas != 0:
+                    resposta1 = input("Deseja tentar refazer a conta  ou ir para tela de login caso já possua conta? (refazer/login) ").strip().lower()
+                    if resposta1 in ["login", "tela de login", "logi"]:
+                        #login()
+                        return
+                    elif resposta1 in ["refazer", "retentar", "conta", "refazer conta"]:
+                        self.email = input("Digite novamente seu email: ").strip()
+                        self.validar_emailcondominio()
+                        return
+                    else:
+                        print("Resposta inválida")
+                        tentativas -= 1
+                        print(f"Tentativas restantes {tentativas}")
+                else:
+                    print(
+                    "Limite de tentativas atingido. Encerrando o processo de cadastro.")
+                    return
+            else:
+                self.salvar_condominio()  # Continua o processo normalmente
+    
+    def salvar_condominio():
         pass
         
 
