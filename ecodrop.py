@@ -1842,110 +1842,110 @@ else:
 
 import random
 import json
+import time
+import sys
 from datetime import datetime
 
-# Define o nome do arquivo JSON que contém as questões
 NOME_ARQUIVO_QUESTOES = "questoes_agua.json"
 
 class Quiz:
     def __init__(self, caminho_arquivo_questoes):
         """
-        Inicializa o objeto Quiz.
-        Tenta carregar as questões do arquivo JSON fornecido.
+        Inicializa o Quiz com o caminho do arquivo JSON.
+        Tenta carregar as questões ao iniciar a classe.
         """
         self.caminho_arquivo = caminho_arquivo_questoes
-        self.questoes = self._carregar_questoes() # Chama o método interno para carregar questões
+        self.questoes = self._carregar_questoes()
 
     def _carregar_questoes(self):
         """
-        Método interno para carregar as questões de um arquivo JSON.
-        É um método privado (indicado pelo '_' inicial) porque é uma tarefa auxiliar da classe.
+        Carrega as questões do JSON informado.
         """
         try:
             with open(self.caminho_arquivo, 'r', encoding='utf-8') as f:
                 questoes_carregadas = json.load(f)
-            print(f"✅ Questões carregadas com sucesso de '{self.caminho_arquivo}'. Total: {len(questoes_carregadas)}")
+
+            print("\n╔════════════════════════════════════════════════════════╗")
+            print("║        ✅ Questões carregadas com sucesso!            ║")
+            print(f"║   Total de questões encontradas: {len(questoes_carregadas):<24}║")
+            print("╚════════════════════════════════════════════════════════╝\n")
             return questoes_carregadas
+
         except FileNotFoundError:
-            print(f"❌ Erro: O arquivo '{self.caminho_arquivo}' não foi encontrado.")
-            print("Por favor, certifique-se de que o arquivo JSON com as questões está no mesmo diretório do script.")
+            print("\n❌ Erro: Arquivo não encontrado.")
+            print(f"Certifique-se de que '{self.caminho_arquivo}' está no mesmo diretório.\n")
             return None
         except json.JSONDecodeError:
-            print(f"❌ Erro: O arquivo '{self.caminho_arquivo}' não é um JSON válido.")
-            print("Verifique a sintaxe do JSON.")
+            print("\n❌ Erro: JSON inválido.")
+            print("Verifique se o arquivo possui a estrutura correta.\n")
             return None
         except Exception as e:
-            print(f"❌ Erro inesperado ao carregar questões: {e}")
+            print(f"\n❌ Erro inesperado: {e}\n")
             return None
 
     def iniciar_quiz(self, num_questoes_desejadas=5):
         """
-        Exibe um quiz com o número especificado de questões sobre gasto de água.
+        Inicia o quiz com a quantidade de questões especificadas.
         """
-        print("--- QUIZ DA SEMANA: Gasto Consciente de Água ---")
-        print("Teste seus conhecimentos e descubra como economizar água!\n")
+        print("\n╔════════════════════════════════════════════════════════╗")
+        print("║           QUIZ DA SEMANA - GASTO CONSCIENTE           ║")
+        print("╠════════════════════════════════════════════════════════╣")
+        print("║  Teste seus conhecimentos sobre o uso da água         ║")
+        print("╚════════════════════════════════════════════════════════╝")
 
-        if not self.questoes: # Verifica se as questões foram carregadas na inicialização
-            print("Não há questões disponíveis para o quiz. Verifique o arquivo JSON ou o caminho.")
+        if not self.questoes:
+            print("⚠️ Erro: Nenhuma questão carregada. Verifique o arquivo JSON.")
             return
 
-        # Garante que temos questões suficientes
         if len(self.questoes) < num_questoes_desejadas:
-            print(f"⚠️ Atenção: Não há questões suficientes para um quiz de {num_questoes_desejadas} perguntas. Apenas {len(self.questoes)} questões serão usadas.")
+            print(f"\n⚠️ Atenção: Apenas {len(self.questoes)} questão(ões) disponível(is).")
             num_questoes_quiz = len(self.questoes)
         else:
             num_questoes_quiz = num_questoes_desejadas
 
-        # Seleciona 'num_questoes_quiz' questões aleatórias e diferentes
         questoes_selecionadas = random.sample(self.questoes, num_questoes_quiz)
-
         pontuacao = 0
-        for i, questao in enumerate(questoes_selecionadas):
-            print(f"\nQuestão {i + 1}: {questao['pergunta']}")
 
-            # Embaralha as opções para que a ordem não seja sempre a mesma
+        for i, questao in enumerate(questoes_selecionadas):
+            print(f"\n🔹 Questão {i + 1}: {questao['pergunta']}")
             opcoes_embaralhadas = random.sample(questao['opcoes'], len(questao['opcoes']))
+
             for j, opcao in enumerate(opcoes_embaralhadas):
-                print(f"{j + 1}. {opcao}")
+                print(f"   {j + 1}. {opcao}")
 
             while True:
                 try:
-                    resposta_usuario_str = input("Sua resposta (número da opção): ")
-                    resposta_usuario_idx = int(resposta_usuario_str) - 1
-                    if 0 <= resposta_usuario_idx < len(opcoes_embaralhadas):
-                        resposta_usuario = opcoes_embaralhadas[resposta_usuario_idx]
+                    resposta = int(input("👉 Sua resposta (número): ")) - 1
+                    if 0 <= resposta < len(opcoes_embaralhadas):
                         break
-                    else:
-                        print("Opção inválida. Digite o número correspondente à opção.")
+                    print("❌ Opção inválida. Digite um número válido.")
                 except ValueError:
-                    print("Entrada inválida. Digite um número.")
+                    print("❌ Entrada inválida. Digite apenas números.")
 
-            if resposta_usuario == questao['resposta_correta']:
-                print("Correto! 🎉")
+            if opcoes_embaralhadas[resposta] == questao['resposta_correta']:
+                print("✅ Correto!")
                 pontuacao += 1
             else:
-                print(f"Errado. A resposta correta era: {questao['resposta_correta']}")
+                print(f"❌ Errado. A resposta correta era: {questao['resposta_correta']}")
 
-        print("\n--- FIM DO QUIZ ---")
-        print(f"Sua pontuação final: {pontuacao} de {num_questoes_quiz}")
-        print("Continue aprendendo e economizando água!")
+        print("\n╔════════════════════════════════════════════════════════╗")
+        print("║                    FIM DO QUIZ                         ║")
+        print("╠════════════════════════════════════════════════════════╣")
+        print(f"║  Sua pontuação final foi: {pontuacao} de {num_questoes_quiz:<28}║")
+        print("╚════════════════════════════════════════════════════════╝\n")
+        print("💡 Continue aprendendo e economizando água!\n")
+        time.sleep(2)
 
-# --- Lógica principal ---
+# --- Execução principal ---
 if __name__ == "__main__":
-    # 1. Cria uma instância da classe Quiz
-    # O método __init__ tentará carregar as questões automaticamente
     meu_quiz = Quiz(NOME_ARQUIVO_QUESTOES)
 
-    # 2. Verifica se as questões foram carregadas com sucesso ao inicializar o Quiz
     if meu_quiz.questoes:
-        # Verifica se o dia atual é segunda-feira (0 = segunda, 6 = domingo)
         hoje = datetime.now()
-        
-        # Para testar em qualquer dia, mude para 'if True:' ou comente a linha abaixo:
         if hoje.weekday() == 0:  # Segunda-feira
-            meu_quiz.iniciar_quiz(num_questoes_desejadas=5) # Inicia o quiz com 5 questões
+            meu_quiz.iniciar_quiz(num_questoes_desejadas=5)
         else:
-            print(f"Hoje não é segunda-feira ({hoje.strftime('%A')}). O quiz será exibido na próxima segunda-feira.")
-            print("Para testar, você pode modificar a verificação de dia 'if hoje.weekday() == 0:' para 'if True:' e rodar.")
+            print(f"\n🕒 Hoje é {hoje.strftime('%A')}! O quiz será exibido na próxima segunda-feira.")
+            print("🔧 Para testar agora, altere 'if hoje.weekday() == 0' para 'if True'.\n")
     else:
-        print("Não foi possível iniciar o quiz devido a erros no carregamento das questões na inicialização.")
+        print("❌ Não foi possível iniciar o quiz. Corrija os erros de carregamento.")
