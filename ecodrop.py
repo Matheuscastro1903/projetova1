@@ -1839,3 +1839,97 @@ else:
     #LIMITE DE OPÇÕES ATINGIDO
     print("Limite de tentativas atingido. Reinicie o programa.")
     
+
+import random
+import json
+from datetime import datetime
+
+# Define o nome do arquivo JSON que contém as questões
+NOME_ARQUIVO_QUESTOES = "questoes_agua.json"
+
+def carregar_questoes(caminho_arquivo):
+    """Carrega as questões de um arquivo JSON."""
+    try:
+        with open(caminho_arquivo, 'r', encoding='utf-8') as f:
+            questoes = json.load(f)
+        print(f"✅ Questões carregadas com sucesso de '{caminho_arquivo}'. Total: {len(questoes)}")
+        return questoes
+    except FileNotFoundError:
+        print(f"❌ Erro: O arquivo '{caminho_arquivo}' não foi encontrado.")
+        print("Por favor, certifique-se de que o arquivo JSON com as questões está no mesmo diretório do script.")
+        return None
+    except json.JSONDecodeError:
+        print(f"❌ Erro: O arquivo '{caminho_arquivo}' não é um JSON válido.")
+        print("Verifique a sintaxe do JSON.")
+        return None
+    except Exception as e:
+        print(f"❌ Erro inesperado ao carregar questões: {e}")
+        return None
+
+def exibir_quiz(questoes_disponiveis):
+    """Exibe um quiz de 5 questões sobre gasto de água."""
+    print("--- QUIZ DA SEMANA: Gasto Consciente de Água ---")
+    print("Teste seus conhecimentos e descubra como economizar água!\n")
+
+    if not questoes_disponiveis:
+        print("Não há questões disponíveis para o quiz. Verifique o arquivo JSON.")
+        return
+
+    # Garante que temos pelo menos 5 questões
+    if len(questoes_disponiveis) < 5:
+        print(f"⚠️ Atenção: Não há questões suficientes para um quiz de 5 perguntas. Apenas {len(questoes_disponiveis)} questões serão usadas.")
+        num_questoes_quiz = len(questoes_disponiveis)
+    else:
+        num_questoes_quiz = 5
+
+    # Seleciona 'num_questoes_quiz' questões aleatórias e diferentes
+    questoes_selecionadas = random.sample(questoes_disponiveis, num_questoes_quiz)
+
+    pontuacao = 0
+    for i, questao in enumerate(questoes_selecionadas):
+        print(f"\nQuestão {i + 1}: {questao['pergunta']}")
+
+        # Embaralha as opções para que a ordem não seja sempre a mesma
+        opcoes_embaralhadas = random.sample(questao['opcoes'], len(questao['opcoes']))
+        for j, opcao in enumerate(opcoes_embaralhadas):
+            print(f"{j + 1}. {opcao}")
+
+        while True:
+            try:
+                resposta_usuario_str = input("Sua resposta (número da opção): ")
+                resposta_usuario_idx = int(resposta_usuario_str) - 1
+                if 0 <= resposta_usuario_idx < len(opcoes_embaralhadas):
+                    resposta_usuario = opcoes_embaralhadas[resposta_usuario_idx]
+                    break
+                else:
+                    print("Opção inválida. Digite o número correspondente à opção.")
+            except ValueError:
+                print("Entrada inválida. Digite um número.")
+
+        if resposta_usuario == questao['resposta_correta']:
+            print("Correto! 🎉")
+            pontuacao += 1
+        else:
+            print(f"Errado. A resposta correta era: {questao['resposta_correta']}")
+
+    print("\n--- FIM DO QUIZ ---")
+    print(f"Sua pontuação final: {pontuacao} de {num_questoes_quiz}")
+    print("Continue aprendendo e economizando água!")
+
+# --- Lógica principal ---
+if __name__ == "__main__":
+    # Carrega as questões do arquivo JSON
+    QUESTOES_AGUA = carregar_questoes(NOME_ARQUIVO_QUESTOES)
+
+    if QUESTOES_AGUA: # Verifica se as questões foram carregadas com sucesso
+        # Verifica se o dia atual é segunda-feira (0 = segunda, 6 = domingo)
+        hoje = datetime.now()
+        # Para testar em qualquer dia, comente a linha abaixo:
+        # hoje.weekday() para 0 (segunda), 1 (terça), ..., 6 (domingo)
+        if hoje.weekday() == 0:  # Segunda-feira
+            exibir_quiz(QUESTOES_AGUA)
+        else:
+            print(f"Hoje não é segunda-feira ({hoje.strftime('%A')}). O quiz será exibido na próxima segunda-feira.")
+            print("Para testar, você pode comentar a verificação de dia 'if hoje.weekday() == 0:' e rodar.")
+    else:
+        print("Não foi possível iniciar o quiz devido a erros no carregamento das questões.")
