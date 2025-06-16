@@ -1,0 +1,155 @@
+[
+    {
+        "pergunta": "Qual das seguintes atividades geralmente consome mais água em uma casa?",
+        "opcoes": ["Lavar louça à mão com a torneira aberta", "Tomar banho de chuveiro por 5 minutos", "Descarga de vaso sanitário", "Lavar roupa na máquina com carga total"],
+        "resposta_correta": "Lavar louça à mão com a torneira aberta"
+    },
+    {
+        "pergunta": "Quantos litros de água, em média, são gastos em um banho de 15 minutos com o chuveiro ligado direto?",
+        "opcoes": ["15 a 30 litros", "45 a 60 litros", "90 a 120 litros", "200 a 300 litros"],
+        "resposta_correta": "200 a 300 litros"
+    },
+    {
+        "pergunta": "Uma torneira pingando pode desperdiçar quantos litros de água por dia?",
+        "opcoes": ["10 litros", "20 litros", "45 litros", "100 litros"],
+        "resposta_correta": "45 litros"
+    },
+    {
+        "pergunta": "Qual vegetal consome a maior quantidade de água para ser produzido por quilo?",
+        "opcoes": ["Tomate", "Alface", "Arroz", "Batata"],
+        "resposta_correta": "Arroz"
+    },
+    {
+        "pergunta": "Qual é a principal forma de economizar água no banheiro?",
+        "opcoes": ["Deixar a torneira aberta ao escovar os dentes", "Dar descarga com frequência", "Tomar banhos rápidos", "Lavar o carro com mangueira"],
+        "resposta_correta": "Tomar banhos rápidos"
+    },
+    {
+        "pergunta": "Para lavar uma calçada, qual a forma mais econômica de água?",
+        "opcoes": ["Usar balde e vassoura", "Usar mangueira com pressão", "Usar lavadora de alta pressão", "Jogar água com balde sem vassoura"],
+        "resposta_correta": "Usar balde e vassoura"
+    },
+    {
+        "pergunta": "O que é 'água virtual'?",
+        "opcoes": ["Água reciclada", "Água consumida na produção de bens e serviços", "Água de rios e lagos", "Água da chuva"],
+        "resposta_correta": "Água consumida na produção de bens e serviços"
+    },
+    {
+        "pergunta": "Em média, quanto tempo leva para lavar um carro usando um balde em comparação com uma mangueira?",
+        "opcoes": ["Mesmo tempo", "O dobro do tempo", "Metade do tempo", "Menos tempo, economizando água"],
+        "resposta_correta": "Menos tempo, economizando água"
+    },
+    {
+        "pergunta": "Qual é o objetivo principal da campanha de uso consciente da água?",
+        "opcoes": ["Restringir o acesso à água", "Incentivar o uso indiscriminado", "Promover a sustentabilidade dos recursos hídricos", "Aumentar as contas de água"],
+        "resposta_correta": "Promover a sustentabilidade dos recursos hídricos"
+    },
+    {
+        "pergunta": "Para regar plantas, qual o melhor horário para economizar água?",
+      
+        "opcoes": ["Meio-dia, quando o sol está forte", "Manhã cedo ou fim de tarde", "Qualquer horário, não faz diferença", "Noite, antes de dormir"],
+        "resposta_correta": "Manhã cedo ou fim de tarde"
+    }
+    {
+        "pergunta": "Qual porcentagem aproximada da água doce do planeta está congelada em geleiras e calotas polares?",
+        "opcoes": ["10%", "30%", "50%", "70%"],
+        "resposta_correta": "70%"
+    },
+    {
+        "pergunta": "Para produzir uma única camiseta de algodão, quantos litros de água são estimados para serem gastos em todo o processo?",
+        "opcoes": ["500 litros", "1.000 litros", "2.700 litros", "5.000 litros"],
+        "resposta_correta": "2.700 litros"
+    },
+    {
+        "pergunta": "Qual das seguintes fontes de água é considerada a mais fácil de ser contaminada por poluentes em áreas urbanas?",
+        "opcoes": ["Água subterrânea (aquíferos)", "Água de rios e lagos", "Água de poços artesianos profundos", "Água da chuva coletada em cisternas"],
+        "resposta_correta": "Água de rios e lagos"
+    },
+    {
+        "pergunta": "O que significa 'pegada hídrica' de um produto ou serviço?",
+        "opcoes": ["A quantidade de água reciclada na sua produção", "O rastro de poluição deixado pela água descartada", "O volume total de água doce utilizado para produzir bens e serviços", "A área geográfica de onde a água para produção é extraída"],
+        "resposta_correta": "O volume total de água doce utilizado para produzir bens e serviços"
+    },
+    {
+        "pergunta": "Qual setor é o maior consumidor de água doce no mundo?",
+        "opcoes": ["Indústria", "Doméstico", "Agricultura", "Energia"],
+        "resposta_correta": "Agricultura"
+    },
+    {
+        "pergunta": "Se você usa um copo para escovar os dentes, em vez de deixar a torneira aberta, quantos litros de água você pode economizar em média por escovação?",
+        "opcoes": ["2 a 5 litros", "5 a 10 litros", "10 a 15 litros", "15 a 20 litros"],
+        "resposta_correta": "10 a 15 litros"
+    },
+    {
+        "pergunta": "O que é 'reúso de água'?",
+        "opcoes": ["Captar água da chuva", "Despoluir rios e lagos", "Utilizar água de esgoto tratada para fins não potáveis", "Perfurar poços artesianos"],
+        "resposta_correta": "Utilizar água de esgoto tratada para fins não potáveis"
+    },
+    {
+        "pergunta": "Qual das seguintes dicas é a mais eficaz para economizar água na cozinha?",
+        "opcoes": ["Descongelar alimentos sob água corrente", "Lavar a louça com a torneira sempre aberta", "Usar a máquina de lavar louça apenas com carga total", "Lavar poucas frutas e legumes por vez"],
+        "resposta_correta": "Usar a máquina de lavar louça apenas com carga total"
+    },
+    {
+        "pergunta": "Qual o principal risco do consumo de água não tratada?",
+        "opcoes": ["Aumento da conta de água", "Diminuição do sabor dos alimentos", "Transmissão de doenças", "Ressecamento da pele"],
+        "resposta_correta": "Transmissão de doenças"
+    },
+    {
+        "pergunta": "Se uma família de 4 pessoas toma banhos de 5 minutos, em vez de 15 minutos, por dia, qual o impacto anual na economia de água, aproximadamente?",
+        "opcoes": ["Economia de centenas de litros", "Economia de alguns milhares de litros", "Economia de dezenas de milhares de litros", "Economia de centenas de milhares de litros"],
+        "resposta_correta": "Economia de centenas de milhares de litros"
+    }
+    [
+    {
+        "pergunta": "Pensando nos seus banhos esta semana, qual foi a atitude mais comum para economizar água?",
+        "opcoes": ["Deixei o chuveiro ligado enquanto me ensaboava", "Tomei banhos de mais de 10 minutos", "Desliguei o chuveiro ao me ensaboar", "Usei a banheira para relaxar diariamente"],
+        "resposta_correta": "Desliguei o chuveiro ao me ensaboar"
+    },
+    {
+        "pergunta": "Ao escovar os dentes ou fazer a barba nesta semana, qual das opções mais se assemelha ao seu hábito?",
+        "opcoes": ["Deixei a torneira aberta o tempo todo", "Deixei a torneira aberta por mais da metade do tempo", "Usei um copo para pegar água e fechei a torneira", "Lavei o rosto demoradamente com a torneira aberta"],
+        "resposta_correta": "Usei um copo para pegar água e fechei a torneira"
+    },
+    {
+        "pergunta": "Considerando o uso da máquina de lavar roupas ou louças esta semana, qual foi a prática mais sustentável?",
+        "opcoes": ["Lavei pequenas cargas de roupa frequentemente", "Acionei a máquina de lavar louça com poucos utensílios", "Aguardei a carga máxima para ligar a máquina", "Pré-lavei a louça sob água corrente antes de ir para a máquina"],
+        "resposta_correta": "Aguardei a carga máxima para ligar a máquina"
+    },
+    {
+        "pergunta": "Se você lavou louça à mão esta semana, qual atitude mais contribuiu para a economia de água?",
+        "opcoes": ["Ensaboar tudo de uma vez com a torneira fechada e enxaguar depois", "Enxaguar cada item individualmente enquanto ensaboava outro", "Deixar a torneira escorrendo para tirar o excesso de comida", "Lavar a louça em dois ciclos para garantir a limpeza"],
+        "resposta_correta": "Ensaboar tudo de uma vez com a torneira fechada e enxaguar depois"
+    },
+    {
+        "pergunta": "Ao notar algum vazamento em sua casa esta semana (torneira pingando, vaso sanitário), qual foi sua atitude?",
+        "opcoes": ["Ignorei, pois é pouca água", "Tentei resolver imediatamente ou chamei um profissional", "Deixei para resolver no fim do mês", "Coloquei um balde para coletar a água, mas não consertei o vazamento"],
+        "resposta_correta": "Tentei resolver imediatamente ou chamei um profissional"
+    }
+    [
+    {
+        "pergunta": "Ao regar suas plantas ou o jardim esta semana, qual método você utilizou que mais contribuiu para economizar água?",
+        "opcoes": ["Usei a mangueira com bico esguichador durante o dia", "Reguei em horários de sol forte para secar mais rápido", "Utilizei regador ou sistema de gotejamento no início da manhã ou fim da tarde", "Reguei todos os dias, independentemente da necessidade das plantas"],
+        "resposta_correta": "Utilizei regador ou sistema de gotejamento no início da manhã ou fim da tarde"
+    },
+    {
+        "pergunta": "Pensando na limpeza da casa esta semana (pisos, carros, calçadas), qual foi a escolha mais consciente em relação ao uso da água?",
+        "opcoes": ["Lavei a calçada com a mangueira", "Usei a mangueira para lavar o carro frequentemente", "Utilizei balde e pano/vassoura para limpeza de pisos e carro", "Deixei a torneira aberta enquanto ensaboava a vassoura"],
+        "resposta_correta": "Utilizei balde e pano/vassoura para limpeza de pisos e carro"
+    },
+    {
+        "pergunta": "Esta semana, ao dar descarga no vaso sanitário, qual hábito você manteve que ajuda a conservar água?",
+        "opcoes": ["Acionei a descarga a cada uso, mesmo para pequenas necessidades", "Verifiquei se havia vazamentos na caixa acoplada regularmente", "Usei o vaso sanitário como lixeira para descartar papéis", "Segurei a descarga por mais tempo do que o necessário"],
+        "resposta_correta": "Verifiquei se havia vazamentos na caixa acoplada regularmente"
+    },
+    {
+        "pergunta": "Ao preparar alimentos ou lavar frutas e vegetais esta semana, qual foi a atitude mais eficaz para evitar o desperdício de água?",
+        "opcoes": ["Deixei a torneira aberta continuamente para lavar os alimentos", "Lavei frutas e vegetais em uma bacia, aproveitando a água para regar plantas", "Descongelei alimentos sob água corrente da torneira", "Usei um escorredor e enxaguei tudo rapidamente com a torneira aberta"],
+        "resposta_correta": "Lavei frutas e vegetais em uma bacia, aproveitando a água para regar plantas"
+    },
+    {
+        "pergunta": "Se você notou que sua torneira da cozinha estava com um fluxo de água muito forte e desnecessário esta semana, qual foi sua ação?",
+        "opcoes": ["Ignorei, pois a água saía mais rápido", "Instalei ou considerei instalar um arejador para reduzir o fluxo", "Abri a torneira ao máximo em todas as lavagens", "Usei mais água do que o normal, já que o fluxo era alto"],
+        "resposta_correta": "Instalei ou considerei instalar um arejador para reduzir o fluxo"
+    }
+]
