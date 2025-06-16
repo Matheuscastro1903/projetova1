@@ -1839,3 +1839,4 @@ else:
     #LIMITE DE OPÇÕES ATINGIDO
     print("Limite de tentativas atingido. Reinicie o programa.")
     
+
