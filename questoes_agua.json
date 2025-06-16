@@ -46,10 +46,9 @@
     },
     {
         "pergunta": "Para regar plantas, qual o melhor horário para economizar água?",
-      
         "opcoes": ["Meio-dia, quando o sol está forte", "Manhã cedo ou fim de tarde", "Qualquer horário, não faz diferença", "Noite, antes de dormir"],
         "resposta_correta": "Manhã cedo ou fim de tarde"
-    }
+    },
     {
         "pergunta": "Qual porcentagem aproximada da água doce do planeta está congelada em geleiras e calotas polares?",
         "opcoes": ["10%", "30%", "50%", "70%"],
@@ -93,14 +92,13 @@
     {
         "pergunta": "Qual o principal risco do consumo de água não tratada?",
         "opcoes": ["Aumento da conta de água", "Diminuição do sabor dos alimentos", "Transmissão de doenças", "Ressecamento da pele"],
-        "resposta_correta": "Transmissão de doenças"
+        "resposta_et": "Transmissão de doenças"
     },
     {
         "pergunta": "Se uma família de 4 pessoas toma banhos de 5 minutos, em vez de 15 minutos, por dia, qual o impacto anual na economia de água, aproximadamente?",
         "opcoes": ["Economia de centenas de litros", "Economia de alguns milhares de litros", "Economia de dezenas de milhares de litros", "Economia de centenas de milhares de litros"],
         "resposta_correta": "Economia de centenas de milhares de litros"
-    }
-    [
+    },
     {
         "pergunta": "Pensando nos seus banhos esta semana, qual foi a atitude mais comum para economizar água?",
         "opcoes": ["Deixei o chuveiro ligado enquanto me ensaboava", "Tomei banhos de mais de 10 minutos", "Desliguei o chuveiro ao me ensaboar", "Usei a banheira para relaxar diariamente"],
@@ -125,8 +123,7 @@
         "pergunta": "Ao notar algum vazamento em sua casa esta semana (torneira pingando, vaso sanitário), qual foi sua atitude?",
         "opcoes": ["Ignorei, pois é pouca água", "Tentei resolver imediatamente ou chamei um profissional", "Deixei para resolver no fim do mês", "Coloquei um balde para coletar a água, mas não consertei o vazamento"],
         "resposta_correta": "Tentei resolver imediatamente ou chamei um profissional"
-    }
-    [
+    },
     {
         "pergunta": "Ao regar suas plantas ou o jardim esta semana, qual método você utilizou que mais contribuiu para economizar água?",
         "opcoes": ["Usei a mangueira com bico esguichador durante o dia", "Reguei em horários de sol forte para secar mais rápido", "Utilizei regador ou sistema de gotejamento no início da manhã ou fim da tarde", "Reguei todos os dias, independentemente da necessidade das plantas"],
