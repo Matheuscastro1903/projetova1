@@ -10,6 +10,9 @@ import pyfiglet
 #ANOTAÇÃO IMPORTANTE
 #Se uma função chama outra função que precisa de argumentos, ela também precisa receber esses argumentos ou criá-los.
 
+#corrgir erro no cadastro
+
+
 
 with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
     
@@ -1105,197 +1108,14 @@ def feedback(email_login, senha_login):
         while tentativas != 0:
             opcao = input("Deseja ir para o menu ou sair do sistema? (Menu/sair): ").strip().lower()
 
-<<<<<<< HEAD
-	print("========Sistema de avaliação========")
-=======
             if opcao in ["menu", "ver menu"]:
                 menu(email_login,senha_login)
                 return
->>>>>>> main
 
             elif opcao in ["sair", "sai", "sair sistema", "sai sistema"]:
                 print("Sistema encerrado pelo usuário.")
                 sys.exit()
 
-<<<<<<< HEAD
-print("O que você achou do nosso serviço?")
-nome = str(input("Digite seu nome: "))
-nota = float(input("Qual nota você nos dá (0 a 10)? "))
-    
-#Nota
-if nota < 0 or nota > 10:
-        	print("Nota inválida. Por favor, digite uma nota entre 0 e 10.")
-else:
-		print("Nota armazenada com sucesso")
-	
-"""
-Logo acima, na parte de avaliação por parte do usuário,
-é verificado se a nota está dentro do intervalo permitido
-"""	
-	
-return
-    
-comentario = str(input("Deixe seu comentário: "))
-
-    # Armazenar o feedback como um dicionário
-    feedback = {
-        "nome": nome,
-        "nota": nota,
-        "comentario": comentario
-    }
-    
-    feedbacks.append(feedback)
-    print("\n✅ Feedback registrado com sucesso!\n")
-
-
-# Função para exibir todos os feedbacks
-def exibir_feedbacks():
-	if not feedbacks:
-        	print("Ainda não há feedbacks registrados.\n")
-        return
-
- def salvar_dados(dados):
-    	with open("dados.csv", "w") as f:
-        	f.write(dados)
-    	atualizar_dados()
-
-def atualizar_dados():
-print("Atualizando os dados com as últimas alterações...")
-
-print("Você deseja retornar ao menu? (s/n)")
-    	if resposta == "s":
-        	print("Retornando ao menu...")
-        	# Aqui podemos chamar a função do menu, por exemplo:
-        	# mostrar_menu()
-    	elif resposta == "n":
-        	print("Encerrando o programa.")
-        	import sys
-        	sys.exit()
-    	else:
-        	print("Opção inválida. Tente novamente.")
-
-"""
-Também é armazenado o comentário que o usuário faz sobre o serviço
-"""
-
-pass
-
-
-def ranking():
-	if dia do mês 28:
-		import json
-	    
-# Lê os dados do arquivo JSON
-	    	with open('dados_usuarios.json', 'r', encoding='utf-8') as arquivo:
-	        	dados = json.load(arquivo)
-	    
-# Extrai os pontos
-		pontos = dados['pontos']
-	    
-# Gera uma lista de tuplas com email e pontos
-		ranking = sorted(pontos.items(), key=lambda item: item[1], reverse=True)
-	    
-# Mostra o ranking com outros dados (nome da família e apartamento)
-	print("🏆 RANKING DOS USUÁRIOS POR PONTOS:\n")
-	        for posicao, (email, ponto) in enumerate(ranking, start=1):
-	        	familia = dados['familia'].get(email, 'Desconhecido')
-	        	ap = dados['apartamento'].get(email, '???')
-	        	print(f"{posicao}º lugar: Família {familia} (Apt {ap}) - {ponto} pontos")
-	print("Você deseja ver os rankings passados? (s/n)")
-			if resposta == "s":
-	            		print("\n--- Rankings Passados ---")
-    			for ranking in rankings_passados:
-       				 print(ranking)
-	elif resposta == "n":
-		print("Encerrando o programa.")
-	            import sys
-	            sys.exit()
-  	else:
-        	print("Você deseja ver os rankings passados? (s/n)")
-	        if resposta == "s":
-	        	print("\n--- Rankings Passados ---")
-    			for ranking in rankings_passados:
-       				 print(ranking)
-	        elif resposta == "n":
-	            	print("Encerrando o programa.")
-	            	import sys
-	            	sys.exit()
-		else:
-		    	print("Opção inválida")
-	                
-"""
-O código acima indica a posição do usuário, em relação a outros, de acordo
-com o que foi gasto por mês de água
-"""
-    
-pass
-
-
-
-def resgatar():
-	print("===Tabela de recompensas===")
-
-	if saldo suficiente:
-		print("Resgate seu prêmio")
-		if voucher:
-			premio = voucher
-		elif cupons:
-			premio = cupons
-		elif descontos:
-			premio = descontos
-		elif milhas:
-			premio= milhas
-		else:
-			print("Encerrando o programa.")
-	            	import sys
-	            	sys.exit()
-	   def salvar_dados(dados):
-    	with open("dados.csv", "w") as f:
-        f.write(dados)
-    	atualizar_dados()
-
-	                
-	 else: 
-		print("Saldo insuficiente")
-		print("Encerrando o programa.")
-	            import sys
-	            sys.exit()
-	
-"""
-Acima o código leva em conta se há saldo suficiete para o usuário adquirir determinado prêmio, 
-havendo inúmeras opções de premiação
-"""
-			
-
-#def resgatar():
-def resgatar_premio(litros_economizados):
-    if litros_economizados >= 1000:
-        premio = "Viagem para uma reserva ecológica por 1 final de semana"
-    elif litros_economizados >= 500:
-        premio = "Assinatura de um serviço de streaming por 3 meses"
-    elif litros_economizados >= 200:
-        premio = "Desconto em um produto de limpeza ecológico"
-    elif litros_economizados >= 100:
-        premio = "Cartão presente de R$50"
-    elif litros_economizados >= 50:
-        premio = "Garrafa d'água ecológica"
-    else:
-        premio = "Você ainda não tem pontos suficientes para resgatar prêmios."
-
-    print("\n🎁 Resgate de Prêmios:")
-    print(f"Você pode resgatar: {premio}")
-
- if pontos >= 200:
-        recompensa = recompensas[200]
-    elif pontos >= 100:
-        recompensa = recompensas[100]
-    elif pontos >= 50:
-        recompensa = recompensas[50]
-    elif pontos >= 20:
-        recompensa = recompensas[20]
-    else:
-        recompensa = "Você não tem pontos suficientes para resgatar recompensas."
-=======
             else:
                 tentativas -= 1
                 print("Opção inválida. Por favor, tente novamente.")
@@ -1342,7 +1162,6 @@ def resgatar_premio(litros_economizados):
 
     
    
->>>>>>> main
     
 import csv
 
@@ -1362,47 +1181,6 @@ def salvar_feedback(email, senha, comentario, nota):
             menu(email, senha)
             return
 
-<<<<<<< HEAD
-"""
-Logo abaixo é realizado o cálculo de pontos ao usuário, sendo possível ver sua posição
-logo após o acúmulo de pontos. Esse cálculo é realizado todo final de semana, sendo que 
-a distribuição de pontos é realizada no final de todo mês
-"""
-def calculo():
-
-	if dia do mês == 28:
-		with open(ARQUIVO_JSON, "r", encoding="utf-8") as arquivo:
-        	json.dump(dados, arquivo, indent=4, ensure_ascii=False)
-		calculo = int(input("[quantidade de pessoas*quantidade de dias*consumo individual]/[média mundial de consumo individual])
-			if calculo < media_mundial_de_consumo_individual:
-				print("Parabéns, você acumulou pontos!!)
-			else:
-				print("Você não pontuou")
-	print("Você deseja ver seu ranking? (s/n)"
-			if resposta == "s":
-				print("🏆 RANKING DOS USUÁRIOS POR PONTOS:\n")
-	        		for posicao, (email, ponto) in enumerate(ranking, start=1):
-	           		familia = dados['familia'].get(email, 'Desconhecido')
-	            		ap = dados['apartamento'].get(email, '???')
-	            		print(f"{posicao}º lugar: Família {familia} (Apt {ap}) - {ponto} pontos")	
-			else:
-				print("Encerrando o programa.")
-	            		import sys
-	            		sys.exit()
-		   
-				  
-	else:
-		print("Você deseja ver seu ranking? (s/n)"
-			if resposta == "s":
-				print("🏆 RANKING DOS USUÁRIOS POR PONTOS:\n")
-	        		for posicao, (email, ponto) in enumerate(ranking, start=1):
-	            		familia = dados['familia'].get(email, 'Desconhecido')
-	            		ap = dados['apartamento'].get(email, '???')
-	           		print(f"{posicao}º lugar: Família {familia} (Apt {ap}) - {ponto} pontos")
-			else: 
-				print("Retornando ao menu")  
-								  
-=======
         elif opcao in ["sair", "sai", "sair sistema", "sai sistema"]:
             print("Sistema encerrado pelo usuário.")
             sys.exit()
@@ -1416,7 +1194,6 @@ def calculo():
     sys.exit()
 
     
->>>>>>> main
 
     
 
@@ -1945,7 +1722,89 @@ class Cadastro:
  # Esse código tem que ser escrito de cima pra baixo,mas para puxar ele tem que ser lá embaixo,pois só assim para o código
  # conseguir usar todas as funções
  #
+class Condominio:
+    """
+    Classe para cadastrar um novo condomínio no sistema.
+    Valida o formato do email e armazena os dados no arquivo condominios.json.
+    """
 
+    def __init__(self):
+        self.email = input("Digite o email do condomínio: ").strip()
+        self.rua = input("Digite o nome da rua do condomínio: ").strip()
+        self.numero = input("Digite o número do condomínio: ").strip()
+        self.cep = input("Digite o CEP do condomínio: ").strip()
+        self.codigo = input("Digite um código identificador do condomínio: ").strip()
+
+        self.validar_emailcondominio()
+
+    def validar_emailcondominio(self):
+        
+        #FUNÇÃO UTILIZADA PARA CONFERIR SE O EMAIL É VÁLIDO OU NÃO
+        dominios_validos = [
+            'gmail.com', 'outlook.com', 'hotmail.com',
+            'yahoo.com', 'icloud.com'
+        ]
+
+        tentativas_email = 3
+        while tentativas_email != 0:
+            # VERIFICA SE O FORMATO DO EMAIL ESTÁ ESCRITO CORRETAMENTE
+            if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', self.email):
+                print("FORMATO DE EMAIL INVÁLIDO, UTILIZE UM DOMÍNIO VÁLIDO")
+                self.email = input("Digite novamente seu email: ").strip()
+                tentativas_email -= 1
+                print(f"Tentativas restantes: {tentativas_email}")
+
+                continue  # volta pro início do while para validar de novo,caso esteja correto,irá passar pelo verificador
+
+            # VERIFICA APENAS O DOMÍNIO,SEPARA TODO O RESTO E PEGA APENAS A PARTE DO DOMÍNIO
+            dominio = self.email.split('@')[1].lower()
+            if dominio not in dominios_validos:
+                print("Domínio não aceito. Use: Gmail, Outlook, Yahoo, iCloud, etc.")
+                self.email = input("Digite novamente seu email: ").strip()
+                tentativas_email -= 1
+                print(f"Tentativas restantes: {tentativas_email}")
+
+                # continuar o loop sem parar
+                continue
+
+        # Se chegou aqui, formato e domínio estão corretos
+            break
+
+        #Esse else só será puxado se o número de tentativas zerar
+        else:
+            print("Limite de tentativas atingido. Encerrando o processo de cadastro.")
+            return
+
+        self.conferir_emailcondominio()
+
+    def conferir_emailcondominio(self):
+        with open("condominios.json", "r", encoding="utf-8") as arquivo:
+            if self.email in dados_conta:
+                print("EMAIL JÁ VINCULADO A CONTA.")
+                tentativas = 3
+                while tentativas != 0:
+                    resposta1 = input("Deseja tentar refazer a conta  ou ir para tela de login caso já possua conta? (refazer/login) ").strip().lower()
+                    if resposta1 in ["login", "tela de login", "logi"]:
+                        #login()
+                        return
+                    elif resposta1 in ["refazer", "retentar", "conta", "refazer conta"]:
+                        self.email = input("Digite novamente seu email: ").strip()
+                        self.validar_emailcondominio()
+                        return
+                    else:
+                        print("Resposta inválida")
+                        tentativas -= 1
+                        print(f"Tentativas restantes {tentativas}")
+                else:
+                    print(
+                    "Limite de tentativas atingido. Encerrando o processo de cadastro.")
+                    return
+            else:
+                self.salvar_condominio()  # Continua o processo normalmente
+    
+    def salvar_condominio():
+        pass
+        
 
 
 
