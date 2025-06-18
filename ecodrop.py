@@ -21,6 +21,7 @@ with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
     dados_pontos = arquivo_lido["pontos"]
     dados_apartamento = arquivo_lido["apartamento"]
     dados_codigov = arquivo_lido["verificador"]
+    
 
 #OBJETIVO DESSA MENSAGEM É SER UMA MENSAGEM DIÁRIA ALEATÓRIA,VISANDO FICAR MAIS INTERATIVO COM O USUÁRIO
 mensagens_agua = [
@@ -1059,14 +1060,23 @@ def deletar(email_login,senha_login):
 
     
 
+'''
+Logo abaixo o código permite com que o usuário dê uma nota
+e uma opinião quanto ao serviço utilizado, havendo um limite de 
+caracteres na aba de comentáios e, após o comentário, ele é
+registrado com a nota
+'''
+import csv
+def feedback(email_login, senha_login):
+    print("\n╔══════════════════════════════════════════════════════════════╗")
+    print("║                📝 SISTEMA DE AVALIAÇÃO DE SERVIÇO            ║")
+    print("╠══════════════════════════════════════════════════════════════╣")
+    print("║ O que você achou do nosso serviço?                           ║")
+    print("╚══════════════════════════════════════════════════════════════╝\n")
 
-def feedback(email_login,senha_login):
-
-    print("========Sistema de avaliação========")
-    print("O que você achou do nosso serviço?")
     
     
-   
+     # Comentário com até 140 caracteres
     tentativas_coment=3
     while tentativas_coment!=0:
         comentario = input("Deixe seu comentário(Digite apenas 140 caracteres): ").strip()
@@ -1173,6 +1183,10 @@ def salvar_feedback(email_login, comentario, nota,senha_login):
 
     
 
+'''
+Abaixo é indicado a posição do usuário em elação a outros
+quanto ao seu gasto de água ao longo do mês
+'''
 
 
 
@@ -1182,7 +1196,31 @@ def salvar_feedback(email_login, comentario, nota,senha_login):
 
     
 
+'''
+O código abaixo oferece inúmeras opções de prêmios ao
+usuário que acumula pontos conforme seu desempenho na
+economia de água. Dependendo do seu saldo, o usuário 
+pode escolher seu prêmio, tendo voucher e descontos, por exemplo
+'''
+import sys
+def resgatar(saldo, recompensas_disponiveis):
+    print("\n╔══════════════════════════════════════════════════════════════╗")
+    print("║                  📜  TABELA DE RECOMPENSAS  📜               ║")
+    print("╠══════════════════════════════════════════════════════════════╣")
+    print("║ -> Voucher                                                  ║")
+    print("║ -> Cupons                                                   ║")
+    print("║ -> Descontos                                                ║")
+    print("║ -> Milhas                                                   ║")
+    print("║ -> Créditos de celular                                      ║")
+    print("║ -> Desconto no condomínio                                   ║")
+    print("╚══════════════════════════════════════════════════════════════╝\n")
 
+    if saldo >= 1:  # Verifica se o saldo é suficiente para resgate
+        print("\n╔══════════════════════════════════════════════════════════════╗")
+        print("║                    🎁  RESGATE DE PRÊMIOS  🎁                 ║")
+        print("╠══════════════════════════════════════════════════════════════╣")
+        print("║ Verificando prêmios disponíveis...                           ║")
+        print("╚══════════════════════════════════════════════════════════════╝\n")
 
 
 
