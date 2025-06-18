@@ -7,6 +7,9 @@ import os
 import pyfiglet
 
 
+
+
+
 #ANOTAÇÃO IMPORTANTE
 #Se uma função chama outra função que precisa de argumentos, ela também precisa receber esses argumentos ou criá-los.
 
@@ -180,72 +183,90 @@ def login():
                 sys.exit()
 
 
-def menu(email_login,senha_login):
+def menu(email_login, senha_login):
     """
- 	Essa função é utilizada para ir para tela de menu,assim que o usuário entrar no sistema.Aqui ele poderá ver quais opções de serviço ele tem.
- 	
+    Essa função é utilizada para ir para tela de menu, assim que o usuário entrar no sistema.
+    Aqui ele poderá ver quais opções de serviço ele tem.
     """
-    #FUNÇÃO UTILIZADA PARA CONSEGUIR VER AS OPÇOES DE FUNÇÕES
     limpar_tela()
     tentativas = 3
     print("BEM VINDO AO MENU PRINCIPAL DO ECODROP💧.")
-    #mensagem estilo minecraft
     print("ECOMENSAGEM DIÁRIA 💧:")
-    print("-"*60)
+    print("-" * 60)
     print(random.choice(mensagens_agua))
-    print("-"*60)
-    
+    print("-" * 60)
+
     time.sleep(2)
     print("\n╔════════════════════════════════════════════════════════════╗")
-    print("║ 🌍 ESCOLHA UMA OPÇÃO NUMÉRICA                              ║")
+    print("║ 🌍 ESCOLHA UMA OPÇÃO NUMÉRICA                                ║")
     print("╠════════════════════════════════════════════════════════════╣")
-    print("║ 1. Ver Ranking 🏆                                          ║")
-    print("║ 2. Calcular Pontos 💧                                      ║")
-    print("║ 3. Atualizar Dados 🔄                                      ║")
-    print("║ 4. Deletar Conta ❌                                        ║")
-    print("║ 5. Enviar Feedback ✉️                                       ║")
-    print("║ 6. Resgatar Recompensas 🎁                                 ║")
-    print("║ 7. Visualizar Dados 📊                                     ║")
-    print("║ 8. Sair do Sistema 🚪                                      ║")
+    print("║ 1. Ver Ranking 🏆                                            ║")
+    print("║ 2. Calcular Pontos 💧                                        ║")
+    print("║ 3. Atualizar Dados 🔄                                        ║")
+    print("║ 4. Deletar Conta ❌                                          ║")
+    print("║ 5. Enviar Feedback ✉️                                         ║")
+    print("║ 6. Resgatar Recompensas 🎁                                   ║")
+    print("║ 7. Visualizar Dados 📊                                       ║")
+    print("║ 8. Jogar Quiz Semanal 💡                                     ║") 
+    print("║ 9. Sair do Sistema 🚪                                        ║") 
     print("╚════════════════════════════════════════════════════════════╝")
-    #resposta2 = input("Digite o número da opção desejada: ").strip()
-    
+
     while tentativas != 0:
-        
         resposta2 = input("Digite o número da opção desejada: ").strip()
 
         if resposta2 == "1":
-            ranking(email_login,senha_login)
+            ranking(email_login, senha_login)
+            menu(email_login, senha_login)
             return
-
         elif resposta2 == "2":
-            calculo(email_login,senha_login)
+            calculo(email_login, senha_login)
+            menu(email_login, senha_login)
             return
-
         elif resposta2 == "3":
             atualizar(email_login, senha_login)
+            menu(email_login, senha_login)
             return
-
         elif resposta2 == "4":
             deletar(email_login, senha_login)
+            menu(email_login, senha_login)
             return
-
         elif resposta2 == "5":
             feedback(email_login, senha_login)
+            menu(email_login, senha_login)
             return
-
         elif resposta2 == "6":
             resgatar(email_login, senha_login)
+            menu(email_login, senha_login)
             return
-
         elif resposta2 == "7":
             mostrar_dados(email_login, senha_login)
+            menu(email_login, senha_login)
             return
-
-        elif resposta2 == "8":
+        elif resposta2 == "8":  
+            limpar_tela()
+            print("Iniciando Quiz Semanal...")
+            time.sleep(1)
+            
+            meu_quiz = Quiz(NOME_ARQUIVO_QUESTOES)
+            
+            if meu_quiz.questoes:
+                hoje = datetime.now()
+                # Verificar se é segunda-feira (0 = segunda-feira)
+                # O quiz é apenas na segunda-feira. 
+                if hoje.weekday() == 0: # 0 é Segunda-feira
+                    print("\nPreparando o quiz da semana! 🤓")
+                    meu_quiz.iniciar_quiz(email_login=email_login, num_questoes_desejadas=5)
+                else:
+                    print(f"\n🕒 O Quiz Semanal está disponível apenas às **segundas-feiras**. Hoje é **{hoje.strftime('%A')}**.")
+                    print("Por favor, volte na próxima segunda-feira para testar seus conhecimentos!")
+            else:
+                print("\n❌ Não foi possível iniciar o quiz. Verifique o arquivo de questões ou o banco de dados.")
+            input("\nPressione Enter para voltar ao Menu.")
+            menu(email_login, senha_login)
+            return
+        elif resposta2 == "9": 
             print("Tenha um bom dia!!")
             sys.exit()
-
         else:
             print("❌ Opção inválida. Tente novamente.")
             tentativas -= 1
@@ -1805,6 +1826,159 @@ class Condominio:
     def salvar_condominio():
         pass
         
+###Quiz semanal com 5 questões que garantem pontos a mais ao usuário dependendo do seu desempenho
+
+from datetime import datetime
+
+NOME_ARQUIVO_QUESTOES = "questoes_agua.json"
+NOME_ARQUIVO_BANCO_DADOS = "banco_dados.JSON"
+class Quiz:
+    def __init__(self, caminho_arquivo_questoes):
+        """
+        Inicializa o Quiz com o caminho do arquivo JSON.
+        Tenta carregar as questões ao iniciar a classe.
+        """
+        self.caminho_arquivo = caminho_arquivo_questoes
+        self.questoes = self._carregar_questoes()
+
+    def _carregar_questoes(self):
+        """
+        Carrega as questões do JSON informado.
+        """
+        try:
+            with open(self.caminho_arquivo, 'r', encoding='utf-8') as f:
+                questoes_carregadas = json.load(f)
+
+            print("\n╔════════════════════════════════════════════════════════╗")
+            print("║         ✅ Questões carregadas com sucesso!             ║")
+            print(f"║   Total de questões encontradas: {len(questoes_carregadas):<24}║")
+            print("╚════════════════════════════════════════════════════════╝\n")
+            return questoes_carregadas
+
+        except FileNotFoundError:
+            print("\n❌ Erro: Arquivo não encontrado.")
+            print(f"Certifique-se de que '{self.caminho_arquivo}' está no mesmo diretório.\n")
+            return None
+        except json.JSONDecodeError:
+            print("\n❌ Erro: JSON inválido.")
+            print("Verifique se o arquivo possui a estrutura correta.\n")
+            return None
+        except Exception as e:
+            print(f"\n❌ Erro inesperado: {e}\n")
+            return None
+
+    def _atualizar_pontuacao_usuario(self, email_usuario, pontos_ganhos):
+        """
+        Adiciona a pontuação do quiz à pontuação total do usuário no banco de dados JSON.
+        """
+        try:
+            # Tenta carregar o banco de dados existente
+            with open(NOME_ARQUIVO_BANCO_DADOS, "r", encoding="utf-8") as f:
+                banco_dados = json.load(f)
+
+            # Verifica se a seção 'usuarios' existe e se o usuário existe nela
+            if "usuarios" not in banco_dados:
+                banco_dados["usuarios"] = {}
+            if email_usuario not in banco_dados["usuarios"]:
+                # Se o usuário não existe, inicializa-o com 0 pontos_quiz
+                banco_dados["usuarios"][email_usuario] = {"pontos_quiz": 0}
+            
+            # Se a chave 'pontos_quiz' não existe para o usuário, inicializa-a
+            if "pontos_quiz" not in banco_dados["usuarios"][email_usuario]:
+                banco_dados["usuarios"][email_usuario]["pontos_quiz"] = 0
+
+            # Atualiza os pontos
+            banco_dados["usuarios"][email_usuario]["pontos_quiz"] += pontos_ganhos
+
+            # Salva o banco de dados atualizado
+            with open(NOME_ARQUIVO_BANCO_DADOS, "w", encoding="utf-8") as f:
+                json.dump(banco_dados, f, indent=4, ensure_ascii=False)
+            print(f"\n✨ Pontuação de {email_usuario} atualizada: +{pontos_ganhos} pontos no quiz!")
+
+        except FileNotFoundError:
+            print(f"\n❌ Erro ao atualizar pontos: Banco de dados '{NOME_ARQUIVO_BANCO_DADOS}' não encontrado.")
+            print("Certifique-se de que o arquivo de banco de dados existe e tem a estrutura correta.")
+        except json.JSONDecodeError:
+            print(f"\n❌ Erro ao atualizar pontos: JSON inválido no arquivo '{NOME_ARQUIVO_BANCO_DADOS}'.")
+            print("Verifique a sintaxe do JSON do banco de dados.")
+        except Exception as e:
+            print(f"\n❌ Erro inesperado ao atualizar pontos: {e}")
+
+
+    def iniciar_quiz(self, email_login, num_questoes_desejadas=5):
+        """
+        Inicia o quiz com a quantidade de questões especificada para o usuário logado.
+        Ao final, atualiza a pontuação do usuário no banco de dados.
+        """
+        print("\n╔════════════════════════════════════════════════════════╗")
+        print("║           QUIZ DA SEMANA - GASTO CONSCIENTE            ║")
+        print("╠════════════════════════════════════════════════════════╣")
+        print("║      Teste seus conhecimentos sobre o uso da água      ║")
+        print("╚════════════════════════════════════════════════════════╝")
+
+        if not self.questoes:
+            print("⚠️ Erro: Nenhuma questão carregada. Verifique o arquivo JSON.")
+            return
+
+        if len(self.questoes) < num_questoes_desejadas:
+            print(f"\n⚠️ Atenção: Apenas {len(self.questoes)} questão(ões) disponível(is).")
+            num_questoes_quiz = len(self.questoes)
+        else:
+            num_questoes_quiz = num_questoes_desejadas
+
+        questoes_selecionadas = random.sample(self.questoes, num_questoes_quiz)
+        pontuacao = 0
+
+        for i, questao in enumerate(questoes_selecionadas):
+            print(f"\n🔹 Questão {i + 1}: {questao['pergunta']}")
+            opcoes_embaralhadas = random.sample(questao['opcoes'], len(questao['opcoes']))
+
+            for j, opcao in enumerate(opcoes_embaralhadas):
+                print(f"   {j + 1}. {opcao}")
+
+            while True:
+                try:
+                    resposta = int(input("👉 Sua resposta (número): ")) - 1
+                    if 0 <= resposta < len(opcoes_embaralhadas):
+                        break
+                    print("❌ Opção inválida. Digite um número válido.")
+                except ValueError:
+                    print("❌ Entrada inválida. Digite apenas números.")
+
+            if opcoes_embaralhadas[resposta] == questao['resposta_correta']:
+                print("✅ Correto!")
+                pontuacao += 1
+            else:
+                print(f"❌ Errado. A resposta correta era: {questao['resposta_correta']}")
+            time.sleep(1) # Pequena pausa para o usuário ler o feedback
+
+        print("\n╔════════════════════════════════════════════════════════╗")
+        print("║                          FIM DO QUIZ                       ║")
+        print("╠════════════════════════════════════════════════════════╣")
+        print(f"║   Sua pontuação final foi: {pontuacao} de {num_questoes_quiz:<28}║")
+        print("╚════════════════════════════════════════════════════════╝\n")
+        print("💡 Continue aprendendo e economizando água!\n")
+
+        # --- CHAMA A FUNÇÃO PARA ATUALIZAR A PONTUAÇÃO DO USUÁRIO NO RANKING ---
+        self._atualizar_pontuacao_usuario(email_login, pontuacao)
+        time.sleep(2)
+
+# --- Execução principal ---
+if __name__ == "__main__":
+    meu_quiz = Quiz(NOME_ARQUIVO_QUESTOES)
+
+    if meu_quiz.questoes:
+        hoje = datetime.now()
+        if hoje.weekday() == 0:  # Segunda-feira
+            meu_quiz.iniciar_quiz(num_questoes_desejadas=5)
+        else:
+            print(f"\n🕒 Hoje é {hoje.strftime('%A')}! O quiz será exibido na próxima segunda-feira.")
+            print("🔧 Para testar agora, altere 'if hoje.weekday() == 0' para 'if True'.\n")
+    else:
+        print("❌ Não foi possível iniciar o quiz. Corrija os erros de carregamento.")
+
+
+
 
 
 
@@ -1839,4 +2013,9 @@ else:
     #LIMITE DE OPÇÕES ATINGIDO
     print("Limite de tentativas atingido. Reinicie o programa.")
     
+
+
+
+
+
 
