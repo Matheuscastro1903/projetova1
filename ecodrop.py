@@ -1984,34 +1984,34 @@ if __name__ == "__main__":
 
 #Início do sistema 
 import pyfiglet
-
-ascii_banner = pyfiglet.figlet_format("ECODROP")
-print(ascii_banner)
+def inical():
+    ascii_banner = pyfiglet.figlet_format("ECODROP")
+    print(ascii_banner)
  
-print("OLÁ,BEM VINDO AO SISTEMA ECODROP💧 do condomínio Village")
+    print("OLÁ,BEM VINDO AO SISTEMA ECODROP💧 do condomínio Village")
 
-tentativas = 3  #  3 tentativas permitidas
-while tentativas != 0:
-    tipo_servico = input(
-        "QUAL TIPO DE SERVIÇO VOCÊ DESEJA ??(LOGIN/CADASTRO) ").strip().lower()
+    tentativas = 3  #  3 tentativas permitidas
+    while tentativas != 0:
+        tipo_servico = input(
+            "QUAL TIPO DE SERVIÇO VOCÊ DESEJA ??(LOGIN/CADASTRO) ").strip().lower()
 
-    if tipo_servico in ["login", "entrar", "acessar", "fazer login"]:
-        login()
-        break  # Sai do loop e puxa a função login
+        if tipo_servico in ["login", "entrar", "acessar", "fazer login"]:
+            login()
+            break  # Sai do loop e puxa a função login
 
-    elif tipo_servico in ["cadastro", "cadastrar", "criar conta", "novo cadastro"]:
-        novo_cadastro = Cadastro()
-        break  # Sai do loop e puxa a função cadastro
+        elif tipo_servico in ["cadastro", "cadastrar", "criar conta", "novo cadastro"]:
+            novo_cadastro = Cadastro()
+            break  # Sai do loop e puxa a função cadastro
+
+        else:
+        #OPÇÃO INVÁLIDA
+            print("Serviço inválido. Por favor, tente novamente.")
+            tentativas -= 1
+            print(f"Tentativas restantes {tentativas}")
 
     else:
-        #OPÇÃO INVÁLIDA
-        print("Serviço inválido. Por favor, tente novamente.")
-        tentativas -= 1
-        print(f"Tentativas restantes {tentativas}")
-
-else:
     #LIMITE DE OPÇÕES ATINGIDO
-    print("Limite de tentativas atingido. Reinicie o programa.")
+        print("Limite de tentativas atingido. Reinicie o programa.")
     
 
 
