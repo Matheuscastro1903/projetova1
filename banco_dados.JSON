@@ -70,5 +70,11 @@
         "vinicastro@gmail.com": "524525",
         "julinhacastro1907@gmail.com": "070819",
         "albuquerquegustavo@hotmail.com": "0551"
+    },
+    "admin_credentials": {                          
+        "admin@ecodrop.com": "admin123",
+        "criador@ecodrop.com": "senhaSecreta"  
     }
-}
+} 
+
+
