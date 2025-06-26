@@ -3,6 +3,7 @@ import customtkinter as ctk
 import tkinter.messagebox as tkmb
 from PIL import Image
 import os
+from ecodrop import *
 
 # --- Variável para controlar o estado de login/cadastro ---
 usuario_logado_ou_cadastrado = False
@@ -57,7 +58,6 @@ def gerenciar_visibilidade_menu(logado=False):
         botao_logout.pack_forget()
 
 def voltar_inicial():
-    esconder_todos_frames_secundarios()
     frame_topo.pack(fill="x")
     frame_conteudo.pack(fill="both", expand=True)
     frame_menu.pack(side="left", fill="y")
@@ -88,18 +88,7 @@ def login():
     entrada_senhalogin = ctk.CTkEntry(frame_login,width=300,show="*")
     entrada_senhalogin.pack(pady=2)
 
-    #3-entrada email cond
-    label_emailcond = ctk.CTkLabel(frame_login, text="Digite o email do seu condomínio:",text_color="#000000",anchor="w",width=300)
-    label_emailcond.pack(pady=(2, 0))
-    entrada_emailcond = ctk.CTkEntry(frame_login,width=300)
-    entrada_emailcond.pack(pady=2)
-
-    #4senha cond
-    label_senhacond = ctk.CTkLabel(frame_login,text="Digite a senha do seu condomínio:",text_color="#000000",anchor="w",width=300)
-    label_senhacond.pack(pady=(2, 0))
-    entrada_senhacond = ctk.CTkEntry(frame_login,width=300,show="*")
-    entrada_senhacond.pack(pady=2)
-
+    
     def simular_conferir_logar():
         email = entrada_emaillogin.get().strip()
         senha = entrada_senhalogin.get().strip()
@@ -156,16 +145,7 @@ def cadastro_usuario():
     entrada_verificador = ctk.CTkEntry(frame_cadastro, width=300, validate="key", validatecommand=(janela.register(validar_numeros), "%P"))
     entrada_verificador.pack(pady=1)
 
-    label_emailcond = ctk.CTkLabel(frame_cadastro, text="Digite o email do seu condomínio:", text_color="#000000", anchor="w", width=300)
-    label_emailcond.pack(pady=(1, 0))
-    entrada_emailcond = ctk.CTkEntry(frame_cadastro, width=300)
-    entrada_emailcond.pack(pady=1)
-
-    label_senhacond = ctk.CTkLabel(frame_cadastro, text="Senha do condomínio:", text_color="#000000", anchor="w", width=300)
-    label_senhacond.pack(pady=(1, 0))
-    entrada_senhacond = ctk.CTkEntry(frame_cadastro, width=300, show="*")
-    entrada_senhacond.pack(pady=1)
-
+    
     def simular_cadastro_conta():
         email = entrada_email.get().strip()
         if "@" in email and len(entrada_senha.get()) >= 4:
