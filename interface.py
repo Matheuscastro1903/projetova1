@@ -164,6 +164,70 @@ def sobre_nos():
     pass
 
 
+def resgatar():
+    esconder_todos_frames_secundarios()
+    frame_resgatar = ctk.CTkFrame(janela, fg_color="#ffffff")
+    label_resgatar = ctk.CTkLabel(frame_resgatar, text="Resgatar Recompensas", fg_color="#ffffff", text_color="blue", font=("Arial", 20))
+    label_resgatar.pack(pady=20)
+
+    ctk.CTkLabel(frame_resgatar, text="Troque seus pontos por recompensas incríveis!", text_color="#000000").pack(pady=10)
+    ctk.CTkLabel(frame_resgatar, text="Seu Saldo Atual: [X] Pontos", text_color="#000000", font=("Arial", 16, "bold")).pack(pady=5)
+
+    ctk.CTkLabel(frame_resgatar, text="Recompensas Disponíveis:", text_color="#000000").pack(pady=(10, 0))
+    ctk.CTkLabel(frame_resgatar, text="1. Voucher de R$50 (500 pontos)", text_color="#000000").pack(pady=2)
+    ctk.CTkLabel(frame_resgatar, text="2. Desconto na taxa de condomínio (1000 pontos)", text_color="#000000").pack(pady=2)
+    ctk.CTkEntry(frame_resgatar, placeholder_text="Digite o número da recompensa", width=300, validate="key", validatecommand=(janela.register(validar_numeros), "%P")).pack(pady=10)
+
+    ctk.CTkButton(frame_resgatar, text="Resgatar (Placeholder)", fg_color="blue", text_color="#ffffff", width=300, command=lambda: print("Resgatar Recompensa clicado!")).pack(pady=10)
+    ctk.CTkButton(frame_resgatar, text="Voltar ao Menu Principal", fg_color="blue", text_color="#ffffff", width=300, command=voltar_inicial).pack(pady=5)
+    frame_resgatar.pack(fill="both", expand=True)
+
+def feedback():
+    esconder_todos_frames_secundarios()
+    frame_feedback = ctk.CTkFrame(janela, fg_color="#ffffff")
+    label_feedback = ctk.CTkLabel(frame_feedback, text="Deixe seu Feedback", fg_color="#ffffff", text_color="blue", font=("Arial", 20))
+    label_feedback.pack(pady=20)
+
+    ctk.CTkLabel(frame_feedback, text="Sua opinião é muito importante para nós!", text_color="#000000").pack(pady=10)
+    ctk.CTkTextbox(frame_feedback, width=400, height=100, placeholder_text="Escreva seu feedback aqui...").pack(pady=5)
+    ctk.CTkEntry(frame_feedback, placeholder_text="Sua Nota (0-10)", width=150, validate="key", validatecommand=(janela.register(validar_numeros), "%P")).pack(pady=5)
+
+    ctk.CTkButton(frame_feedback, text="Enviar Feedback (Placeholder)", fg_color="blue", text_color="#ffffff", width=300, command=lambda: print("Enviar Feedback clicado!")).pack(pady=10)
+    ctk.CTkButton(frame_feedback, text="Voltar ao Menu Principal", fg_color="blue", text_color="#ffffff", width=300, command=voltar_inicial).pack(pady=5)
+    frame_feedback.pack(fill="both", expand=True)
+
+def deletar_conta():
+    esconder_todos_frames_secundarios()
+    frame_deletar = ctk.CTkFrame(janela, fg_color="#ffffff")
+    label_deletar = ctk.CTkLabel(frame_deletar, text="Deletar Conta", fg_color="#ffffff", text_color="red", font=("Arial", 20))
+    label_deletar.pack(pady=20)
+
+    ctk.CTkLabel(frame_deletar, text="⚠️ Cuidado! Esta ação é irreversível.", text_color="red", font=("Arial", 14, "bold")).pack(pady=10)
+    ctk.CTkLabel(frame_deletar, text="Para confirmar, digite seu email e senha:", text_color="#000000").pack(pady=(10, 0))
+    ctk.CTkEntry(frame_deletar, placeholder_text="Seu Email", width=300).pack(pady=5)
+    ctk.CTkEntry(frame_deletar, placeholder_text="Sua Senha", width=300, show="*").pack(pady=5)
+
+    ctk.CTkButton(frame_deletar, text="Confirmar Deleção (Placeholder)", fg_color="red", text_color="#ffffff", width=300, command=lambda: print("Deletar Conta clicado!")).pack(pady=10)
+    ctk.CTkButton(frame_deletar, text="Cancelar e Voltar", fg_color="blue", text_color="#ffffff", width=300, command=voltar_inicial).pack(pady=5)
+    frame_deletar.pack(fill="both", expand=True)
+
+def calcular_pontos():
+    esconder_todos_frames_secundarios()
+    frame_pontos = ctk.CTkFrame(janela, fg_color="#ffffff")
+    label_pontos = ctk.CTkLabel(frame_pontos, text="Calcular Pontos de Economia", fg_color="#ffffff", text_color="blue", font=("Arial", 20))
+    label_pontos.pack(pady=20)
+
+    ctk.CTkLabel(frame_pontos, text="Veja seus pontos com base no consumo de água do mês!", text_color="#000000").pack(pady=10)
+    ctk.CTkLabel(frame_pontos, text="Consumo Mês Anterior: [X] Litros", text_color="#000000", font=("Arial", 14)).pack(pady=5)
+    ctk.CTkLabel(frame_pontos, text="Pontos Ganhos: [Y] Pontos", text_color="#000000", font=("Arial", 14, "bold")).pack(pady=5)
+    ctk.CTkLabel(frame_pontos, text="Total de Pontos: [Z] Pontos", text_color="green", font=("Arial", 16, "bold")).pack(pady=5)
+
+
+    ctk.CTkButton(frame_pontos, text="Voltar ao Menu Principal", fg_color="blue", text_color="#ffffff", width=300, command=voltar_inicial).pack(pady=20)
+    frame_pontos.pack(fill="both", expand=True)
+
+
+
 #ctk.set_appearance_mode("light")
 
 
