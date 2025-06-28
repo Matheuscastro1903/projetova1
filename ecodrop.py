@@ -5,7 +5,7 @@ import re
 import random
 import os
 import pyfiglet
-
+from interface import mostrar_menu
 
 
 
@@ -78,12 +78,9 @@ def gerar_codigo_resgate():
     print(f"{letras}-{numeros}")
 
 def limpar_tela():
-	
-    """objetivo dessa função é limpar a tela sempre que passar para outra seção,deixando o projeto mais real"""
-    #FUNÇÃO UTILIZADO PARA LIMPAR O TERMINAL,DEIXANDO O SISTEMA MAIS "REAL"
-    os.system('cls' if os.name == 'nt' else 'clear')
+    pass
 
-def login():
+def login(email,senha,label_avisologin):
     """
     objetivo dessa função é o usuário poder entrar no sistema colocando seus dados da conta.
     Caso ele não possua conta será redirecionado para página de cadastro.Caso ele
@@ -96,184 +93,26 @@ def login():
         arquivo_lido = json.load(arquivo)
         
         dados_conta = arquivo_lido["senha"]
-        dados_familia = arquivo_lido["familia"]
-        dados_quantidade = arquivo_lido["membros"]
-        dados_pontos = arquivo_lido["pontos"]
-        dados_apartamento = arquivo_lido["apartamento"]
-        dados_codigov = arquivo_lido["verificador"]
+        
 
 
-        print("Bem vindo a tela de Login ECODROP💧.")
-        #print(random.choice(mensagens_agua))
-        time.sleep(1)
-        email_login = input("Digite seu email(ex:nome123@gmail.com):")
-        # "joao.silva@email.com": "48291" dados para teste
-        senha_login = input("Digite sua senha:")
-        if email_login in dados_conta:
-            if dados_conta[email_login] == senha_login:
-                limpar_tela()
-                menu(email_login,senha_login)
+        
+        if email in dados_conta:
+            if dados_conta[email] == senha:
+                
+                mostrar_menu(email,senha)
+                return
             else:
-                print("EMAIL OU SENHA INCORRETO.")
-                tentativas = 2
-                while tentativas != 0:
-                    email_login = input("Digite seu email(nome123@gmail.com):")
-                    senha_login = input("Digite sua senha:")
-                    if dados_conta[email_login] == senha_login:
-                        limpar_tela()
-                        menu(email_login,senha_login)
-                        
-                        return
-                    else:
-                        print("SENHA OU EMAIL INCORRETO.")
-                        tentativas -= 1
-                        print(f"Tentativas restantes {tentativas}")
-                else:
-                    print("NÚMERO DE TENTATIVAS EXTRAPOLADAS.TENTE NOVAMENTE MAIS TARDE.")
-                    tentativas_verificador=3
-                    while tentativas_verificador!=0:
-                        question1 = input("Deseja tentar entrar usando código verificador ??(sim/não)")
-                        if question1 in ["sim", "si", "yes", "codigo", "código verificador", "verificador", "código"]:
-                            tryverificador = input("Digite seu código verificador(Você terá apenas 1 chance):")
-                            if dados_codigov[email_login] == tryverificador:
-                                print("Você conseguiu o acesso.Mude imediatamente sua senha,visando não ter problemas futuros.")
-                                menu(email_login,senha_login)
-                                return
-                            else:
-                                print("Você errou o código verificador.")
-                                print("Tente novamente mais tarde.Use esse tempo para tentar relembrar seus dados.")
-                                sys.exit()
-                        elif question1 in ["não", "no", "nao", "sair", "sai"]:
-                            print("Tenha um bom dia.")
-                            sys.exit()
-                        else:
-                            print("OPÇÃO INÁLIDA.")
-                            tentativas-=1
-                            print(f"Número de tentativas restantes {tentativas}")
-                    else:
-                        print("NÚMERO DE TENTATIVAS EXTRAPOLADAS.TENTE NOVAMENTE MAIS TARDE.")
-                        sys.exit()
-
+                label_avisologin.configure(text="EMAIL OU SENHA INCORRETO.\nContate o suporte para recuperar usa senha",text_color="red")
+                return
+                
         else:
-            print("EMAIL NÃO CADASTRADO.")
-            opcao = input(
-                "Deseja ir para tela de cadastro ou sair do sistema ??(cadastro/sair)").strip().lower()
-            if opcao in ["cadastro", "cadastrar", "criar conta", "novo cadastro"]:
-                cadastro_novo = Cadastro()
-            elif opcao in ["sair", "sair sistema", "quitar", "sai"]:
-                print("Tenha um bom dia!!")
-                sys.exit()
-            else:
-                print("Opção inválida")
-                tentativas3 = 2
-                while tentativas3 != 0:
-                    opcao = input(
-                        "Deseja ir para tela de cadastro ou sair do sistema ??(cadastro/sair)").strip().lower()
-                    if opcao in ["cadastro", "cadastrar", "criar conta", "novo cadastro"]:
-                        cadastro_novo = Cadastro()
-                    elif opcao in ["sair", "sair sistema", "quitar", "sai"]:
-                        print("Tenha um bom dia!!")
-                        sys.exit()
-                    else:
-                        print("Opção inválida")
-                        print(f"Tentativas restantes {tentativas3}")
-                        tentativas3 -= 1
-
-                print("NÚMERO DE TENTATIVAS EXTRAPOLADAS.TENTE NOVAMENTE MAIS TARDE.")
-                sys.exit()
+            label_avisologin.configure(text="EMAIL NÃO CADASTRADO.\nVá para tela de cadastro")
+            return
 
 
-def menu(email_login, senha_login):
-    """
-    Essa função é utilizada para ir para tela de menu, assim que o usuário entrar no sistema.
-    Aqui ele poderá ver quais opções de serviço ele tem.
-    """
-    limpar_tela()
-    tentativas = 3
-    print("BEM VINDO AO MENU PRINCIPAL DO ECODROP💧.")
-    print("ECOMENSAGEM DIÁRIA 💧:")
-    print("-" * 60)
-    print(random.choice(mensagens_agua))
-    print("-" * 60)
 
-    time.sleep(2)
-    print("\n╔════════════════════════════════════════════════════════════╗")
-    print("║ 🌍 ESCOLHA UMA OPÇÃO NUMÉRICA                                ║")
-    print("╠════════════════════════════════════════════════════════════╣")
-    print("║ 1. Ver Ranking 🏆                                            ║")
-    print("║ 2. Calcular Pontos 💧                                        ║")
-    print("║ 3. Atualizar Dados 🔄                                        ║")
-    print("║ 4. Deletar Conta ❌                                          ║")
-    print("║ 5. Enviar Feedback ✉️                                         ║")
-    print("║ 6. Resgatar Recompensas 🎁                                   ║")
-    print("║ 7. Visualizar Dados 📊                                       ║")
-    print("║ 8. Jogar Quiz Semanal 💡                                     ║") 
-    print("║ 9. Sair do Sistema 🚪                                        ║") 
-    print("╚════════════════════════════════════════════════════════════╝")
-
-    while tentativas != 0:
-        resposta2 = input("Digite o número da opção desejada: ").strip()
-
-        if resposta2 == "1":
-            ranking(email_login, senha_login)
-            menu(email_login, senha_login)
-            return
-        elif resposta2 == "2":
-            calculo(email_login, senha_login)
-            menu(email_login, senha_login)
-            return
-        elif resposta2 == "3":
-            atualizar(email_login, senha_login)
-            menu(email_login, senha_login)
-            return
-        elif resposta2 == "4":
-            deletar(email_login, senha_login)
-            menu(email_login, senha_login)
-            return
-        elif resposta2 == "5":
-            feedback(email_login, senha_login)
-            menu(email_login, senha_login)
-            return
-        elif resposta2 == "6":
-            resgatar(email_login, senha_login)
-            menu(email_login, senha_login)
-            return
-        elif resposta2 == "7":
-            mostrar_dados(email_login, senha_login)
-            menu(email_login, senha_login)
-            return
-        elif resposta2 == "8":  
-            limpar_tela()
-            print("Iniciando Quiz Semanal...")
-            time.sleep(1)
-            
-            meu_quiz = Quiz(NOME_ARQUIVO_QUESTOES)
-            
-            if meu_quiz.questoes:
-                hoje = datetime.now()
-                # Verificar se é segunda-feira (0 = segunda-feira)
-                # O quiz é apenas na segunda-feira. 
-                if hoje.weekday() == 0: # 0 é Segunda-feira
-                    print("\nPreparando o quiz da semana! 🤓")
-                    meu_quiz.iniciar_quiz(email_login=email_login, num_questoes_desejadas=5)
-                else:
-                    print(f"\n🕒 O Quiz Semanal está disponível apenas às **segundas-feiras**. Hoje é **{hoje.strftime('%A')}**.")
-                    print("Por favor, volte na próxima segunda-feira para testar seus conhecimentos!")
-            else:
-                print("\n❌ Não foi possível iniciar o quiz. Verifique o arquivo de questões ou o banco de dados.")
-            input("\nPressione Enter para voltar ao Menu.")
-            menu(email_login, senha_login)
-            return
-        elif resposta2 == "9": 
-            print("Tenha um bom dia!!")
-            sys.exit()
-        else:
-            print("❌ Opção inválida. Tente novamente.")
-            tentativas -= 1
-
-    print("❗ Limite de tentativas atingido. Reinicie o programa.")
-    sys.exit()
-
+    
 
 def mostrar_dados(email_login,senha_login):
     """
