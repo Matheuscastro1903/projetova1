@@ -1,6 +1,43 @@
 
 import customtkinter as ctk
 from PIL import Image
+import json
+import csv
+import time
+import re
+import random
+
+mensagens_agua = [
+    "💧 Cada gota conta. Economize água!",
+    "🚿 Banhos curtos, planeta mais saudável.",
+    "🌍 Água é vida. Preserve cada gota.",
+    "🧼 Feche a torneira ao escovar os dentes.",
+    "💦 Pequenas atitudes salvam grandes recursos.",
+    "🔧 Torneiras pingando desperdiçam litros por dia!",
+    "🌱 Use a água da chuva para regar plantas.",
+    "❌ Água não é infinita. Use com consciência.",
+    "🪣 Reutilize a água sempre que puder.",
+    "🐳 Preserve os rios, lagos e oceanos.",
+    "📉 Menos desperdício, mais futuro.",
+    "🧽 Economize água ao lavar louça ou roupa.",
+    "🏡 Sua casa também pode ser sustentável.",
+    "👶 Ensine as crianças a cuidar da água.",
+    "💙 Água limpa é direito de todos. Preserve!"
+]
+
+with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
+    
+    # quando usa json.load o arquivo json é transformado em dicionário python
+    """
+    o objetivo dessa parte do código é abrir o arquivo json e salvar os dicionários em python,facilitando a manipulação
+    """
+    arquivo_lido = json.load(arquivo)
+    dados_conta = arquivo_lido["senha"]
+    dados_familia = arquivo_lido["familia"]
+    dados_quantidade = arquivo_lido["membros"]
+    dados_pontos = arquivo_lido["pontos"]
+    dados_apartamento = arquivo_lido["apartamento"]
+    dados_codigov = arquivo_lido["verificador"]
 
 
 # Função para só permitir digitar números
@@ -18,10 +55,11 @@ def voltar_inicial():
     frame_cadastro.pack_forget()
     frame_login.pack_forget()
     frame_adm.pack_forget()
+    frame_sobrenos.pack_forget()
 
     frame_topo.pack(fill="x")
     frame_conteudo.pack(fill="both", expand=True)
-    frame_menu.pack(side="left", fill="y")
+    frame_lateral.pack(side="left", fill="y")
     frame_principal.pack(side="right", fill="both",expand=True, padx=30, pady=30)
     frame_rodape.pack(fill="x", side="bottom")
 
@@ -33,7 +71,7 @@ def voltar_inicial():
 def mostrar_login():
     frame_topo.pack_forget()
     frame_conteudo.pack_forget()
-    frame_menu.pack_forget()
+    frame_lateral.pack_forget()
     frame_principal.pack_forget()
     frame_rodape.pack_forget()
     frame_login.pack(fill="both", expand=True)
@@ -48,14 +86,37 @@ def conferir_logar(entrada_emaillogin,entrada_senhalogin):
         label_avisologin.configure(text="Preencha todos os campos.", text_color="red")
         return
     
-    #login(email,senha,label_avisologin,mostrar_menu)
+    login(email,senha,label_avisologin)
 
+def login(email,senha,label_avisologin):
+    with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
+        # quando usa json.load o arquivo json é transformado em dicionário python
+        arquivo_lido = json.load(arquivo)
+        
+        dados_conta = arquivo_lido["senha"]
+        
+
+
+        
+        if email in dados_conta:
+            if dados_conta[email] == senha:
+                
+                mostrar_menu(email,senha)
+                return
+            else:
+                label_avisologin.configure(text="EMAIL OU SENHA INCORRETO.\nContate o suporte para recuperar usa senha",text_color="red")
+                return
+                
+        else:
+            label_avisologin.configure(text="EMAIL NÃO CADASTRADO.\nVá para tela de cadastro")
+            return
+    pass
 
 def cadastro_usuario():
     # frames para esquecer
     frame_topo.pack_forget()
     frame_conteudo.pack_forget()
-    frame_menu.pack_forget()
+    frame_lateral.pack_forget()
     frame_principal.pack_forget()
     frame_rodape.pack_forget()
 
@@ -71,7 +132,7 @@ def cadastrar_conta():
 def modo_adm():
     frame_topo.pack_forget()
     frame_conteudo.pack_forget()
-    frame_menu.pack_forget()
+    frame_lateral.pack_forget()
     frame_principal.pack_forget()
     frame_rodape.pack_forget() 
 
@@ -86,15 +147,179 @@ def entrar_modoadm():
 def sobre_nos():
     frame_topo.pack_forget()
     frame_conteudo.pack_forget()
-    frame_menu.pack_forget()
+    frame_lateral.pack_forget()
     frame_principal.pack_forget()
     frame_rodape.pack_forget()
     frame_sobrenos.pack(fill="both", expand=True)
 
     pass
 
-def mostrar_menu():
-    print("entrando menu...")
+def mostrar_menu(email, senha):
+    frame_login.pack_forget()
+
+    # Frame principal que envolve o menu e o conteúdo
+    frame_menu = ctk.CTkFrame(janela, fg_color="#ffffff")
+
+    # Topo do sistema com título
+    frame_topo = ctk.CTkFrame(frame_menu, fg_color="#1A73E8", height=80)
+    frame_topo.pack(fill="x")
+
+    titulo = ctk.CTkLabel(frame_topo, text="EcoDrop", fg_color="#1A73E8", text_color="white",
+                          font=("Arial", 24, "bold"))
+    titulo.pack(pady=20)
+
+    # Menu lateral
+    frame_lateral = ctk.CTkFrame(frame_menu, fg_color="white", width=200)
+    frame_lateral.pack(side="left", fill="y")
+
+    # Frame de conteúdo
+    frame_conteudo = ctk.CTkFrame(frame_menu, fg_color="#f0f2f5")
+    
+
+    # ---- Botões reorganizados ----
+    botao1 = ctk.CTkButton(frame_lateral, text="🏆 Ranking mensal", fg_color="white", text_color="#1A73E8",
+                           font=("Arial", 12), anchor="w",
+                           command=lambda: mostrar_ranking(email, senha, frame_principalmenu), cursor="hand2")
+    botao1.pack(fill="x", pady=(20, 10), padx=20)
+
+    botao2 = ctk.CTkButton(frame_lateral, text="🎁 Resgatar prêmios", fg_color="white", text_color="#1A73E8",
+                           font=("Arial", 12), anchor="w",
+                           command=lambda: resgatar_premio(email, senha, frame_principalmenu), cursor="hand2")
+    botao2.pack(fill="x", pady=10, padx=20)
+
+    botao3 = ctk.CTkButton(frame_lateral, text="🧮 Cálculo de pontos", fg_color="white", text_color="#1A73E8",
+                           font=("Arial", 12), anchor="w",
+                           command=lambda: calculo_pontuacao(email, senha, frame_principalmenu), cursor="hand2")
+    botao3.pack(fill="x", pady=10, padx=20)
+
+    botao4 = ctk.CTkButton(frame_lateral, text="🧠 Quiz semanal", fg_color="white", text_color="#1A73E8",
+                           font=("Arial", 12), anchor="w",
+                           command=lambda: mostrar_dados(email, senha, frame_principalmenu), cursor="hand2")
+    botao4.pack(fill="x", pady=10, padx=20)
+
+    botao5 = ctk.CTkButton(frame_lateral, text="📘 Área educativa", fg_color="white", text_color="#1A73E8",
+                           font=("Arial", 12), anchor="w",
+                           command=lambda: atualizar_dados(email, senha, frame_principalmenu), cursor="hand2")
+    botao5.pack(fill="x", pady=10, padx=20)
+
+    botao6 = ctk.CTkButton(frame_lateral, text="📊 Mostrar dados", fg_color="white", text_color="#1A73E8",
+                           font=("Arial", 12), anchor="w",
+                           command=lambda: mostrar_dados(email, senha, frame_principalmenu), cursor="hand2")
+    botao6.pack(fill="x", pady=10, padx=20)
+
+    botao7 = ctk.CTkButton(frame_lateral, text="🔄 Atualizar dados", fg_color="white", text_color="#1A73E8",
+                           font=("Arial", 12), anchor="w",
+                           command=lambda: atualizar_dados(email, senha, frame_principalmenu), cursor="hand2")
+    botao7.pack(fill="x", pady=10, padx=20)
+
+    botao8 = ctk.CTkButton(frame_lateral, text="🗑 Deletar conta", fg_color="white", text_color="#1A73E8",
+                           font=("Arial", 12), anchor="w",
+                           command=lambda: deletar_conta(email, senha, frame_principalmenu), cursor="hand2")
+    botao8.pack(fill="x", pady=10, padx=20)
+
+    botao9 = ctk.CTkButton(frame_lateral, text="✍️ Enviar feedback", fg_color="white", text_color="#1A73E8",
+                           font=("Arial", 12), anchor="w",
+                           command=lambda: feedback(email, senha, frame_principalmenu), cursor="hand2")
+    botao9.pack(fill="x", pady=10, padx=20)
+
+    # Frame principal de conteúdo
+    frame_conteudo.pack(fill="both", expand=True)
+
+    frame_principalmenu = ctk.CTkFrame(frame_conteudo, fg_color="#ffffff")
+    frame_principalmenu.pack(fill="both", expand=True)
+
+    # Mensagem de boas-vindas
+    texto_bem_vindo = ctk.CTkLabel(frame_principalmenu, text="Bem-vindo ao EcoDrop",
+                                   fg_color="#ffffff", text_color="#202124", font=("Arial", 18, "bold"))
+    texto_bem_vindo.pack(pady=(0, 20))
+
+    texto_instrucao = ctk.CTkLabel(frame_principalmenu,
+                                   text=random.choice(mensagens_agua),
+                                   fg_color="#ffffff", text_color="#5f6368",
+                                   wraplength=500, justify="left", font=("Arial", 12))
+    texto_instrucao.pack()
+
+    imagem = Image.open("fotos/mascoteprincipall.png")
+    ctk_imagem = ctk.CTkImage(light_image=imagem, dark_image=imagem, size=(400, 400))
+
+    label = ctk.CTkLabel(frame_principalmenu, image=ctk_imagem, text="")
+    label.pack()
+
+    # Exibe o frame principal completo
+    frame_menu.pack(fill="both", expand=True)
+
+
+
+    pass
+
+def mostrar_dados(email, senha, frame_principalmenu):
+    """
+    📊 Função: Mostrar Dados
+    Mostra os principais dados da conta do usuário (exceto senha e código verificador por segurança).
+    Utilizada para que o usuário possa revisar as informações do seu cadastro.
+    """
+    pass
+
+
+def atualizar_dados(email, senha, frame_principalmenu):
+    """
+    🔄 Função: Atualizar Dados
+    Permite ao usuário escolher se deseja atualizar:
+    - Dados da conta (e-mail ou senha), ou
+    - Dados pessoais (nome da família, membros, apartamento).
+    Direciona para subfunções específicas com tratamento de erro e validação.
+    """
+    pass
+
+
+def deletar_conta(email, senha, frame_principalmenu):
+    """
+    🗑 Função: Deletar Conta
+    Permite ao usuário excluir sua conta permanentemente do sistema.
+    Após a confirmação, os dados são removidos e ele precisará se cadastrar novamente.
+    """
+    pass
+
+
+def feedback(email, senha, frame_principalmenu):
+    """
+    ✍️ Função: Feedback
+    Permite ao usuário enviar uma opinião com até 140 caracteres e uma nota de 0 a 10.
+    Serve para avaliar o sistema e coletar sugestões de melhoria.
+    """
+    pass
+
+
+def calculo_pontuacao(email, senha, frame_principalmenu):
+    """
+    🧮 Função: Cálculo de Pontos
+    Calcula pontos com base nos litros economizados, número de moradores e consumo médio.
+    Os pontos são convertidos em benefícios (ex: vouchers, descontos, milhas).
+    """
+    pass
+
+
+def resgatar_premio(email, senha, frame_principalmenu):
+    """
+    🎁 Função: Resgatar Prêmios
+    Permite ao usuário resgatar recompensas usando seus pontos acumulados.
+    Verifica se o saldo é suficiente antes de confirmar o resgate.
+    """
+    pass
+
+
+def mostrar_ranking(email, senha, frame_principalmenu):
+    """
+    🏆 Função: Ranking Mensal
+    Exibe uma lista com as famílias que mais economizaram água no mês.
+    Usa o consumo médio diário como critério de ordenação.
+    """
+    pass
+
+def quiz_semanal(email, senha, frame_principalmenu):
+    pass
+
+def area_educativa(email, senha, frame_principalmenu):
     pass
 
 
@@ -120,23 +345,23 @@ frame_conteudo = ctk.CTkFrame(janela, fg_color="#f0f0f0")
 frame_conteudo.pack(fill="both", expand=True)
 
 # Menu lateral
-frame_menu = ctk.CTkFrame(frame_conteudo, fg_color="#f0f0f0", width=200)
-frame_menu.pack(side="left", fill="y")
+frame_lateral = ctk.CTkFrame(frame_conteudo, fg_color="#f0f0f0", width=200)
+frame_lateral.pack(side="left", fill="y")
 
 # Botões do menu
-botao1 = ctk.CTkButton(frame_menu, text="Login", fg_color="#f0f0f0",
+botao1 = ctk.CTkButton(frame_lateral, text="Login", fg_color="#f0f0f0",
                        text_color="#1A73E8", font=("Arial", 12), anchor="w", command=mostrar_login)
 botao1.pack(fill="x", pady=(20, 10), padx=10)
 
-botao2 = ctk.CTkButton(frame_menu, text="Cadastro usuário", fg_color="#f0f0f0",
+botao2 = ctk.CTkButton(frame_lateral, text="Cadastro usuário", fg_color="#f0f0f0",
                        text_color="#1A73E8", font=("Arial", 12), anchor="w", command=cadastro_usuario)
 botao2.pack(fill="x", pady=10, padx=10)
 
-botao3 = ctk.CTkButton(frame_menu, text="Modo administrador", fg_color="#f0f0f0",
+botao3 = ctk.CTkButton(frame_lateral, text="Modo administrador", fg_color="#f0f0f0",
                        text_color="#1A73E8", font=("Arial", 12), anchor="w", command=modo_adm)
 botao3.pack(fill="x", pady=10, padx=10)
 
-botao4 = ctk.CTkButton(frame_menu, text="Sobre nós", fg_color="#f0f0f0",
+botao4 = ctk.CTkButton(frame_lateral, text="Sobre nós", fg_color="#f0f0f0",
                        text_color="#1A73E8", font=("Arial", 12), anchor="w", command=sobre_nos)
 botao4.pack(fill="x", pady=10, padx=10)
 
@@ -336,7 +561,17 @@ descricao_projeto = ctk.CTkLabel(
     justify="left"
 )
 descricao_projeto.pack(pady=(0, 30))
+imagem = Image.open("fotos/fotosobrenos.jpg")
+ctk_imagem = ctk.CTkImage(
+    light_image=imagem, dark_image=imagem, size=(500, 300))
 
+label = ctk.CTkLabel(frame_sobrenos, image=ctk_imagem, text="")
+label.pack()
+botao_voltarinicial = ctk.CTkButton(frame_sobrenos, text="Voltar", fg_color="blue", text_color="#ffffff", width=300, command=voltar_inicial)
+botao_voltarinicial.pack(pady=30)
+
+
+###############################################
 
 
 
