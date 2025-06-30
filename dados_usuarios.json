@@ -19,7 +19,9 @@
     "lucas.barbosa@hotmail.com": 13200,
     "carol.fernandes@gmail.com": 14120,
     "hugo.moraes@hotmail.com": 17580,
-    "bianca.oliveira@gmail.com": 14900
+    "bianca.oliveira@gmail.com": 14900,
+    "lionelmessi10@gmail.com": 20300,
+    "cr7@gmail.com": 21600
   },
   "calculo_realizado": {
     "joao.silva@email.com": false,
@@ -41,6 +43,9 @@
     "lucas.barbosa@hotmail.com": false,
     "carol.fernandes@gmail.com": false,
     "hugo.moraes@hotmail.com": false,
-    "bianca.oliveira@gmail.com": false
+    "bianca.oliveira@gmail.com": false,
+    "lionelmessi10@gmail.com": false,
+    "cr7@gmail.com": false
   }
 }
+

@@ -42,15 +42,23 @@ with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
 
 # Função para só permitir digitar números
 def validar_numeros(novo_texto):  # Adicione o parâmetro
+    """Função utilizada para deixar o usuário digitar apenas números,melhorando o tratamento de erros """
     return novo_texto.isdigit() or novo_texto == ""
 
 # Função para só permitir digitar letras e espaços
 
 def validar_letras_espacos(novo_texto):  # Adicione o parâmetro
+    """Função utilizada para deixar o usuário digitar apenas letras e espaços,melhorando o tratamento de erros """
     return all(c.isalpha() or c.isspace() for c in novo_texto) or novo_texto == ""
 
+def aviso_sistema():
+    """Função utilizada para mostrar o frame_aviso,que só aparecerá se o cadastro for concluído com sucesso"""
+    frame_cadastro.pack_forget()
+    frame_aviso.pack(fill="both",expand=True)
+  
 
 def voltar_inicial():
+    """Função utilizada para volta a tela inical,caso tenha entrado na opção errada"""
     # Frames para "esquecer"
     frame_cadastro.pack_forget()
     frame_login.pack_forget()
@@ -69,17 +77,20 @@ def voltar_inicial():
 
 
 def mostrar_login():
+    """Função utilizada para expandir o frame login"""
     frame_topo.pack_forget()
     frame_conteudo.pack_forget()
     frame_lateral.pack_forget()
     frame_principal.pack_forget()
     frame_rodape.pack_forget()
+    frame_aviso.pack_forget()
     frame_login.pack(fill="both", expand=True)
 
     pass
 
 
 def conferir_logar(entrada_emaillogin,entrada_senhalogin):
+    """Função utilizada para verificar se há espaços em branco ao apertar o botão logar"""
     email = entrada_emaillogin.get().strip()
     senha = entrada_senhalogin.get().strip()
     if email == "" or senha == "":
@@ -89,6 +100,7 @@ def conferir_logar(entrada_emaillogin,entrada_senhalogin):
     login(email,senha,label_avisologin)
 
 def login(email,senha,label_avisologin):
+    """Função utilizada para verificar se email e senha estão corretos,para assim ir para o menu"""
     with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
         # quando usa json.load o arquivo json é transformado em dicionário python
         arquivo_lido = json.load(arquivo)
@@ -112,7 +124,8 @@ def login(email,senha,label_avisologin):
             return
     pass
 
-def cadastro_usuario():
+def mostrar_cadastro():
+    """Função utilizada para expandir o frame cadastro"""
     # frames para esquecer
     frame_topo.pack_forget()
     frame_conteudo.pack_forget()
@@ -125,11 +138,48 @@ def cadastro_usuario():
     pass
 
 
-def cadastrar_conta():
-    pass
+def conferir_cadastrar(entrada_email, entrada_nome, entrada_senha,
+                       entrada_qmembros, entrada_numeroap, entrada_verificador,label_aviso):
+    """
+    Essa função será utilizada para verificar se as entradas estão preenchidas
+    corretamente e chamará a classe Cadastro para cadastrar a conta.
+    """
+
+    email = entrada_email.get().strip()
+    nome_familia = entrada_nome.get().strip()
+    senha = entrada_senha.get().strip()
+    quantidade_pessoas = int(entrada_qmembros.get().strip())
+    apartamento = int(entrada_numeroap.get().strip())
+    verificador = entrada_verificador.get().strip()
+
+    entradas = [email, nome_familia, senha,quantidade_pessoas,apartamento]
+
+    # Verificação: se algum campo de texto estiver vazio
+    if any(campo == "" for campo in entradas):
+        label_aviso.configure(text="Todos os campos devem ser preenchidos.", text_color="red")
+        return
+
+    # Validação da senha
+    if len(senha) < 4 or len(senha) > 20:
+        label_aviso.configure(text="A senha deve ter entre 4 e 20 caracteres.", text_color="red")
+        return
+    
+    if len(verificador) < 4 or len(verificador) > 20:
+        label_aviso.configure(text="A senha deve ter entre 4 e 20 caracteres.", text_color="red")
+        return
+    
+
+    
+    conta = Cadastro(email,quantidade_pessoas,senha,nome_familia,apartamento,verificador)
+
+
+
+
+    
 
 
 def modo_adm():
+    """Função utilizada para expandir o frame_adm,quando o usuário quiser ir para o modo adm"""
     frame_topo.pack_forget()
     frame_conteudo.pack_forget()
     frame_lateral.pack_forget()
@@ -141,10 +191,12 @@ def modo_adm():
     pass
 
 def entrar_modoadm():
+    
     pass
 
 
 def sobre_nos():
+    """Função utilizada para mostrar o frame_sobrenos(Contando a história do  projeto ecodrop"""
     frame_topo.pack_forget()
     frame_conteudo.pack_forget()
     frame_lateral.pack_forget()
@@ -155,6 +207,7 @@ def sobre_nos():
     pass
 
 def mostrar_menu(email, senha):
+    """Função utilizada para mostrar o frame_menu,onde verá as funções disponíveis do programa"""
     frame_login.pack_forget()
 
     # Frame principal que envolve o menu e o conteúdo
@@ -199,7 +252,7 @@ def mostrar_menu(email, senha):
 
     botao5 = ctk.CTkButton(frame_lateral, text="📘 Área educativa", fg_color="white", text_color="#1A73E8",
                            font=("Arial", 12), anchor="w",
-                           command=lambda: atualizar_dados(email, senha, frame_principalmenu), cursor="hand2")
+                           command=lambda: area_educativa(email, senha, frame_menu), cursor="hand2")
     botao5.pack(fill="x", pady=10, padx=20)
 
     botao6 = ctk.CTkButton(frame_lateral, text="📊 Mostrar dados", fg_color="white", text_color="#1A73E8",
@@ -263,12 +316,7 @@ def mostrar_dados(email, senha, frame_principalmenu):
 
 def atualizar_dados(email, senha, frame_principalmenu):
     """
-    🔄 Função: Atualizar Dados
-    Permite ao usuário escolher se deseja atualizar:
-    - Dados da conta (e-mail ou senha), ou
-    - Dados pessoais (nome da família, membros, apartamento).
-    Direciona para subfunções específicas com tratamento de erro e validação.
-    """
+    🔄 Função: Atualizar Dados,onde será possível o usuário atualizar seus dados"""
     pass
 
 
@@ -319,13 +367,129 @@ def mostrar_ranking(email, senha, frame_principalmenu):
 def quiz_semanal(email, senha, frame_principalmenu):
     pass
 
-def area_educativa(email, senha, frame_principalmenu):
+
+
+def area_educativa(email, senha, frame_menu):
+    """Função utilizada para ir para o frame_educativo(usaremos a tela inteira nessa função,por se necessário para ter mais conteúdo.
+    Onde terá várias opções de leitura sobre assuntos de sustentabilidade"""
+    frame_menu.destroy()
+
+    frame_topoeducativo = ctk.CTkFrame(janela, fg_color="#1A73E8", height=80)
+    frame_topoeducativo.pack(fill="x")
+
+    titulo_educativo = ctk.CTkLabel(frame_topoeducativo, text="💧 ÁREA EDUCATIVA",
+                                    text_color="#f0f0f0", font=("Arial", 24, "bold"))
+    titulo_educativo.pack(pady=20)
+
+    frame_educativo = ctk.CTkFrame(janela, fg_color="#ffffff")
+    frame_educativo.pack(fill="both", expand=True, padx=20, pady=10)
+
+    btn1 = ctk.CTkButton(frame_educativo,
+                         text="Europa investe €15 bilhões em preservação de recursos hídricos até 2027",
+                         fg_color="white",
+                         text_color="#1A73E8",
+                         font=("Arial", 12),
+                         anchor="w",
+                         cursor="hand2",
+                         command=area_educativa1)
+    btn1.pack(fill="x", pady=10)
+
+    btn2 = ctk.CTkButton(frame_educativo,
+                         text="Cientistas desenvolvem tecnologia para extrair água potável do ar usando resíduos alimentares",
+                         fg_color="white",
+                         text_color="#1A73E8",
+                         font=("Arial", 12),
+                         anchor="w",
+                         cursor="hand2",
+                         command=area_educativa2)
+    btn2.pack(fill="x", pady=10)
+
+    btn3 = ctk.CTkButton(frame_educativo,
+                         text="Universidade do Texas inicia construção do maior centro universitário de reúso de água dos EUA",
+                         fg_color="white",
+                         text_color="#1A73E8",
+                         font=("Arial", 12),
+                         anchor="w",
+                         cursor="hand2",
+                         command=area_educativa3)
+    btn3.pack(fill="x", pady=10)
+
+    btn4 = ctk.CTkButton(frame_educativo,
+                         text="Alunos serão instruídos sobre conservação da água e limpeza do rio Ganges na Índia",
+                         fg_color="white",
+                         text_color="#1A73E8",
+                         font=("Arial", 12),
+                         anchor="w",
+                         cursor="hand2",
+                         command=area_educativa4)
+    btn4.pack(fill="x", pady=10)
+
+    btn5 = ctk.CTkButton(frame_educativo,
+                         text="Escolas de New Haven, EUA, ampliam programas de sustentabilidade e uso racional da água",
+                         fg_color="white",
+                         text_color="#1A73E8",
+                         font=("Arial", 12),
+                         anchor="w",
+                         cursor="hand2",
+                         command=area_educativa5)
+    btn5.pack(fill="x", pady=10)
+
+    btn6 = ctk.CTkButton(frame_educativo,
+                         text="10 filmes educativos para crianças sobre sustentabilidade",
+                         fg_color="white",
+                         text_color="#1A73E8",
+                         font=("Arial", 12),
+                         anchor="w",
+                         cursor="hand2",
+                         command=area_educativa6)
+    btn6.pack(fill="x", pady=10)
+
+    botao_voltarmenu = ctk.CTkButton(frame_educativo,
+                                     text="Voltar ao menu",
+                                     fg_color="white",
+                                     text_color="#1A73E8",
+                                     font=("Arial", 12),
+                                     anchor="w",
+                                     cursor="hand2",
+                                     command=lambda: mostrar_menu(email, senha))
+    botao_voltarmenu.pack(fill="x", pady=10)
+
+    frame_educativo.pack(fill="both", expand=True, padx=20, pady=10)
+
+
+def area_educativa1():
+    # Área educativa destinada ao tema: Preservação de recursos hídricos na Europa
+    pass
+
+def area_educativa2():
+    # Área educativa destinada ao tema: Tecnologia para extrair água potável do ar usando resíduos alimentares
+    pass
+
+def area_educativa3():
+    # Área educativa destinada ao tema: Construção do maior centro universitário de reúso de água dos EUA
+    pass
+
+def area_educativa4():
+    # Área educativa destinada ao tema: Conservação da água e limpeza do rio Ganges na Índia
+    pass
+
+def area_educativa5():
+    # Área educativa destinada ao tema: Programas de sustentabilidade e uso racional da água em escolas de New Haven, EUA
+    pass
+
+def area_educativa6():
+    # Área educativa destinada ao tema: Filmes educativos para crianças sobre sustentabilidade
     pass
 
 
+def sair_sistema():
+    """Função utilizada para fechar sistema """
+    janela.destroy()  # Fecha a janela principal
+    # Ou qualquer outra lógica de saída que você preferir
+
 # ctk.set_appearance_mode("light")
 
-
+######################################################################
 # Configuração da janela principal
 janela = ctk.CTk()
 janela.title("ECODROP SYSTEM")
@@ -354,7 +518,7 @@ botao1 = ctk.CTkButton(frame_lateral, text="Login", fg_color="#f0f0f0",
 botao1.pack(fill="x", pady=(20, 10), padx=10)
 
 botao2 = ctk.CTkButton(frame_lateral, text="Cadastro usuário", fg_color="#f0f0f0",
-                       text_color="#1A73E8", font=("Arial", 12), anchor="w", command=cadastro_usuario)
+                       text_color="#1A73E8", font=("Arial", 12), anchor="w", command=mostrar_cadastro)
 botao2.pack(fill="x", pady=10, padx=10)
 
 botao3 = ctk.CTkButton(frame_lateral, text="Modo administrador", fg_color="#f0f0f0",
@@ -397,6 +561,8 @@ texto_rodape = ctk.CTkLabel(
 texto_rodape.pack()
 
 ###########################################################
+"""Parte do frame login"""
+
 frame_login = ctk.CTkFrame(janela, fg_color="#ffffff")
 label_login = ctk.CTkLabel(frame_login, text="Informe seus dados:",
                            fg_color="#ffffff", text_color="blue", font=("Arial", 20))
@@ -437,6 +603,7 @@ botao_voltarinicial.pack()
 
 
 ##############################################
+"""Parte do frame cadastro"""
 frame_cadastro = ctk.CTkFrame(janela, fg_color="#ffffff")
 label_cadastro = ctk.CTkLabel(frame_cadastro, text="Informe seus dados:",
                               fg_color="#ffffff", text_color="blue", font=("Arial", 20))
@@ -499,7 +666,9 @@ entrada_verificador.pack(pady=1)
 
 
 botao_cadastrar = ctk.CTkButton(frame_cadastro, text="Cadastrar", fg_color="blue",
-                                text_color="#ffffff", width=300, command=cadastrar_conta)
+                                text_color="#ffffff", width=300, command=lambda: conferir_cadastrar(entrada_email,entrada_nome,entrada_senha,
+                                                                                                    entrada_qmembros,
+                                                                                                   entrada_numeroap,entrada_verificador,label_aviso))
 botao_cadastrar.pack(pady=1)
 
 # botão de voltar
@@ -509,6 +678,7 @@ botao_voltarinicial.pack()
 
 
 #####################################
+"""Parte do frame adm(modo administrador"""
 frame_adm = ctk.CTkFrame(janela, fg_color="#ffffff")
 label_adm = ctk.CTkLabel(frame_adm, text="Informe seus dados:",fg_color="#ffffff", text_color="blue", font=("Arial", 30))
 label_adm.pack(pady=1)
@@ -533,6 +703,7 @@ botao_voltarinicial.pack()
 
 
 ######################################################
+"""Parte do frame sobrenos(Conta a história do ecodrop"""
 frame_sobrenos = ctk.CTkFrame(janela, fg_color="#ffffff")
 
 # Título principal
@@ -570,10 +741,168 @@ label.pack()
 botao_voltarinicial = ctk.CTkButton(frame_sobrenos, text="Voltar", fg_color="blue", text_color="#ffffff", width=300, command=voltar_inicial)
 botao_voltarinicial.pack(pady=30)
 
+#######################################
+"""Parte do frame aviso(só será usada quando o usuário finalizar corretamente o cadastro,tendo a opção de ir para login ou sair do sistema"""
+frame_aviso=ctk.CTkFrame(janela,fg_color="#ffffff")
+ # Label de aviso
+label = ctk.CTkLabel(frame_aviso, text="Cadastro realizado com sucesso!", font=("Arial", 20), text_color="green")
+label.pack(pady=(40, 20))
+
+    # Botão para ir para login
+botao_login = ctk.CTkButton(frame_aviso, text="Ir para Login", width=200, command=mostrar_login)
+botao_login.pack(pady=(0, 10))
+
+    # Botão para sair do sistema
+botao_sair = ctk.CTkButton(frame_aviso, text="Sair do Sistema", width=200, fg_color="red", hover_color="#cc0000", command=sair_sistema)
+botao_sair.pack()
+
 
 ###############################################
 
 
 
+class Cadastro:
+    """
+    Essa Classe tem o objetivo de cadastrar os usuários, recebendo os dados básicos como parâmetros.
+    Ela realiza o cadastro de uma conta e verifica o código de segurança fornecido.
+    """
+
+    def __init__(self, email, quantidade_pessoas, senha, nome_familia, apartamento, verificador):
+        # Dados básicos de cadastro
+        self.email = email
+        self.quantidade = quantidade_pessoas
+        self.senha = senha.strip()
+        self.nome_familia = nome_familia.strip()
+        self.pontos = 0  # Pontos começam zerados
+        self.apartamento = apartamento
+        self.verificador = verificador.strip()
+        print("entrei cadastro")
+        self.email_valido()
+
+        # Chamada para verificar o código de segurança
+        
+
+
+    def email_valido(self):
+        
+        #FUNÇÃO UTILIZADA PARA CONFERIR SE O EMAIL É VÁLIDO OU NÃO
+        dominios_validos = [
+            'gmail.com', 'outlook.com', 'hotmail.com',
+            'yahoo.com', 'icloud.com'
+        ]
+
+        tentativas_email = 3
+        while tentativas_email != 0:
+            # VERIFICA SE O FORMATO DO EMAIL ESTÁ ESCRITO CORRETAMENTE
+            if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', self.email):
+                print("FORMATO DE EMAIL INVÁLIDO, UTILIZE UM DOMÍNIO VÁLIDO")
+                self.email = input("Digite novamente seu email: ").strip()
+                tentativas_email -= 1
+                print(f"Tentativas restantes: {tentativas_email}")
+
+                continue  # volta pro início do while para validar de novo,caso esteja correto,irá passar pelo verificador
+
+            # VERIFICA APENAS O DOMÍNIO,SEPARA TODO O RESTO E PEGA APENAS A PARTE DO DOMÍNIO
+            dominio = self.email.split('@')[1].lower()
+            if dominio not in dominios_validos:
+                print("Domínio não aceito. Use: Gmail, Outlook, Yahoo, iCloud, etc.")
+                self.email = input("Digite novamente seu email: ").strip()
+                tentativas_email -= 1
+                print(f"Tentativas restantes: {tentativas_email}")
+
+                # continuar o loop sem parar
+                continue
+
+        # Se chegou aqui, formato e domínio estão corretos
+            break
+
+        else:
+            print("Limite de tentativas atingido. Encerrando o processo de cadastro.")
+            return
+
+        self.conferir_email()
+
+    
+    def conferir_email(self):
+        
+        #FUNÇÃO UTILIZADA PARA CONFERIR SE O EMAIL JÁ ESTÁ CADASTRADO OU NÃO
+        
+        with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
+            arquivo_lido = json.load(arquivo)
+            dados_conta = arquivo_lido["senha"]
+            dados_familia = arquivo_lido["familia"]
+            dados_quantidade = arquivo_lido["membros"]
+            dados_pontos = arquivo_lido["pontos"]
+            dados_apartamento = arquivo_lido["apartamento"]
+            dados_codigov = arquivo_lido["verificador"]
+
+            if self.email in dados_conta:
+                print("EMAIL JÁ POSSUI UMA CONTA.")
+                tentativas = 3
+                while tentativas != 0:
+                    resposta1 = input(
+                    "Deseja tentar refazer a conta ou ir para tela de login caso já possua conta? (refazer/login) ").strip().lower()
+                    if resposta1 in ["login", "tela de login", "logi"]:
+                        login()
+                        return
+                    elif resposta1 in ["refazer", "retentar", "conta", "refazer conta"]:
+                        self.email = input("Digite novamente seu email: ").strip()
+                        self.conferir_email()
+                        return
+                    else:
+                        print("Resposta inválida")
+                        tentativas -= 1
+                        print(f"Tentativas restantes {tentativas}")
+                else:
+                    print(
+                    "Limite de tentativas atingido. Encerrando o processo de cadastro.")
+                    return
+            else:
+                self.conferir_ap()  # Continua o processo normalmente
+
+    def conferir_ap(self):
+        
+       #FUNÇÃO UTILIZADA PARA ANALISAR SE O APARTAMENTO JÁ ESTÁ CADASTRADO OU NÃO
+        if self.apartamento in dados_apartamento.values():
+            print("APARTAMENTO JÁ CADASTRADO.")
+            tentativas = 3
+            while tentativas != 0:
+                resposta1 = input(
+                    "Deseja tentar refazer a conta ou ir para tela de login caso já possua conta ??(refazer/login)").strip().lower()
+                if resposta1 in ["login", "tela de login", "logi"]:
+                    login()
+                    return
+                elif resposta1 in ["refazer", "retentar", "conta", "refazer conta"]:
+                    Cadastro()
+                    return
+                else:
+                    print("Resposta inválida")
+                    tentativas -= 1
+                    print(f"Tentativas restantes {tentativas}")
+            else:  # ✅ Só imprime quando zerar tentativas
+                print(
+                    "Limite de tentativas atingido. Encerrando o processo de cadastro.")
+        else:
+            self.cadastrar_conta()
+
+    def cadastrar_conta(self):
+        
+        ##FUNÇÃO UTILIZADA PARA CADASTRAR CONTA NO BANCO DE DADOS
+
+        dados_conta[self.email] = self.senha
+        dados_familia[self.email] = self.nome_familia
+        dados_quantidade[self.email] = self.quantidade
+        dados_pontos[self.email] = self.pontos
+        dados_apartamento[self.email] = self.apartamento
+        dados_codigov[self.email] = self.verificador
+
+        # PARA ARQUIVO TIPO JSON É MELHOR USAR "w" pois qualquer errinho de formatação pode quebrar o sistema
+        with open(r"banco_dados.JSON", "w", encoding="utf-8") as arquivo:
+            # Aqui, estamos criando um dicionário com duas chaves:
+            json.dump({"senha": dados_conta, "familia": dados_familia, "membros": dados_quantidade, "pontos": dados_pontos,
+                       "apartamento": dados_apartamento, "verificador": dados_codigov}, arquivo, indent=4, ensure_ascii=False)
+            aviso_sistema()
+        
+        
 
 janela.mainloop()
