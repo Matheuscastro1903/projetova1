@@ -208,7 +208,11 @@ def sobre_nos():
 
 def mostrar_menu(email, senha):
     """Função utilizada para mostrar o frame_menu,onde verá as funções disponíveis do programa"""
+    for widget in janela.winfo_children():
+        widget.destroy()
+
     frame_login.pack_forget()
+    
 
     # Frame principal que envolve o menu e o conteúdo
     frame_menu = ctk.CTkFrame(janela, fg_color="#ffffff")
@@ -299,6 +303,15 @@ def mostrar_menu(email, senha):
     label.pack()
 
     # Exibe o frame principal completo
+    
+    # Frame do rodapé
+    frame_rodape = ctk.CTkFrame(frame_menu, fg_color="#f0f0f0", height=30)
+    frame_rodape.pack(fill="x", side="bottom")
+
+    texto_rodape = ctk.CTkLabel(
+    frame_rodape, text="Versão 2.0 • Suporte: ecodropsuporte@gmail.com", text_color="#5f6368", font=("Arial", 10))
+    texto_rodape.pack()
+    
     frame_menu.pack(fill="both", expand=True)
 
 
@@ -372,13 +385,15 @@ def quiz_semanal(email, senha, frame_principalmenu):
 def area_educativa(email, senha, frame_menu):
     """Função utilizada para ir para o frame_educativo(usaremos a tela inteira nessa função,por se necessário para ter mais conteúdo.
     Onde terá várias opções de leitura sobre assuntos de sustentabilidade"""
-    frame_menu.destroy()
+    
+    for widget in janela.winfo_children():
+        widget.destroy()
 
     frame_topoeducativo = ctk.CTkFrame(janela, fg_color="#1A73E8", height=80)
     frame_topoeducativo.pack(fill="x")
 
     titulo_educativo = ctk.CTkLabel(frame_topoeducativo, text="💧 ÁREA EDUCATIVA",
-                                    text_color="#f0f0f0", font=("Arial", 24, "bold"))
+                                    text_color="#ffffff", font=("Arial", 24, "bold"))
     titulo_educativo.pack(pady=20)
 
     frame_educativo = ctk.CTkFrame(janela, fg_color="#ffffff")
@@ -391,7 +406,7 @@ def area_educativa(email, senha, frame_menu):
                          font=("Arial", 12),
                          anchor="w",
                          cursor="hand2",
-                         command=area_educativa1)
+                         command=lambda: area_educativa1(frame_educativo, email, senha, frame_menu))
     btn1.pack(fill="x", pady=10)
 
     btn2 = ctk.CTkButton(frame_educativo,
@@ -401,7 +416,7 @@ def area_educativa(email, senha, frame_menu):
                          font=("Arial", 12),
                          anchor="w",
                          cursor="hand2",
-                         command=area_educativa2)
+                         command=lambda: area_educativa2(frame_educativo, email, senha, frame_menu))
     btn2.pack(fill="x", pady=10)
 
     btn3 = ctk.CTkButton(frame_educativo,
@@ -411,7 +426,7 @@ def area_educativa(email, senha, frame_menu):
                          font=("Arial", 12),
                          anchor="w",
                          cursor="hand2",
-                         command=area_educativa3)
+                         command=lambda: area_educativa3(frame_educativo, email, senha, frame_menu))
     btn3.pack(fill="x", pady=10)
 
     btn4 = ctk.CTkButton(frame_educativo,
@@ -421,68 +436,490 @@ def area_educativa(email, senha, frame_menu):
                          font=("Arial", 12),
                          anchor="w",
                          cursor="hand2",
-                         command=area_educativa4)
+                         command=lambda: area_educativa4(frame_educativo, email, senha, frame_menu))
     btn4.pack(fill="x", pady=10)
 
     btn5 = ctk.CTkButton(frame_educativo,
-                         text="Escolas de New Haven, EUA, ampliam programas de sustentabilidade e uso racional da água",
+                         text="Impacto dos datacenters em áreas com escassez hídrica na América Latina",
                          fg_color="white",
                          text_color="#1A73E8",
                          font=("Arial", 12),
                          anchor="w",
                          cursor="hand2",
-                         command=area_educativa5)
+                         command=lambda: area_educativa5(frame_educativo, email, senha, frame_menu))
     btn5.pack(fill="x", pady=10)
 
     btn6 = ctk.CTkButton(frame_educativo,
-                         text="10 filmes educativos para crianças sobre sustentabilidade",
+                         text="8 filmes educativos para crianças sobre sustentabilidade",
                          fg_color="white",
                          text_color="#1A73E8",
                          font=("Arial", 12),
                          anchor="w",
                          cursor="hand2",
-                         command=area_educativa6)
+                         command=lambda: area_educativa6(frame_educativo, email, senha, frame_menu))
     btn6.pack(fill="x", pady=10)
 
-    botao_voltarmenu = ctk.CTkButton(frame_educativo,
-                                     text="Voltar ao menu",
-                                     fg_color="white",
-                                     text_color="#1A73E8",
-                                     font=("Arial", 12),
-                                     anchor="w",
-                                     cursor="hand2",
-                                     command=lambda: mostrar_menu(email, senha))
-    botao_voltarmenu.pack(fill="x", pady=10)
+
+    botao_voltar = ctk.CTkButton(frame_educativo,
+                                 text="⬅ Voltar",
+                                 fg_color="white",
+                                 text_color="#1A73E8",
+                                 font=("Arial", 12),
+                                 cursor="hand2",
+                                 command=lambda: mostrar_menu(email, senha))
+    botao_voltar.pack(pady=20)
 
     frame_educativo.pack(fill="both", expand=True, padx=20, pady=10)
 
 
-def area_educativa1():
-    # Área educativa destinada ao tema: Preservação de recursos hídricos na Europa
-    pass
+def area_educativa1(frame_educativo, email, senha, frame_menu):
+    for widget in frame_educativo.winfo_children():
+        widget.destroy()
 
-def area_educativa2():
-    # Área educativa destinada ao tema: Tecnologia para extrair água potável do ar usando resíduos alimentares
-    pass
+    # Título
+    titulo = ctk.CTkLabel(frame_educativo,
+                          text="🌍 Investimento de €15 bilhões para combater a crise hídrica na Europa",
+                          text_color="#1A73E8",
+                          font=("Arial", 20, "bold"),
+                          wraplength=800, justify="left")
+    titulo.pack(pady=(20, 10))
 
-def area_educativa3():
-    # Área educativa destinada ao tema: Construção do maior centro universitário de reúso de água dos EUA
-    pass
+    # Parágrafo da notícia
+    corpo_texto = (
+        "A Universidade Europeia e o Banco Europeu de Investimento anunciaram, em 7 de junho, "
+        "um aporte de €15 bilhões (≈US$17bi) a projetos voltados à redução da poluição, "
+        "prevenção do desperdício e fomento à inovação no setor hídrico ao longo dos próximos três anos. "
+        "A ação considera a intensificação das secas e pressões agrícolas e urbanas causadas pelas mudanças climáticas. "
+        "Como medida de responsabilização, o Reino Unido restringiu bônus a executivos de empresas de água que não investem "
+        "o suficiente na qualidade dos corpos de água."
+    )
 
-def area_educativa4():
-    # Área educativa destinada ao tema: Conservação da água e limpeza do rio Ganges na Índia
-    pass
+    label_corpo = ctk.CTkLabel(frame_educativo,
+                               text=corpo_texto,
+                               text_color="#333333",
+                               font=("Arial", 14),
+                               wraplength=800,
+                               justify="left")
+    label_corpo.pack(pady=10)
 
-def area_educativa5():
-    # Área educativa destinada ao tema: Programas de sustentabilidade e uso racional da água em escolas de New Haven, EUA
-    pass
+    # Destaque: Por que isso importa?
+    label_importancia = ctk.CTkLabel(frame_educativo,
+                                     text="💡 Por que isso importa?",
+                                     text_color="#1A73E8",
+                                     font=("Arial", 20, "bold"),
+                                     wraplength=800,
+                                     justify="left")
+    label_importancia.pack(pady=(20, 5))
 
-def area_educativa6():
-    # Área educativa destinada ao tema: Filmes educativos para crianças sobre sustentabilidade
-    pass
+    texto_importancia = (
+        "Esse investimento maciço pode impulsionar tecnologias verdes, infraestrutura resiliente e processos de governança "
+        "que garantam água limpa e gestão sustentável,uma virada estratégica para enfrentar a escassez hídrica em regiões vulneráveis."
+    )
+
+    label_texto_importancia = ctk.CTkLabel(frame_educativo,
+                                           text=texto_importancia,
+                                           text_color="#000000",
+                                           font=("Arial", 14),
+                                           wraplength=800,
+                                           justify="left")
+    label_texto_importancia.pack(pady=5)
+
+    # Fontes
+    label_fontes = ctk.CTkLabel(frame_educativo,
+                                text="🔗 Fontes:",
+                                text_color="#1A73E8",
+                                font=("Arial", 14, "bold"),
+                                wraplength=800,
+                                justify="left")
+    label_fontes.pack(pady=(20, 5))
+
+ 
+    
+    lbl = ctk.CTkLabel(frame_educativo,
+                           text="• reuters.com",
+                           text_color="#333333",
+                           font=("Arial", 13),
+                           anchor="w",
+                           justify="left")
+    lbl.pack()
+
+    # Botão de voltar
+    botao_voltar = ctk.CTkButton(frame_educativo,
+                                 text="⬅ Voltar",
+                                 fg_color="white",
+                                 text_color="#1A73E8",
+                                 font=("Arial", 12),
+                                 cursor="hand2",
+                                 command=lambda: area_educativa(email, senha, frame_menu))
+    botao_voltar.pack(pady=50)
+
+ 
+def area_educativa2(frame_educativo, email, senha, frame_menu):
+    for widget in frame_educativo.winfo_children():
+        widget.destroy()
+
+    # Título
+    titulo = ctk.CTkLabel(frame_educativo,
+                          text="🎒 Extração de água potável do ar usando alimentos",
+                          text_color="#1A73E8",
+                          font=("Arial", 20, "bold"),
+                          wraplength=800, justify="left")
+    titulo.pack(pady=(20, 10))
+
+    # Parágrafo da notícia
+    corpo_texto = (
+        "Pesquisadores da Universidade do Texas em Austin publicaram, em abril, um método inovador para captar água do ar "
+        "usando hidrogéis feitos com biomassa de resíduos alimentares e conchas. Esses materiais absorvem grandes volumes "
+        "de umidade e liberam água pura com aquecimento leve. Em campo, foram obtidos 15L de água por kg de gel por dia—"
+        "recuperando 95% do volume captado."
+    )
+
+    label_corpo = ctk.CTkLabel(frame_educativo,
+                               text=corpo_texto,
+                               text_color="#333333",
+                               font=("Arial", 14),
+                               wraplength=800,
+                               justify="left")
+    label_corpo.pack(pady=10)
+
+    # Destaque: Impacto prático
+    label_importancia = ctk.CTkLabel(frame_educativo,
+                                     text="💡 Impacto prático:",
+                                     text_color="#1A73E8",
+                                     font=("Arial", 20, "bold"),
+                                     wraplength=800,
+                                     justify="left")
+    label_importancia.pack(pady=(20, 5))
+
+    texto_importancia = (
+        "Trata-se de uma solução biodegradável, modular e de baixo consumo energético — ideal para comunidades rurais, "
+        "irrigação localizada ou situações emergenciais em áreas carentes de infraestrutura hídrica."
+    )
+
+    label_texto_importancia = ctk.CTkLabel(frame_educativo,
+                                           text=texto_importancia,
+                                           text_color="#000000",
+                                           font=("Arial", 14),
+                                           wraplength=800,
+                                           justify="left")
+    label_texto_importancia.pack(pady=5)
+
+    # Fontes
+    label_fontes = ctk.CTkLabel(frame_educativo,
+                                text="🔗 Fontes:",
+                                text_color="#1A73E8",
+                                font=("Arial", 14, "bold"),
+                                wraplength=800,
+                                justify="left")
+    label_fontes.pack(pady=(20, 5))
+
+    lbl = ctk.CTkLabel(frame_educativo,
+                       text="• foodandwine.com",
+                       text_color="#333333",
+                       font=("Arial", 13),
+                       anchor="w",
+                       justify="left")
+    lbl.pack()
+
+    # Botão de voltar
+    botao_voltar = ctk.CTkButton(frame_educativo,
+                                 text="⬅ Voltar",
+                                 fg_color="white",
+                                 text_color="#1A73E8",
+                                 font=("Arial", 12),
+                                 cursor="hand2",
+                                 command=lambda: area_educativa(email, senha, frame_menu))
+    botao_voltar.pack(pady=50)
 
 
-def sair_sistema():
+def area_educativa3(frame_educativo, email, senha, frame_menu):
+    for widget in frame_educativo.winfo_children():
+        widget.destroy()
+
+    # Título
+    titulo = ctk.CTkLabel(frame_educativo,
+                          text="🏗️ UT Austin constrói o maior centro universitário de reúso de água nos EUA",
+                          text_color="#1A73E8",
+                          font=("Arial", 20, "bold"),
+                          wraplength=800, justify="left")
+    titulo.pack(pady=(20, 10))
+
+    # Parágrafo da notícia
+    corpo_texto = (
+        "Em maio, a UT anunciou a construção do WaterHub, instalação de 900m² que vai tratar até 1 milhão de galões "
+        "(≈3,8 mil m³) de esgoto por dia. A previsão de operação é para o segundo semestre de 2027. O local servirá como laboratório "
+        "de pesquisa prática para estudantes, integrando ensino e teste de tecnologias de reúso para aliviar sistemas municipais sobrecarregados."
+    )
+
+    label_corpo = ctk.CTkLabel(frame_educativo,
+                               text=corpo_texto,
+                               text_color="#333333",
+                               font=("Arial", 14),
+                               wraplength=800,
+                               justify="left")
+    label_corpo.pack(pady=10)
+
+    # Destaque: Impacto prático (pode deixar o título como "💡 Por que isso importa?" para manter padrão, ou "Impacto prático")
+    label_importancia = ctk.CTkLabel(frame_educativo,
+                                     text="💡 Por que isso importa?",
+                                     text_color="#1A73E8",
+                                     font=("Arial", 20, "bold"),
+                                     wraplength=800,
+                                     justify="left")
+    label_importancia.pack(pady=(20, 5))
+
+    texto_importancia = (
+        "Esse centro universitário vai impulsionar a pesquisa e o desenvolvimento de tecnologias inovadoras de reúso de água, "
+        "contribuindo para a sustentabilidade urbana e formação técnica avançada."
+    )
+
+    label_texto_importancia = ctk.CTkLabel(frame_educativo,
+                                           text=texto_importancia,
+                                           text_color="#000000",
+                                           font=("Arial", 14),
+                                           wraplength=800,
+                                           justify="left")
+    label_texto_importancia.pack(pady=5)
+
+    # Fontes
+    label_fontes = ctk.CTkLabel(frame_educativo,
+                                text="🔗 Fontes:",
+                                text_color="#1A73E8",
+                                font=("Arial", 14, "bold"),
+                                wraplength=800,
+                                justify="left")
+    label_fontes.pack(pady=(20, 5))
+
+    lbl = ctk.CTkLabel(frame_educativo,
+                       text="• axios.com",
+                       text_color="#333333",
+                       font=("Arial", 13),
+                       anchor="w",
+                       justify="left")
+    lbl.pack()
+
+    # Botão de voltar
+    botao_voltar = ctk.CTkButton(frame_educativo,
+                                 text="⬅ Voltar",
+                                 fg_color="white",
+                                 text_color="#1A73E8",
+                                 font=("Arial", 12),
+                                 cursor="hand2",
+                                 command=lambda: area_educativa(email, senha, frame_menu))
+    botao_voltar.pack(pady=50)
+
+
+def area_educativa4(frame_educativo, email, senha, frame_menu):
+    for widget in frame_educativo.winfo_children():
+        widget.destroy()
+
+    # Título
+    titulo = ctk.CTkLabel(frame_educativo,
+                          text="📰 Educação Ambiental na Índia: Estudantes de Uttar Pradesh se tornam embaixadores da limpeza",
+                          text_color="#1A73E8",
+                          font=("Arial", 20, "bold"),
+                          wraplength=800, justify="left")
+    titulo.pack(pady=(20, 10))
+
+    # Parágrafo da notícia
+    corpo_texto = (
+        "Em junho de 2024, o governo do estado de Uttar Pradesh, na Índia, lançou uma iniciativa educativa para envolver os alunos "
+        "das escolas públicas e privadas na conservação ambiental e limpeza do rio Ganges, um dos maiores e mais sagrados rios da Ásia. "
+        "O programa inclui formação de “embaixadores estudantis da limpeza”, práticas de higiene e conservação hídrica, visitas a locais "
+        "poluídos, plantio de árvores, redações, campanhas ambientais e integração da comunidade escolar e familiar."
+    )
+
+    label_corpo = ctk.CTkLabel(frame_educativo,
+                               text=corpo_texto,
+                               text_color="#333333",
+                               font=("Arial", 14),
+                               wraplength=800,
+                               justify="left")
+    label_corpo.pack(pady=10)
+
+    # Destaque: Por que isso importa?
+    label_importancia = ctk.CTkLabel(frame_educativo,
+                                     text="💡 Por que isso importa?",
+                                     text_color="#1A73E8",
+                                     font=("Arial", 20, "bold"),
+                                     wraplength=800,
+                                     justify="left")
+    label_importancia.pack(pady=(20, 5))
+
+    texto_importancia = (
+        "A iniciativa ajuda a sensibilizar jovens sobre a conservação hídrica e atitudes sustentáveis desde cedo, "
+        "envolvendo também suas famílias e escolas, o que pode gerar impacto real na limpeza do Ganges e na formação de cidadãos conscientes."
+    )
+
+    label_texto_importancia = ctk.CTkLabel(frame_educativo,
+                                           text=texto_importancia,
+                                           text_color="#000000",
+                                           font=("Arial", 14),
+                                           wraplength=800,
+                                           justify="left")
+    label_texto_importancia.pack(pady=5)
+
+    # Fontes
+    label_fontes = ctk.CTkLabel(frame_educativo,
+                                text="🔗 Fontes:",
+                                text_color="#1A73E8",
+                                font=("Arial", 14, "bold"),
+                                wraplength=800,
+                                justify="left")
+    label_fontes.pack(pady=(20, 5))
+
+    lbl = ctk.CTkLabel(frame_educativo,
+                       text="• timesofindia.indiatimes.com",
+                       text_color="#333333",
+                       font=("Arial", 13),
+                       anchor="w",
+                       justify="left")
+    lbl.pack()
+
+    # Botão de voltar
+    botao_voltar = ctk.CTkButton(frame_educativo,
+                                 text="⬅ Voltar",
+                                 fg_color="white",
+                                 text_color="#1A73E8",
+                                 font=("Arial", 12),
+                                 cursor="hand2",
+                                 command=lambda: area_educativa(email, senha, frame_menu))
+    botao_voltar.pack(pady=50)
+
+
+def area_educativa5(frame_educativo, email, senha, frame_menu):
+    for widget in frame_educativo.winfo_children():
+        widget.destroy()
+
+    # Título
+    titulo = ctk.CTkLabel(frame_educativo,
+                          text="📰 Impacto dos datacenters em áreas com escassez hídrica na América Latina",
+                          text_color="#1A73E8",
+                          font=("Arial", 20, "bold"),
+                          wraplength=800, justify="left")
+    titulo.pack(pady=(20, 10))
+
+    # Parágrafo da notícia
+    corpo_texto = (
+        "Um artigo do The Guardian chama atenção para a instalação de grandes datacenters em regiões "
+        "com escassez de água no Brasil e outros países da América Latina. Um dos casos citados em Caucaia (CE) "
+        "está em regiões afetadas por seca, e esses centros utilizam até 80 % da água retirada para resfriamento, "
+        "gerando riscos de esgotamento de recursos hídricos locais. O texto destaca a necessidade de maior transparência, "
+        "engajamento comunitário e uso de alternativas como dessalinização e reúso."
+    )
+
+    label_corpo = ctk.CTkLabel(frame_educativo,
+                               text=corpo_texto,
+                               text_color="#333333",
+                               font=("Arial", 14),
+                               wraplength=800,
+                               justify="left")
+    label_corpo.pack(pady=10)
+
+    # Destaque: Por que isso importa?
+    label_importancia = ctk.CTkLabel(frame_educativo,
+                                     text="💡 Por que isso importa?",
+                                     text_color="#1A73E8",
+                                     font=("Arial", 20, "bold"),
+                                     wraplength=800, justify="left")
+    label_importancia.pack(pady=(20, 5))
+
+    texto_importancia = (
+        "Educação ambiental sobre impactos tecnológicos no ciclo da água.\n\n"
+        "Inovação na busca por soluções de resfriamento menos dependentes de água.\n\n"
+        "Reflexão sobre políticas de concessão hídrica e planejamento sustentável."
+    )
+
+    label_texto_importancia = ctk.CTkLabel(frame_educativo,
+                                           text=texto_importancia,
+                                           text_color="#000000",
+                                           font=("Arial", 14),
+                                           wraplength=800,
+                                           justify="left")
+    label_texto_importancia.pack(pady=5)
+
+    # Fontes
+    label_fontes = ctk.CTkLabel(frame_educativo,
+                                text="🔗 Fontes:",
+                                text_color="#1A73E8",
+                                font=("Arial", 14, "bold"),
+                                wraplength=800,
+                                justify="left")
+    label_fontes.pack(pady=(20, 5))
+
+    lbl = ctk.CTkLabel(frame_educativo,
+                       text="• theguardian.com",
+                       text_color="#333333",
+                       font=("Arial", 13),
+                       anchor="w",
+                       justify="left")
+    lbl.pack()
+
+    # Botão de voltar
+    botao_voltar = ctk.CTkButton(frame_educativo,
+                                 text="⬅ Voltar",
+                                 fg_color="white",
+                                 text_color="#1A73E8",
+                                 font=("Arial", 12),
+                                 cursor="hand2",
+                                 command=lambda: area_educativa(email, senha, frame_menu))
+    botao_voltar.pack(pady=50)
+
+def area_educativa6(frame_educativo, email, senha, frame_menu):
+    for widget in frame_educativo.winfo_children():
+        widget.destroy()
+
+    # Título principal menor e com menos espaçamento
+    titulo = ctk.CTkLabel(frame_educativo,
+                          text="🌿 8 Filmes sobre Sustentabilidade para Crianças",
+                          text_color="#1A73E8",
+                          font=("Arial", 16, "bold"),  # fonte menor
+                          wraplength=800,
+                          justify="left")
+    titulo.pack(pady=(10, 5))  # menos espaçamento
+
+    filmes = [
+        ("Wall-E (2008)", "Um clássico da Pixar! Mostra um futuro onde a Terra foi tomada pelo lixo e a humanidade vive no espaço. Wall-E, um robô solitário, nos ensina sobre consumo, lixo e amor pelo planeta."),
+        ("Lorax: Em Busca da Trúfula Perdida (2012)", "Baseado na obra do Dr. Seuss, aborda desmatamento e exploração de recursos naturais, com personagens carismáticos e músicas cativantes."),
+        ("Happy Feet: O Pinguim (2006)", "Através de um pinguim dançarino, o filme aborda temas como mudança climática, preservação dos oceanos e o impacto da pesca predatória."),
+        ("Rio (2011)", "Além da aventura, mostra a importância da biodiversidade brasileira e os perigos do tráfico de animais silvestres."),
+        ("Irmão Urso (Brother Bear) (2003)", "Aborda o respeito à natureza, ao ciclo da vida e à conexão espiritual com o meio ambiente, com forte mensagem sobre empatia e equilíbrio natural."),
+        ("A Fuga das Galinhas (Chicken Run) (2000)", "Uma metáfora inteligente sobre liberdade animal e os impactos da agroindústria – adaptado ao humor infantil."),
+        ("O Rei Leão (1994 / 2019)", "Apesar de não focar diretamente em sustentabilidade, ensina sobre o “ciclo da vida” e o equilíbrio ecológico da savana africana."),
+        ("Meu Amigo Totoro (1988)", "Um clássico do Studio Ghibli. Exalta a harmonia entre seres humanos e natureza, com um toque mágico e poético.")
+    ]
+        
+
+    for titulo_filme, descricao in filmes:
+        label_filme_titulo = ctk.CTkLabel(frame_educativo,
+                                          text=titulo_filme,
+                                          text_color="#1A73E8",
+                                          font=("Arial", 14, "bold"),  # fonte menor
+                                          wraplength=800,
+                                          justify="left")
+        label_filme_titulo.pack(padx=20, pady=(8, 2), anchor="w")  # menos espaçamento
+
+        label_filme_desc = ctk.CTkLabel(frame_educativo,
+                                        text=descricao,
+                                        text_color="#333333",
+                                        font=("Arial", 12),  # fonte menor
+                                        wraplength=800,
+                                        justify="left")
+        label_filme_desc.pack(padx=20, pady=(0, 6), anchor="w")  # menos espaçamento
+
+    # Botão de voltar
+    botao_voltar = ctk.CTkButton(frame_educativo,
+                                 text="⬅ Voltar",
+                                 fg_color="white",
+                                 text_color="#1A73E8",
+                                 font=("Arial", 12),
+                                 cursor="hand2",
+                                 command=lambda: area_educativa(email, senha, frame_menu))
+    botao_voltar.pack(pady=30)
+
+
+
+def sair_sitema():
     """Função utilizada para fechar sistema """
     janela.destroy()  # Fecha a janela principal
     # Ou qualquer outra lógica de saída que você preferir
@@ -753,7 +1190,7 @@ botao_login = ctk.CTkButton(frame_aviso, text="Ir para Login", width=200, comman
 botao_login.pack(pady=(0, 10))
 
     # Botão para sair do sistema
-botao_sair = ctk.CTkButton(frame_aviso, text="Sair do Sistema", width=200, fg_color="red", hover_color="#cc0000", command=sair_sistema)
+botao_sair = ctk.CTkButton(frame_aviso, text="Sair do Sistema", width=200, fg_color="red", hover_color="#cc0000", command=sair_sitema)
 botao_sair.pack()
 
 

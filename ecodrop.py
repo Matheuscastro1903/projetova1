@@ -5,7 +5,7 @@ import re
 import random
 import os
 import pyfiglet
-from interface import mostrar_menu
+
 
 
 
