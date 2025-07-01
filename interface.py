@@ -151,7 +151,7 @@ def conferir_cadastrar(entrada_email, entrada_nome, entrada_senha,
     senha = entrada_senha.get().strip()
     quantidade_pessoas = int(entrada_qmembros.get().strip())
     apartamento = int(entrada_numeroap.get().strip())
-    verificador = entrada_verificador.get().strip()
+    verificador = int(entrada_verificador.get().strip())
 
     entradas = [email, nome_familia, senha,quantidade_pessoas,apartamento]
 
@@ -336,9 +336,131 @@ def mostrar_dados(email, senha, frame_principalmenu):
 
 def atualizar_dados(email, senha, frame_principalmenu):
     """
-    🔄 Função: Atualizar Dados,onde será possível o usuário atualizar seus dados"""
-    pass
+    🔄 Função: Atualizar Dados, onde será possível o usuário atualizar seus dados
+    """
+    for widget in frame_principalmenu.winfo_children():
+        widget.destroy()
 
+    atualizar_label_titulo = ctk.CTkLabel(frame_principalmenu, text="Informe seus dados:",
+                                          fg_color="#ffffff", text_color="blue", font=("Arial", 20))
+    atualizar_label_titulo.pack(pady=1)
+
+    atualizar_label_aviso = ctk.CTkLabel(frame_principalmenu, text=" ",
+                                         fg_color="#ffffff", text_color="blue", font=("Arial", 20))
+    atualizar_label_aviso.pack(pady=1)
+
+    # 1 - Entrada Email
+    atualizar_label_email = ctk.CTkLabel(frame_principalmenu, text="Digite seu email:",
+                                         text_color="#000000", anchor="w", width=300)
+    atualizar_label_email.pack(pady=(1, 0))
+
+    atualizar_entrada_email = ctk.CTkEntry(frame_principalmenu, width=300)
+    atualizar_entrada_email.pack(pady=1)
+
+    # 2 - Nome da família
+    atualizar_label_nome = ctk.CTkLabel(frame_principalmenu, text="Digite o nome da sua família",
+                                        text_color="#000000", anchor="w", width=300)
+    atualizar_label_nome.pack(pady=(1, 0))
+
+    atualizar_entrada_nome = ctk.CTkEntry(frame_principalmenu, width=300, validate="key", validatecommand=(
+        janela.register(validar_letras_espacos), "%P"))
+    atualizar_entrada_nome.pack(pady=1)
+
+    # 3 - Senha
+    atualizar_label_senha = ctk.CTkLabel(frame_principalmenu, text="Senha (mínimo 4 caracteres):",
+                                         text_color="#000000", anchor="w", width=300)
+    atualizar_label_senha.pack(pady=(1, 0))
+
+    atualizar_entrada_senha = ctk.CTkEntry(frame_principalmenu, width=300, show="*")
+    atualizar_entrada_senha.pack(pady=1)
+
+    # 4 - Quantidade de membros
+    atualizar_label_qmembros = ctk.CTkLabel(frame_principalmenu, text="Quantidade de membros na família:",
+                                            text_color="#000000", anchor="w", width=300)
+    atualizar_label_qmembros.pack(pady=(1, 0))
+
+    atualizar_entrada_qmembros = ctk.CTkEntry(frame_principalmenu, width=300, validate="key", validatecommand=(
+        janela.register(validar_numeros), "%P"))
+    atualizar_entrada_qmembros.pack(pady=1)
+
+    # 5 - Número do apartamento
+    atualizar_label_numeroap = ctk.CTkLabel(frame_principalmenu, text="Digite o número do seu apartamento",
+                                            text_color="#000000", anchor="w", width=300)
+    atualizar_label_numeroap.pack(pady=(1, 0))
+
+    atualizar_entrada_numeroap = ctk.CTkEntry(frame_principalmenu, width=300, validate="key", validatecommand=(
+        janela.register(validar_numeros), "%P"))
+    atualizar_entrada_numeroap.pack(pady=1)
+
+    # 6 - Código verificador
+    atualizar_label_verificador = ctk.CTkLabel(frame_principalmenu, text="Digite seu código verificador (mínimo 4 caracteres):",
+                                               text_color="#000000", anchor="w", width=300)
+    atualizar_label_verificador.pack(pady=(1, 0))
+
+    atualizar_entrada_verificador = ctk.CTkEntry(frame_principalmenu, width=300, validate="key", validatecommand=(
+        janela.register(validar_numeros), "%P"))
+    atualizar_entrada_verificador.pack(pady=1)
+
+    # Botão de atualizar
+    atualizar_botao_confirmar = ctk.CTkButton(frame_principalmenu, text="Atualizar", fg_color="blue",
+                                              text_color="#ffffff", width=300,
+                                              command=lambda: conferir_atualizar(email,
+                                                  atualizar_entrada_email,
+                                                  atualizar_entrada_nome,
+                                                  atualizar_entrada_senha,
+                                                  atualizar_entrada_qmembros,
+                                                  atualizar_entrada_numeroap,
+                                                  atualizar_entrada_verificador,
+                                                  atualizar_label_aviso))
+    atualizar_botao_confirmar.pack(pady=5)
+
+
+
+def conferir_atualizar(email,atualizar_entrada_email, atualizar_entrada_nome, atualizar_entrada_senha,
+                        atualizar_entrada_qmembros, atualizar_entrada_numeroap,
+                        atualizar_entrada_verificador, atualizar_label_aviso):
+    """
+    ✅ Função: Conferir Atualizar - Verifica se os dados inseridos são válidos antes de prosseguir com a atualização.
+    """
+
+    # Coletando e limpando os dados
+    email_novo = atualizar_entrada_email.get().strip()
+    nome_familia = atualizar_entrada_nome.get().strip()
+    senha = atualizar_entrada_senha.get().strip()
+    verificador = atualizar_entrada_verificador.get().strip()
+    quantidade_pessoas=atualizar_entrada_qmembros.get().strip()
+    apartamento=atualizar_entrada_numeroap.get().strip()
+
+
+    # Tenta converter os campos numéricos
+    
+
+    # Lista de campos que devem estar preenchidos
+    entradas = [email_novo, nome_familia,quantidade_pessoas, apartamento]
+
+    # Verifica se algum campo está vazio
+    if any(str(campo) == "" for campo in entradas):
+        atualizar_label_aviso.configure(text="Todos os campos devem ser preenchidos.", text_color="red")
+        return
+
+    # Validação do tamanho da senha
+    if len(senha) < 4 or len(senha) > 20:
+        atualizar_label_aviso.configure(text="A senha deve ter entre 4 e 20 caracteres.", text_color="red")
+        return
+
+    # Validação do código verificador
+    if len(verificador) < 4 or len(verificador) > 20:
+        atualizar_label_aviso.configure(text="O código verificador deve ter entre 4 e 20 caracteres.", text_color="red")
+        return
+
+    # Se passou por todas as validações
+    atualizar_emailvalido(email,email_novo,senha,verificador,quantidade_pessoas,apartamento)
+
+    # Aqui você pode chamar a função que realmente faz a atualização no sistema/banco
+    # exemplo: atualizar_usuario(email, nome_familia, senha, quantidade_pessoas, apartamento, verificador)
+def atualizar_emailvalido(email,email_novo,senha,verificador,quantidade_pessoas,apartamento,atualizar_label_aviso):
+
+    pass
 
 def deletar_conta(email, senha, frame_principalmenu):
     """
@@ -1071,41 +1193,33 @@ label_nome = ctk.CTkLabel(frame_cadastro, text="Digite o nome da sua família",
                           text_color="#000000", anchor="w", width=300)
 label_nome.pack(pady=(1, 0))
 
-entrada_nome = ctk.CTkEntry(frame_cadastro, width=300, validate="key", validatecommand=(
-    janela.register(validar_letras_espacos), "%P"))
+entrada_nome = ctk.CTkEntry(frame_cadastro, width=300, validate="key", validatecommand=(janela.register(validar_letras_espacos), "%P"))
 entrada_nome.pack(pady=1)
 
 # 3-Entrada Senha
-label_senha = ctk.CTkLabel(frame_cadastro, text="Senha (mínimo 4 caracteres):",
-                           text_color="#000000", anchor="w", width=300)
+label_senha = ctk.CTkLabel(frame_cadastro, text="Senha (mínimo 4 caracteres):",text_color="#000000", anchor="w", width=300)
 label_senha.pack(pady=(1, 0))
 
 entrada_senha = ctk.CTkEntry(frame_cadastro, width=300, show="*")
 entrada_senha.pack(pady=1)
 
 # 4. Campo Quantidade de membros
-label_qmembros = ctk.CTkLabel(
-    frame_cadastro, text="Quantidade de membros na família:", text_color="#000000", anchor="w", width=300)
+label_qmembros = ctk.CTkLabel(frame_cadastro, text="Quantidade de membros na família:", text_color="#000000", anchor="w", width=300)
 label_qmembros.pack(pady=(1, 0))
-entrada_qmembros = ctk.CTkEntry(frame_cadastro, width=300, validate="key", validatecommand=(
-    janela.register(validar_numeros), "%P"))
+entrada_qmembros = ctk.CTkEntry(frame_cadastro, width=300, validate="key", validatecommand=(janela.register(validar_numeros), "%P"))
 entrada_qmembros.pack(pady=1)
 
 # 5. Número do apartamento
-label_numeroap = ctk.CTkLabel(
-    frame_cadastro, text="Digite o número do seu apartamento", text_color="#000000", anchor="w", width=300)
+label_numeroap = ctk.CTkLabel(frame_cadastro, text="Digite o número do seu apartamento", text_color="#000000", anchor="w", width=300)
 label_numeroap.pack(pady=(1, 0))
-entrada_numeroap = ctk.CTkEntry(frame_cadastro, width=300, validate="key", validatecommand=(
-    janela.register(validar_numeros), "%P"))
+entrada_numeroap = ctk.CTkEntry(frame_cadastro, width=300, validate="key", validatecommand=(janela.register(validar_numeros), "%P"))
 entrada_numeroap.pack(pady=1)
 
 # 6. Código verificador
-label_verificador = ctk.CTkLabel(
-    frame_cadastro, text="Digite seu código verificador(mínimo 4 caracteres):", text_color="#000000", anchor="w", width=300)
+label_verificador = ctk.CTkLabel(frame_cadastro, text="Digite seu código verificador(mínimo 4 caracteres):", text_color="#000000", anchor="w", width=300)
 label_verificador.pack(pady=(1, 0))
 
-entrada_verificador = ctk.CTkEntry(frame_cadastro, width=300, validate="key", validatecommand=(
-    janela.register(validar_numeros), "%P"))
+entrada_verificador = ctk.CTkEntry(frame_cadastro, width=300, validate="key", validatecommand=(janela.register(validar_numeros), "%P"))
 entrada_verificador.pack(pady=1)
 
 
@@ -1113,11 +1227,10 @@ botao_cadastrar = ctk.CTkButton(frame_cadastro, text="Cadastrar", fg_color="blue
                                 text_color="#ffffff", width=300, command=lambda: conferir_cadastrar(entrada_email,entrada_nome,entrada_senha,
                                                                                                     entrada_qmembros,
                                                                                                    entrada_numeroap,entrada_verificador,label_aviso))
-botao_cadastrar.pack(pady=1)
+botao_cadastrar.pack(pady=10)
 
 # botão de voltar
-botao_voltarinicial = ctk.CTkButton(
-    frame_cadastro, text="Voltar", fg_color="blue", text_color="#ffffff", width=300, command=voltar_inicial)
+botao_voltarinicial = ctk.CTkButton(frame_cadastro, text="Voltar", fg_color="blue", text_color="#ffffff", width=300, command=voltar_inicial)
 botao_voltarinicial.pack()
 
 
@@ -1135,7 +1248,7 @@ label_emailadm = ctk.CTkLabel(frame_adm, text="Digite seu email:",
                            text_color="#000000", anchor="w", width=300)
 label_emailadm.pack(pady=(1, 0))
 
-entrada_emailadm = ctk.CTkEntry(frame_cadastro, width=300)
+entrada_emailadm = ctk.CTkEntry(frame_adm, width=300)
 entrada_emailadm.pack(pady=1)
 
 # 1-Entrada Nome
@@ -1243,35 +1356,29 @@ class Cadastro:
             'yahoo.com', 'icloud.com'
         ]
 
-        tentativas_email = 3
-        while tentativas_email != 0:
+        
             # VERIFICA SE O FORMATO DO EMAIL ESTÁ ESCRITO CORRETAMENTE
-            if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', self.email):
-                print("FORMATO DE EMAIL INVÁLIDO, UTILIZE UM DOMÍNIO VÁLIDO")
-                self.email = input("Digite novamente seu email: ").strip()
-                tentativas_email -= 1
-                print(f"Tentativas restantes: {tentativas_email}")
+        if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', self.email):
+            #label_aviso é uma variável global,não necessitando importar para edita-la
+            label_aviso.configure(text="Formato inválido", text_color="red")
+            return
+            
 
-                continue  # volta pro início do while para validar de novo,caso esteja correto,irá passar pelo verificador
+                  # volta pro início do while para validar de novo,caso esteja correto,irá passar pelo verificador
 
             # VERIFICA APENAS O DOMÍNIO,SEPARA TODO O RESTO E PEGA APENAS A PARTE DO DOMÍNIO
-            dominio = self.email.split('@')[1].lower()
-            if dominio not in dominios_validos:
-                print("Domínio não aceito. Use: Gmail, Outlook, Yahoo, iCloud, etc.")
-                self.email = input("Digite novamente seu email: ").strip()
-                tentativas_email -= 1
-                print(f"Tentativas restantes: {tentativas_email}")
-
-                # continuar o loop sem parar
-                continue
-
-        # Se chegou aqui, formato e domínio estão corretos
-            break
-
-        else:
-            print("Limite de tentativas atingido. Encerrando o processo de cadastro.")
+        dominio = self.email.split('@')[1].lower()
+        if dominio not in dominios_validos:
+            label_aviso.configure(text="Domínio não aceito", text_color="red")
             return
 
+                # continuar o loop sem parar
+                
+
+        # Se chegou aqui, formato e domínio estão corretos
+            
+
+        
         self.conferir_email()
 
     
@@ -1288,27 +1395,10 @@ class Cadastro:
             dados_apartamento = arquivo_lido["apartamento"]
             dados_codigov = arquivo_lido["verificador"]
 
-            if self.email in dados_conta:
-                print("EMAIL JÁ POSSUI UMA CONTA.")
-                tentativas = 3
-                while tentativas != 0:
-                    resposta1 = input(
-                    "Deseja tentar refazer a conta ou ir para tela de login caso já possua conta? (refazer/login) ").strip().lower()
-                    if resposta1 in ["login", "tela de login", "logi"]:
-                        login()
-                        return
-                    elif resposta1 in ["refazer", "retentar", "conta", "refazer conta"]:
-                        self.email = input("Digite novamente seu email: ").strip()
-                        self.conferir_email()
-                        return
-                    else:
-                        print("Resposta inválida")
-                        tentativas -= 1
-                        print(f"Tentativas restantes {tentativas}")
-                else:
-                    print(
-                    "Limite de tentativas atingido. Encerrando o processo de cadastro.")
-                    return
+            if self.email.strip() in dados_conta:#dessa forma verificará se o email está já cadastrado ou não
+                label_aviso.configure(text="Email já cadastrado.",text_color="red")
+                return
+            
             else:
                 self.conferir_ap()  # Continua o processo normalmente
 
@@ -1316,24 +1406,7 @@ class Cadastro:
         
        #FUNÇÃO UTILIZADA PARA ANALISAR SE O APARTAMENTO JÁ ESTÁ CADASTRADO OU NÃO
         if self.apartamento in dados_apartamento.values():
-            print("APARTAMENTO JÁ CADASTRADO.")
-            tentativas = 3
-            while tentativas != 0:
-                resposta1 = input(
-                    "Deseja tentar refazer a conta ou ir para tela de login caso já possua conta ??(refazer/login)").strip().lower()
-                if resposta1 in ["login", "tela de login", "logi"]:
-                    login()
-                    return
-                elif resposta1 in ["refazer", "retentar", "conta", "refazer conta"]:
-                    Cadastro()
-                    return
-                else:
-                    print("Resposta inválida")
-                    tentativas -= 1
-                    print(f"Tentativas restantes {tentativas}")
-            else:  # ✅ Só imprime quando zerar tentativas
-                print(
-                    "Limite de tentativas atingido. Encerrando o processo de cadastro.")
+            label_aviso.configure(text="APARTAMENTO JÁ CADASTRADO.TENTE NOVAMENTE")
         else:
             self.cadastrar_conta()
 

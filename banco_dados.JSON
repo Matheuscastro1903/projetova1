@@ -22,7 +22,8 @@
         "bianca.oliveira@gmail.com": "Bia@321",
         "lionelmessi10@gmail.com": "301910",
         "cr7@gmail.com": "cr777",
-        "neymarjunior11@gmail.com": "neymar11"
+        "neymarjunior11@gmail.com": "neymar11",
+        "matheusmorais@gmail.com": "888888888888"
     },
     "familia": {
         "joao.silva@email.com": "Silva",
@@ -47,7 +48,8 @@
         "bianca.oliveira@gmail.com": "Oliveira",
         "lionelmessi10@gmail.com": "Messi",
         "cr7@gmail.com": "Cristiano",
-        "neymarjunior11@gmail.com": "Santos"
+        "neymarjunior11@gmail.com": "Santos",
+        "matheusmorais@gmail.com": "Morais"
     },
     "membros": {
         "joao.silva@email.com": 4,
@@ -72,7 +74,8 @@
         "bianca.oliveira@gmail.com": 3,
         "lionelmessi10@gmail.com": 5,
         "cr7@gmail.com": 6,
-        "neymarjunior11@gmail.com": 5
+        "neymarjunior11@gmail.com": 5,
+        "matheusmorais@gmail.com": 4
     },
     "pontos": {
         "joao.silva@email.com": 150,
@@ -97,7 +100,8 @@
         "bianca.oliveira@gmail.com": 130,
         "lionelmessi10@gmail.com": 0,
         "cr7@gmail.com": 0,
-        "neymarjunior11@gmail.com": 0
+        "neymarjunior11@gmail.com": 0,
+        "matheusmorais@gmail.com": 0
     },
     "apartamento": {
         "joao.silva@email.com": 101,
@@ -122,7 +126,8 @@
         "bianca.oliveira@gmail.com": 1402,
         "lionelmessi10@gmail.com": 1010,
         "cr7@gmail.com": 777,
-        "neymarjunior11@gmail.com": 111111
+        "neymarjunior11@gmail.com": 111111,
+        "matheusmorais@gmail.com": 2201
     },
     "verificador": {
         "joao.silva@email.com": 83456,
@@ -145,8 +150,9 @@
         "carol.fernandes@gmail.com": 23409,
         "hugo.moraes@hotmail.com": 85920,
         "bianca.oliveira@gmail.com": 10393,
-        "lionelmessi10@gmail.com": "312312",
-        "cr7@gmail.com": "777777777",
-        "neymarjunior11@gmail.com": "111111111111"
+        "lionelmessi10@gmail.com": 312312,
+        "cr7@gmail.com": 777777777,
+        "neymarjunior11@gmail.com": 111111111111,
+        "matheusmorais@gmail.com": 312312445
     }
 }
