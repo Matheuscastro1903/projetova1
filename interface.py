@@ -189,6 +189,12 @@ def modo_adm():
 
     frame_adm.pack(fill="both", expand=True)
 
+
+
+    pass
+
+def conferir_adm(entrada_emailadm,entrada_codigoadm):
+
     pass
 
 def entrar_modoadm():
@@ -1125,15 +1131,23 @@ label_adm = ctk.CTkLabel(frame_adm, text=" ",fg_color="#ffffff", text_color="blu
 label_adm.pack(pady=1)
 
 # 1-Entrada Nome
-label_codigo = ctk.CTkLabel(frame_adm, text="Digite código de administrador:",
-                           text_color="blue", anchor="w", width=300)
-label_codigo.pack(pady=(1, 0))
+label_emailadm = ctk.CTkLabel(frame_adm, text="Digite seu email:",
+                           text_color="#000000", anchor="w", width=300)
+label_emailadm.pack(pady=(1, 0))
 
-entrada_codigo = ctk.CTkEntry(frame_adm, width=300)
-entrada_codigo.pack(pady=1)
+entrada_emailadm = ctk.CTkEntry(frame_cadastro, width=300)
+entrada_emailadm.pack(pady=1)
+
+# 1-Entrada Nome
+label_codigoadm = ctk.CTkLabel(frame_adm, text="Digite código de administrador:",
+                           text_color="blue", anchor="w", width=300)
+label_codigoadm.pack(pady=(1, 0))
+
+entrada_codigoadm = ctk.CTkEntry(frame_adm, width=300)
+entrada_codigoadm.pack(pady=1)
 
 botao_modoadm = ctk.CTkButton(frame_adm, text="Entrar modo adm", fg_color="blue",
-                                text_color="#ffffff", width=300, command=entrar_modoadm)
+                                text_color="#ffffff", width=300, command=lambda:conferir_adm(entrada_emailadm,entrada_codigoadm))
 botao_modoadm.pack(pady=1)
 # botão de voltar
 botao_voltarinicial = ctk.CTkButton(frame_adm, text="Voltar", fg_color="blue", text_color="#ffffff", width=300, command=voltar_inicial)
