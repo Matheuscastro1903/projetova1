@@ -6,6 +6,7 @@ import csv
 import time
 import re
 import random
+#interface
 
 mensagens_agua = [
     "💧 Cada gota conta. Economize água!",

@@ -10,6 +10,7 @@ import pyfiglet
 
 
 
+
 #ANOTAÇÃO IMPORTANTE
 #Se uma função chama outra função que precisa de argumentos, ela também precisa receber esses argumentos ou criá-los.
 
