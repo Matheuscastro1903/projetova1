@@ -273,7 +273,7 @@ def mostrar_menu(email, senha):
 
     botao7 = ctk.CTkButton(frame_lateral, text="🔄 Atualizar dados", fg_color="white", text_color="#1A73E8",
                            font=("Arial", 12), anchor="w",
-                           command=lambda: atualizar_dados(email, senha, frame_principalmenu), cursor="hand2")
+                           command=lambda: atualizar_dados(email, senha, frame_principalmenu,frame_menu), cursor="hand2")
     botao7.pack(fill="x", pady=10, padx=20)
 
     botao8 = ctk.CTkButton(frame_lateral, text="🗑 Deletar conta", fg_color="white", text_color="#1A73E8",
@@ -334,7 +334,7 @@ def mostrar_dados(email, senha, frame_principalmenu):
     pass
 
 
-def atualizar_dados(email, senha, frame_principalmenu):
+def atualizar_dados(email, senha, frame_principalmenu,frame_menu):
     """
     🔄 Função: Atualizar Dados, onde será possível o usuário atualizar seus dados
     """
@@ -411,14 +411,14 @@ def atualizar_dados(email, senha, frame_principalmenu):
                                                   atualizar_entrada_qmembros,
                                                   atualizar_entrada_numeroap,
                                                   atualizar_entrada_verificador,
-                                                  atualizar_label_aviso))
+                                                  atualizar_label_aviso,frame_menu))
     atualizar_botao_confirmar.pack(pady=5)
 
 
 
 def conferir_atualizar(email,atualizar_entrada_email, atualizar_entrada_nome, atualizar_entrada_senha,
                         atualizar_entrada_qmembros, atualizar_entrada_numeroap,
-                        atualizar_entrada_verificador, atualizar_label_aviso):
+                        atualizar_entrada_verificador, atualizar_label_aviso,frame_menu):
     """
     ✅ Função: Conferir Atualizar - Verifica se os dados inseridos são válidos antes de prosseguir com a atualização.
     """
@@ -433,7 +433,7 @@ def conferir_atualizar(email,atualizar_entrada_email, atualizar_entrada_nome, at
 
 
     # Tenta converter os campos numéricos
-    
+    email_antigo=email
 
     # Lista de campos que devem estar preenchidos
     entradas = [email_novo, nome_familia,quantidade_pessoas, apartamento]
@@ -454,13 +454,92 @@ def conferir_atualizar(email,atualizar_entrada_email, atualizar_entrada_nome, at
         return
 
     # Se passou por todas as validações
-    atualizar_emailvalido(email,email_novo,senha,verificador,quantidade_pessoas,apartamento)
+    atualizar_emailvalido(email_antigo,email_novo,senha,verificador,quantidade_pessoas,apartamento,nome_familia,atualizar_label_aviso,frame_menu)
 
     # Aqui você pode chamar a função que realmente faz a atualização no sistema/banco
     # exemplo: atualizar_usuario(email, nome_familia, senha, quantidade_pessoas, apartamento, verificador)
-def atualizar_emailvalido(email,email_novo,senha,verificador,quantidade_pessoas,apartamento,atualizar_label_aviso):
+
+def atualizar_emailvalido(email_antigo,email_novo,senha,verificador,quantidade_pessoas,apartamento,nome_familia,atualizar_label_aviso,frame_menu):
+    dominios_validos = [
+            'gmail.com', 'outlook.com', 'hotmail.com',
+            'yahoo.com', 'icloud.com'
+        ]
+
+        
+            # VERIFICA SE O FORMATO DO EMAIL ESTÁ ESCRITO CORRETAMENTE
+    if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',email_novo):
+        #label_aviso é uma variável global,não necessitando importar para edita-la
+        atualizar_label_aviso.configure(text="Formato inválido", text_color="red")
+        return
+            
+
+                  # volta pro início do while para validar de novo,caso esteja correto,irá passar pelo verificador
+
+            # VERIFICA APENAS O DOMÍNIO,SEPARA TODO O RESTO E PEGA APENAS A PARTE DO DOMÍNIO
+    dominio = email_novo.split('@')[1].lower()
+    if dominio not in dominios_validos:
+        atualizar_label_aviso.configure(text="DOMÍNIO INVÁLIDO", text_color="red")
+        return
+    atualizar_conferiremail(email_antigo,email_novo,senha,verificador,quantidade_pessoas,apartamento,nome_familia,atualizar_label_aviso,frame_menu)
 
     pass
+
+def atualizar_conferiremail(email_antigo,email_novo,senha,verificador,quantidade_pessoas,apartamento,nome_familia,atualizar_label_aviso,frame_menu):
+    if email_novo.strip() in dados_conta:#dessa forma verificará se o email está já cadastrado ou não
+        atualizar_label_aviso.configure(text="Email já cadastrado.",text_color="red")
+        return     
+    else:
+        atualizar_conferirap(email_antigo,email_novo,senha,verificador,quantidade_pessoas,apartamento,nome_familia,atualizar_label_aviso,frame_menu)
+
+    pass
+
+def atualizar_conferirap(email_antigo,email_novo,senha,verificador,quantidade_pessoas,apartamento,nome_familia,atualizar_label_aviso,frame_menu):
+    if apartamento in dados_apartamento.values():
+            atualizar_label_aviso.configure(text="APARTAMENTO JÁ CADASTRADO.TENTE NOVAMENTE")
+    else:
+        atualizar_conta(email_antigo,email_novo,senha,verificador,quantidade_pessoas,apartamento,nome_familia,atualizar_label_aviso,frame_menu)
+
+    pass
+
+def atualizar_conta(email_antigo,email_novo,senha,verificador,quantidade_pessoas,apartamento,nome_familia,atualizar_label_aviso,frame_menu):
+    pontos=dados_pontos[email_antigo]
+
+    dados_conta.pop(email_antigo, None)
+    dados_conta[email_novo] = senha
+
+    dados_familia.pop(email_antigo, None)
+    dados_familia[email_novo] = nome_familia
+
+    dados_quantidade.pop(email_antigo, None)
+    dados_quantidade[email_novo] = quantidade_pessoas
+
+    dados_pontos.pop(email_antigo, None)
+    dados_pontos[email_novo] = pontos  # Certifique-se que a variável `pontos` esteja definida
+
+    dados_apartamento.pop(email_antigo, None)
+    dados_apartamento[email_novo] = apartamento
+
+    dados_codigov.pop(email_antigo, None)
+    dados_codigov[email_novo] = verificador
+
+# Reescreve todo o JSON com os dados atualizados
+    with open("banco_dados.JSON", "w", encoding="utf-8") as arquivo:
+        json.dump({
+        "senha": dados_conta,
+        "familia": dados_familia,
+        "membros": dados_quantidade,
+        "pontos": dados_pontos,
+        "apartamento": dados_apartamento,
+        "verificador": dados_codigov
+        }, arquivo, indent=4, ensure_ascii=False)
+
+        mostrar_frameatualizar(frame_menu)
+        pass
+def mostrar_frameatualizar(frame_menu):
+    for widget in frame_menu.winfo_children():
+        widget.destroy()
+    #frame_menu.pack_forget()
+   
 
 def deletar_conta(email, senha, frame_principalmenu):
     """
@@ -1323,6 +1402,14 @@ botao_sair.pack()
 
 
 ###############################################
+frame_avisoatualizar=ctk.CTkFrame(janela,fg_color="#ffffff")
+ # Label de aviso
+label = ctk.CTkLabel(frame_avisoatualizar, text="Atualização  realizada com sucesso!", font=("Arial", 50), text_color="green")
+label.pack(pady=(40, 20))
+    # Botão para ir para login
+label2=ctk.CTkLabel(frame_avisoatualizar,text="Reiniciando o sistema em 7 segundos", font=("Arial", 50), text_color="green")
+label2.pack(pady=(40, 20))
+    # Botão para sair do sistema
 
 
 
