@@ -1,4 +1,5 @@
 
+
 import customtkinter as ctk
 from PIL import Image
 import json
@@ -1343,3 +1344,4 @@ class Cadastro:
         
 
 janela.mainloop()
+
