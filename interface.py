@@ -535,10 +535,19 @@ def atualizar_conta(email_antigo,email_novo,senha,verificador,quantidade_pessoas
 
         mostrar_frameatualizar(frame_menu)
         pass
+
 def mostrar_frameatualizar(frame_menu):
-    for widget in frame_menu.winfo_children():
-        widget.destroy()
-    #frame_menu.pack_forget()
+    
+    frame_menu.pack_forget()
+    frame_avisoatualizar=ctk.CTkFrame(janela,fg_color="#ffffff")
+    # Label de aviso
+    label = ctk.CTkLabel(frame_avisoatualizar, text="Atualização  realizada com sucesso!", font=("Arial", 50), text_color="#1A73E8")
+    label.pack(pady=(40, 20))
+    # Botão para ir para login
+    label2=ctk.CTkLabel(frame_avisoatualizar,text="Reiniciando o sistema em 7 segundos", font=("Arial", 50), text_color="#1A73E8")
+    label2.pack(pady=(40, 20))
+    frame_avisoatualizar.pack(fill="both",expand=True)
+    janela.after(7000,sair_sitema)
    
 
 def deletar_conta(email, senha, frame_principalmenu):
