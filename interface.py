@@ -26,36 +26,19 @@ mensagens_agua = [
 
 # Load data from JSON at startup
 # Initialize empty data structures in case the file is not found
-dados_conta = {}
-dados_familia = {}
-dados_quantidade = {}
-dados_pontos = {}
-dados_apartamento = {}
-dados_codigov = {}
-
-try:
-    with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
-        # when json.load is used, the json file is transformed into a python dictionary
-        """
-        the objective of this part of the code is to open the json file and save the dictionaries in python, facilitating manipulation
-        """
-        arquivo_lido = json.load(arquivo)
-        dados_conta = arquivo_lido.get("senha", {})
-        dados_familia = arquivo_lido.get("familia", {})
-        dados_quantidade = arquivo_lido.get("membros", {})
-        dados_pontos = arquivo_lido.get("pontos", {})
-        dados_apartamento = arquivo_lido.get("apartamento", {})
-        dados_codigov = arquivo_lido.get("verificador", {})
-except FileNotFoundError:
-    # Create an empty JSON file if it doesn't exist
-    with open(r"banco_dados.JSON", "w", encoding="utf-8") as arquivo:
-        json.dump({"senha": {}, "familia": {}, "membros": {}, "pontos": {}, "apartamento": {}, "verificador": {}}, arquivo, indent=4, ensure_ascii=False)
-except json.JSONDecodeError:
-    # Handle case where JSON file is empty or malformed
-    print("WARNING: banco_dados.JSON is empty or malformed. Initializing with empty data.")
-    with open(r"banco_dados.JSON", "w", encoding="utf-8") as arquivo:
-        json.dump({"senha": {}, "familia": {}, "membros": {}, "pontos": {}, "apartamento": {}, "verificador": {}}, arquivo, indent=4, ensure_ascii=False)
-
+with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
+    
+    # quando usa json.load o arquivo json é transformado em dicionário python
+    """
+    o objetivo dessa parte do código é abrir o arquivo json e salvar os dicionários em python,facilitando a manipulação
+    """
+    arquivo_lido = json.load(arquivo)
+    dados_conta = arquivo_lido["senha"]
+    dados_familia = arquivo_lido["familia"]
+    dados_quantidade = arquivo_lido["membros"]
+    dados_pontos = arquivo_lido["pontos"]
+    dados_apartamento = arquivo_lido["apartamento"]
+    dados_codigov = arquivo_lido["verificador"]
 
 # Function to only allow numbers
 def validar_numeros(novo_texto):  # Add the parameter
@@ -158,43 +141,38 @@ def mostrar_cadastro():
     entrada_verificador.delete(0, ctk.END)
 
 
-def conferir_cadastrar(entrada_email_widget, entrada_nome_widget, entrada_senha_widget,
-                        entrada_qmembros_widget, entrada_numeroap_widget, entrada_verificador_widget, label_aviso_widget):
+def conferir_cadastrar(entrada_email, entrada_nome, entrada_senha,
+                    entrada_qmembros,entrada_numeroap, entrada_verificador, label_aviso):
     """
     This function will be used to verify if the entries are filled
     correctly and will call the Cadastro class to register the account.
     """
-    email = entrada_email_widget.get().strip()
-    nome_familia = entrada_nome_widget.get().strip()
-    senha = entrada_senha_widget.get().strip()
-    quantidade_pessoas_str = entrada_qmembros_widget.get().strip()
-    apartamento_str = entrada_numeroap_widget.get().strip()
-    verificador = entrada_verificador_widget.get().strip()
+    email = entrada_email.get().strip()
+    nome_familia = entrada_nome.get().strip()
+    senha = entrada_senha.get().strip()
+    quantidade_pessoas = int(entrada_qmembros.get().strip())
+    apartamento = int(entrada_numeroap.get().strip())
+    verificador = entrada_verificador.get().strip()
 
-    # Initial check for empty fields (except for numbers which are validated by input restriction)
-    if not email or not nome_familia or not senha or not quantidade_pessoas_str or not apartamento_str or not verificador:
-        label_aviso_widget.configure(text="Todos os campos devem ser preenchidos.", text_color="red")
+    entradas = [email, nome_familia, senha,quantidade_pessoas,apartamento]
+
+    # Verificação: se algum campo de texto estiver vazio
+    if any(campo == "" for campo in entradas):
+        label_aviso.configure(text="Todos os campos devem ser preenchidos.", text_color="red")
         return
 
-    try:
-        quantidade_pessoas = int(quantidade_pessoas_str)
-        apartamento = int(apartamento_str)
-    except ValueError:
-        label_aviso_widget.configure(text="Quantidade de membros e Apartamento devem ser números.", text_color="red")
+    # Validação da senha
+    if len(senha) < 4 or len(senha) > 20:
+        label_aviso.configure(text="A senha deve ter entre 4 e 20 caracteres.", text_color="red")
         return
-
-    # Password validation
-    if not (4 <= len(senha) <= 20):
-        label_aviso_widget.configure(text="A senha deve ter entre 4 e 20 caracteres.", text_color="red")
+    
+    if len(verificador) < 4 or len(verificador) > 20:
+        label_aviso.configure(text="A senha deve ter entre 4 e 20 caracteres.", text_color="red")
         return
+    
 
-    # Verifier code validation
-    if not (4 <= len(verificador) <= 20):
-        label_aviso_widget.configure(text="O código verificador deve ter entre 4 e 20 caracteres.", text_color="red")
-        return
-
-    # Create Cadastro object, which handles further validation and saving
-    Cadastro(email, quantidade_pessoas, senha, nome_familia, apartamento, verificador, label_aviso_widget)
+    verificador=int(verificador)
+    conta = Cadastro(email,quantidade_pessoas,senha,nome_familia,apartamento,verificador)
 
 
 def modo_adm():
@@ -1458,84 +1436,93 @@ botao_sair_aviso.pack()
 
 ###############################################
 
-
 class Cadastro:
     """
-    This Class aims to register users, receiving basic data as parameters.
-    It performs account registration and verifies the provided security code.
+    Essa Classe tem o objetivo de cadastrar os usuários, recebendo os dados básicos como parâmetros.
+    Ela realiza o cadastro de uma conta e verifica o código de segurança fornecido.
     """
 
-    def __init__(self, email, quantidade_pessoas, senha, nome_familia, apartamento, verificador, label_aviso_widget):
-        # Basic registration data
+    def __init__(self, email, quantidade_pessoas, senha, nome_familia, apartamento, verificador):
+        # Dados básicos de cadastro
         self.email = email
         self.quantidade = quantidade_pessoas
         self.senha = senha
         self.nome_familia = nome_familia
-        self.pontos = 0  # Points start at zero
+        self.pontos = 0  # Pontos começam zerados
         self.apartamento = apartamento
         self.verificador = verificador
-        self.label_aviso_widget = label_aviso_widget # Store the label to update messages in the GUI
-        print("Iniciando processo de cadastro...")
+        print("entrei cadastro")
         self.email_valido()
 
+        # Chamada para verificar o código de segurança
+        
+
+
     def email_valido(self):
-        """Function used to verify if the email is valid or not."""
+        
+        #FUNÇÃO UTILIZADA PARA CONFERIR SE O EMAIL É VÁLIDO OU NÃO
         dominios_validos = [
             'gmail.com', 'outlook.com', 'hotmail.com',
             'yahoo.com', 'icloud.com'
         ]
 
+        
+            # VERIFICA SE O FORMATO DO EMAIL ESTÁ ESCRITO CORRETAMENTE
         if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', self.email):
-            self.label_aviso_widget.configure(text="FORMATO DE EMAIL INVÁLIDO. Utilize um domínio válido.", text_color="red")
+            #label_aviso é uma variável global,não necessitando importar para edita-la
+            label_aviso.configure(text="Formato inválido", text_color="red")
             return
+            
 
+                  # volta pro início do while para validar de novo,caso esteja correto,irá passar pelo verificador
+
+            # VERIFICA APENAS O DOMÍNIO,SEPARA TODO O RESTO E PEGA APENAS A PARTE DO DOMÍNIO
         dominio = self.email.split('@')[1].lower()
         if dominio not in dominios_validos:
-            self.label_aviso_widget.configure(text="Domínio não aceito. Use: Gmail, Outlook, Yahoo, iCloud, etc.", text_color="red")
+            label_aviso.configure(text="Domínio não aceito", text_color="red")
             return
 
+                # continuar o loop sem parar
+                
+
+        # Se chegou aqui, formato e domínio estão corretos
+            
+
+        
         self.conferir_email()
 
+    
     def conferir_email(self):
-        """Function used to verify if the email is already registered or not."""
-        global dados_conta # Access global data
+        
+        #FUNÇÃO UTILIZADA PARA CONFERIR SE O EMAIL JÁ ESTÁ CADASTRADO OU NÃO
+        
+        with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
+            arquivo_lido = json.load(arquivo)
+            dados_conta = arquivo_lido["senha"]
+            dados_familia = arquivo_lido["familia"]
+            dados_quantidade = arquivo_lido["membros"]
+            dados_pontos = arquivo_lido["pontos"]
+            dados_apartamento = arquivo_lido["apartamento"]
+            dados_codigov = arquivo_lido["verificador"]
 
-        try:
-            with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
-                arquivo_lido = json.load(arquivo)
-                dados_conta = arquivo_lido.get("senha", {})
-        except Exception as e:
-            self.label_aviso_widget.configure(text=f"Erro ao carregar dados: {e}", text_color="red")
-            return
-
-        if self.email in dados_conta:
-            self.label_aviso_widget.configure(text="EMAIL JÁ POSSUI UMA CONTA.", text_color="red")
-            return # Stop the registration process
-        else:
-            self.conferir_ap()
+            if self.email.strip() in dados_conta:#dessa forma verificará se o email está já cadastrado ou não
+                label_aviso.configure(text="Email já cadastrado.",text_color="red")
+                return
+            
+            else:
+                self.conferir_ap()  # Continua o processo normalmente
 
     def conferir_ap(self):
-        """Function used to analyze if the apartment is already registered or not."""
-        global dados_apartamento # Access global data
-
-        try:
-            with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
-                arquivo_lido = json.load(arquivo)
-                dados_apartamento = arquivo_lido.get("apartamento", {})
-        except Exception as e:
-            self.label_aviso_widget.configure(text=f"Erro ao carregar dados: {e}", text_color="red")
-            return
-
-        # Check if the apartment number exists in any value of dados_apartamento
+        
+       #FUNÇÃO UTILIZADA PARA ANALISAR SE O APARTAMENTO JÁ ESTÁ CADASTRADO OU NÃO
         if self.apartamento in dados_apartamento.values():
-            self.label_aviso_widget.configure(text="APARTAMENTO JÁ CADASTRADO.", text_color="red")
-            return # Stop the registration process
+            label_aviso.configure(text="APARTAMENTO JÁ CADASTRADO.TENTE NOVAMENTE")
         else:
             self.cadastrar_conta()
 
     def cadastrar_conta(self):
-        """Function used to register the account in the database."""
-        global dados_conta, dados_familia, dados_quantidade, dados_pontos, dados_apartamento, dados_codigov
+        
+        ##FUNÇÃO UTILIZADA PARA CADASTRAR CONTA NO BANCO DE DADOS
 
         dados_conta[self.email] = self.senha
         dados_familia[self.email] = self.nome_familia
@@ -1544,15 +1531,13 @@ class Cadastro:
         dados_apartamento[self.email] = self.apartamento
         dados_codigov[self.email] = self.verificador
 
-        # It's better to use "w" for JSON files because any formatting error can break the system
-        try:
-            with open(r"banco_dados.JSON", "w", encoding="utf-8") as arquivo:
-                json.dump({"senha": dados_conta, "familia": dados_familia, "membros": dados_quantidade, "pontos": dados_pontos,
-                            "apartamento": dados_apartamento, "verificador": dados_codigov}, arquivo, indent=4, ensure_ascii=False)
-            self.label_aviso_widget.configure(text="Cadastro realizado com sucesso!", text_color="green")
-            aviso_sistema() # Show the success screen
-        except Exception as e:
-            self.label_aviso_widget.configure(text=f"Erro ao salvar cadastro: {e}", text_color="red")
+        # PARA ARQUIVO TIPO JSON É MELHOR USAR "w" pois qualquer errinho de formatação pode quebrar o sistema
+        with open(r"banco_dados.JSON", "w", encoding="utf-8") as arquivo:
+            # Aqui, estamos criando um dicionário com duas chaves:
+            json.dump({"senha": dados_conta, "familia": dados_familia, "membros": dados_quantidade, "pontos": dados_pontos,
+                       "apartamento": dados_apartamento, "verificador": dados_codigov}, arquivo, indent=4, ensure_ascii=False)
+            aviso_sistema()
+
 
 
 janela.mainloop()

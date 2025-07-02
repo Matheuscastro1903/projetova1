@@ -23,7 +23,8 @@
         "ronaldinho10@gmail.com": "101010",
         "matheusmm@gmail.com": "190190",
         "endrick123@gmail.com": "12345",
-        "ediclorofila@gmail.com": "213231"
+        "ediclorofila@gmail.com": "213231",
+        "teteucastro@gmail.com": "102030"
     },
     "familia": {
         "joao.silva@email.com": "Silva",
@@ -49,7 +50,8 @@
         "ronaldinho10@gmail.com": "Ronaldinho",
         "matheusmm@gmail.com": "Morais",
         "endrick123@gmail.com": "Endrick",
-        "ediclorofila@gmail.com": "Clorofila"
+        "ediclorofila@gmail.com": "Clorofila",
+        "teteucastro@gmail.com": "Castroo"
     },
     "membros": {
         "joao.silva@email.com": 4,
@@ -75,7 +77,8 @@
         "ronaldinho10@gmail.com": "5",
         "matheusmm@gmail.com": "6",
         "endrick123@gmail.com": "4",
-        "ediclorofila@gmail.com": "4"
+        "ediclorofila@gmail.com": "4",
+        "teteucastro@gmail.com": 4
     },
     "pontos": {
         "joao.silva@email.com": 150,
@@ -83,7 +86,7 @@
         "carlos.pereira@email.com": 120,
         "ana.costa@email.com": 180,
         "gabriel.escobar@gmail.com": 200,
-        "matheus1903@gmail.com": 200,
+        "matheus1903@gmail.com": 700,
         "samuel.andrade@gmail.com": 100,
         "vinicastro@gmail.com": 60,
         "julinhacastro1907@gmail.com": 30,
@@ -101,7 +104,8 @@
         "ronaldinho10@gmail.com": 0,
         "matheusmm@gmail.com": 0,
         "endrick123@gmail.com": 195,
-        "ediclorofila@gmail.com": 210
+        "ediclorofila@gmail.com": 10,
+        "teteucastro@gmail.com": 0
     },
     "apartamento": {
         "joao.silva@email.com": 101,
@@ -127,7 +131,8 @@
         "ronaldinho10@gmail.com": "1010",
         "matheusmm@gmail.com": "7878",
         "endrick123@gmail.com": "4",
-        "ediclorofila@gmail.com": "2301"
+        "ediclorofila@gmail.com": "2301",
+        "teteucastro@gmail.com": 1000
     },
     "verificador": {
         "joao.silva@email.com": 83456,
@@ -149,10 +154,11 @@
         "carol.fernandes@gmail.com": 23409,
         "bianca.oliveira@gmail.com": 10393,
         "lionelmessi10@gmail.com": 312312,
-        "lamineyamal19@gmail.com": "19999999",
-        "ronaldinho10@gmail.com": "1000000000000",
-        "matheusmm@gmail.com": "342424",
-        "endrick123@gmail.com": "65636",
-        "ediclorofila@gmail.com": "441424"
+        "lamineyamal19@gmail.com": 19999999,
+        "ronaldinho10@gmail.com": 1000000000000,
+        "matheusmm@gmail.com": 342424,
+        "endrick123@gmail.com": 65636,
+        "ediclorofila@gmail.com": 441424,
+        "teteucastro@gmail.com": 426422
     }
 }
