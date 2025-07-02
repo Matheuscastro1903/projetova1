@@ -131,14 +131,8 @@ def mostrar_cadastro():
     frame_aviso.pack_forget() # Hide aviso frame if navigating from it
 
     frame_cadastro.pack(fill="both", expand=True)
-    label_aviso.configure(text=" ", text_color="blue") # Clear previous messages
-    # Clear entry fields
-    entrada_email.delete(0, ctk.END)
-    entrada_nome.delete(0, ctk.END)
-    entrada_senha.delete(0, ctk.END)
-    entrada_qmembros.delete(0, ctk.END)
-    entrada_numeroap.delete(0, ctk.END)
-    entrada_verificador.delete(0, ctk.END)
+    
+    
 
 
 def conferir_cadastrar(entrada_email, entrada_nome, entrada_senha,
@@ -496,7 +490,7 @@ def atualizar_emailvalido(email_antigo,email_novo,senha,verificador,quantidade_p
     pass
 
 def atualizar_conferiremail(email_antigo,email_novo,senha,verificador,quantidade_pessoas,apartamento,nome_familia,atualizar_label_aviso,frame_menu):
-    if email_novo.strip() in dados_conta:#dessa forma verificará se o email está já cadastrado ou não
+    if email_novo in dados_conta:#dessa forma verificará se o email está já cadastrado ou não
         atualizar_label_aviso.configure(text="Email já cadastrado.",text_color="red")
         return     
     else:
