@@ -202,6 +202,7 @@ def entrar_modoadm():
     pass
 
 
+
 def sobre_nos():
     """Função utilizada para mostrar o frame_sobrenos(Contando a história do  projeto ecodrop"""
     frame_topo.pack_forget()
@@ -333,7 +334,6 @@ def mostrar_dados(email, senha, frame_principalmenu):
     """
     pass
 
-
 def atualizar_dados(email, senha, frame_principalmenu,frame_menu):
     """
     🔄 Função: Atualizar Dados, onde será possível o usuário atualizar seus dados
@@ -413,8 +413,6 @@ def atualizar_dados(email, senha, frame_principalmenu,frame_menu):
                                                   atualizar_entrada_verificador,
                                                   atualizar_label_aviso,frame_menu))
     atualizar_botao_confirmar.pack(pady=5)
-
-
 
 def conferir_atualizar(email,atualizar_entrada_email, atualizar_entrada_nome, atualizar_entrada_senha,
                         atualizar_entrada_qmembros, atualizar_entrada_numeroap,
@@ -770,7 +768,6 @@ def area_educativa1(frame_educativo, email, senha, frame_menu):
                                  command=lambda: area_educativa(email, senha, frame_menu))
     botao_voltar.pack(pady=50)
 
- 
 def area_educativa2(frame_educativo, email, senha, frame_menu):
     for widget in frame_educativo.winfo_children():
         widget.destroy()
@@ -848,7 +845,6 @@ def area_educativa2(frame_educativo, email, senha, frame_menu):
                                  command=lambda: area_educativa(email, senha, frame_menu))
     botao_voltar.pack(pady=50)
 
-
 def area_educativa3(frame_educativo, email, senha, frame_menu):
     for widget in frame_educativo.winfo_children():
         widget.destroy()
@@ -924,7 +920,6 @@ def area_educativa3(frame_educativo, email, senha, frame_menu):
                                  cursor="hand2",
                                  command=lambda: area_educativa(email, senha, frame_menu))
     botao_voltar.pack(pady=50)
-
 
 def area_educativa4(frame_educativo, email, senha, frame_menu):
     for widget in frame_educativo.winfo_children():
@@ -1002,7 +997,6 @@ def area_educativa4(frame_educativo, email, senha, frame_menu):
                                  cursor="hand2",
                                  command=lambda: area_educativa(email, senha, frame_menu))
     botao_voltar.pack(pady=50)
-
 
 def area_educativa5(frame_educativo, email, senha, frame_menu):
     for widget in frame_educativo.winfo_children():
