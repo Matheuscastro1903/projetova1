@@ -1140,7 +1140,7 @@ def sair_sitema():
     """Função utilizada para fechar sistema """
     janela.destroy()  # Fecha a janela principal
     # Ou qualquer outra lógica de saída que você preferir
-
+#
 # ctk.set_appearance_mode("light")
 
 ######################################################################
