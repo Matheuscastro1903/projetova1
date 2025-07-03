@@ -5,6 +5,7 @@ import csv
 import time
 import re
 import random
+from datetime import datetime, timedelta
 
 mensagens_agua = [
     "💧 Cada gota conta. Economize água!",
@@ -24,47 +25,81 @@ mensagens_agua = [
     "💙 Água limpa é direito de todos. Preserve!"
 ]
 
-# Load data from JSON at startup
-# Initialize empty data structures in case the file is not found
-with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
-    
-    # quando usa json.load o arquivo json é transformado em dicionário python
-    """
-    o objetivo dessa parte do código é abrir o arquivo json e salvar os dicionários em python,facilitando a manipulação
-    """
-    arquivo_lido = json.load(arquivo)
-    dados_conta = arquivo_lido["senha"]
-    dados_familia = arquivo_lido["familia"]
-    dados_quantidade = arquivo_lido["membros"]
-    dados_pontos = arquivo_lido["pontos"]
-    dados_apartamento = arquivo_lido["apartamento"]
-    dados_codigov = arquivo_lido["verificador"]
+# Lista de prêmios disponíveis (pode ser carregada de um JSON ou CSV também)
+premios_disponiveis = [
+    {"nome": "Voucher de R$20 em delivery", "custo": 200},
+    {"nome": "Desconto de 10% na conta de água", "custo": 500},
+    {"nome": "Kit de sementes para horta caseira", "custo": 150},
+    {"nome": "E-book sobre sustentabilidade", "custo": 100},
+    {"nome": "Doação de 50L de água para causas sociais", "custo": 250},
+    {"nome": "Copo reutilizável EcoDrop", "custo": 300}
+]
 
-# Function to only allow numbers
-def validar_numeros(novo_texto):  # Add the parameter
-    """Function used to let the user type only numbers, improving error handling"""
+# Inicializa as estruturas de dados globais
+dados_conta = {}
+dados_familia = {}
+dados_quantidade = {}
+dados_pontos = {}
+dados_apartamento = {}
+dados_codigov = {}
+dados_questoes_quiz = []
+dados_ultimo_quiz = {}
+
+
+# Tenta carregar os dados do arquivo JSON
+try:
+    with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
+        # Quando json.load é usado, o arquivo JSON é transformado em um dicionário Python
+        """
+        O objetivo desta parte do código é abrir o arquivo JSON e salvar os dicionários em Python, facilitando a manipulação.
+        """
+        arquivo_lido = json.load(arquivo)
+        dados_conta = arquivo_lido.get("senha", {})
+        dados_familia = arquivo_lido.get("familia", {})
+        dados_quantidade = arquivo_lido.get("membros", {})
+        dados_pontos = arquivo_lido.get("pontos", {})
+        dados_apartamento = arquivo_lido.get("apartamento", {})
+        dados_codigov = arquivo_lido.get("verificador", {})
+        dados_questoes_quiz = arquivo_lido.get("questoes_quiz", [])
+        dados_ultimo_quiz = arquivo_lido.get("ultimo_quiz", {})
+
+except FileNotFoundError:
+    # Se o arquivo não existir, cria um com a estrutura básica
+    print("WARNING: banco_dados.JSON não encontrado. Criando novo arquivo.")
+    with open(r"banco_dados.JSON", "w", encoding="utf-8") as arquivo:
+        json.dump({"senha": {}, "familia": {}, "membros": {}, "pontos": {}, "apartamento": {}, "verificador": {}, "questoes_quiz": [], "ultimo_quiz": {}}, arquivo, indent=4, ensure_ascii=False)
+except json.JSONDecodeError:
+    # Se o arquivo JSON estiver vazio ou malformado, inicializa com dados vazios
+    print("WARNING: banco_dados.JSON está vazio ou malformado. Inicializando com dados vazios.")
+    with open(r"banco_dados.JSON", "w", encoding="utf-8") as arquivo:
+        json.dump({"senha": {}, "familia": {}, "membros": {}, "pontos": {}, "apartamento": {}, "verificador": {}, "questoes_quiz": [], "ultimo_quiz": {}}, arquivo, indent=4, ensure_ascii=False)
+
+
+# Função para permitir apenas a digitação de números
+def validar_numeros(novo_texto):
+    """Função utilizada para permitir que o usuário digite apenas números, melhorando o tratamento de erros."""
     return novo_texto.isdigit() or novo_texto == ""
 
-# Function to only allow letters and spaces
-def validar_letras_espacos(novo_texto):  # Add the parameter
-    """Function used to let the user type only letters and spaces, improving error handling"""
+# Função para permitir apenas a digitação de letras e espaços
+def validar_letras_espacos(novo_texto):
+    """Função utilizada para permitir que o usuário digite apenas letras e espaços, melhorando o tratamento de erros."""
     return all(c.isalpha() or c.isspace() for c in novo_texto) or novo_texto == ""
 
 def aviso_sistema():
-    """Function used to show the frame_aviso, which will only appear if the registration is successfully completed"""
+    """Função utilizada para exibir o frame_aviso, que aparecerá apenas se o cadastro for concluído com sucesso."""
     frame_cadastro.pack_forget()
     frame_aviso.pack(fill="both", expand=True)
 
 def voltar_inicial():
-    """Function used to return to the initial screen, if the wrong option was entered"""
-    # Frames to "forget"
+    """Função utilizada para retornar à tela inicial, caso o usuário tenha entrado na opção errada."""
+    # Oculta todos os frames de funcionalidade
     frame_cadastro.pack_forget()
     frame_login.pack_forget()
     frame_adm.pack_forget()
     frame_sobrenos.pack_forget()
-    frame_aviso.pack_forget() # Ensure the warning frame is also hidden if user navigates from it
+    frame_aviso.pack_forget()
 
-    # Repack initial frames
+    # Reexibe os frames iniciais
     frame_topo.pack(fill="x")
     frame_conteudo.pack(fill="both", expand=True)
     frame_lateral.pack(side="left", fill="y")
@@ -73,21 +108,21 @@ def voltar_inicial():
 
 
 def mostrar_login():
-    """Function used to expand the login frame"""
+    """Função utilizada para exibir o frame de login."""
     frame_topo.pack_forget()
     frame_conteudo.pack_forget()
     frame_lateral.pack_forget()
     frame_principal.pack_forget()
     frame_rodape.pack_forget()
-    frame_aviso.pack_forget() # Hide aviso frame if navigating from it
+    frame_aviso.pack_forget() # Oculta o frame de aviso se estiver visível
     frame_login.pack(fill="both", expand=True)
-    label_avisologin.configure(text=" ", text_color="blue") # Clear previous messages
-    entrada_emaillogin.delete(0, ctk.END) # Clear email field
-    entrada_senhalogin.delete(0, ctk.END) # Clear password field
+    label_avisologin.configure(text=" ", text_color="blue") # Limpa mensagens anteriores
+    entrada_emaillogin.delete(0, ctk.END) # Limpa o campo de email
+    entrada_senhalogin.delete(0, ctk.END) # Limpa o campo de senha
 
 
 def conferir_logar(entrada_emaillogin, entrada_senhalogin):
-    """Function used to check for blank spaces when pressing the login button"""
+    """Função utilizada para verificar se há campos em branco ao clicar no botão de login."""
     email = entrada_emaillogin.get().strip()
     senha = entrada_senhalogin.get().strip()
     if email == "" or senha == "":
@@ -97,10 +132,9 @@ def conferir_logar(entrada_emaillogin, entrada_senhalogin):
     login(email, senha, label_avisologin)
 
 def login(email, senha, label_avisologin):
-    """Function used to verify if email and password are correct, to then go to the menu"""
-    global dados_conta # Ensure global access to updated data
+    """Função utilizada para verificar se o email e a senha estão corretos, e então navegar para o menu principal."""
+    global dados_conta # Garante acesso global aos dados atualizados
 
-    # Re-read data just in case it was modified externally or by another process
     try:
         with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
             arquivo_lido = json.load(arquivo)
@@ -121,56 +155,67 @@ def login(email, senha, label_avisologin):
         return
 
 def mostrar_cadastro():
-    """Function used to expand the registration frame"""
-    # frames to forget
+    """Função utilizada para exibir o frame de cadastro."""
+    # Oculta os frames principais
     frame_topo.pack_forget()
     frame_conteudo.pack_forget()
     frame_lateral.pack_forget()
     frame_principal.pack_forget()
     frame_rodape.pack_forget()
-    frame_aviso.pack_forget() # Hide aviso frame if navigating from it
+    frame_aviso.pack_forget() # Oculta o frame de aviso se estiver visível
 
     frame_cadastro.pack(fill="both", expand=True)
-    
-    
+    label_aviso.configure(text=" ", text_color="blue") # Limpa mensagens anteriores
+    # Limpa os campos de entrada
+    entrada_email.delete(0, ctk.END)
+    entrada_nome.delete(0, ctk.END)
+    entrada_senha.delete(0, ctk.END)
+    entrada_qmembros.delete(0, ctk.END)
+    entrada_numeroap.delete(0, ctk.END)
+    entrada_verificador.delete(0, ctk.END)
 
 
-def conferir_cadastrar(entrada_email, entrada_nome, entrada_senha,
-                    entrada_qmembros,entrada_numeroap, entrada_verificador, label_aviso):
+def conferir_cadastrar(entrada_email_widget, entrada_nome_widget, entrada_senha_widget,
+                        entrada_qmembros_widget, entrada_numeroap_widget, entrada_verificador_widget, label_aviso_widget):
     """
-    This function will be used to verify if the entries are filled
-    correctly and will call the Cadastro class to register the account.
+    Esta função verifica se os campos de entrada estão preenchidos corretamente
+    e chama a classe Cadastro para registrar a conta.
     """
-    email = entrada_email.get().strip()
-    nome_familia = entrada_nome.get().strip()
-    senha = entrada_senha.get().strip()
-    quantidade_pessoas = int(entrada_qmembros.get().strip())
-    apartamento = int(entrada_numeroap.get().strip())
-    verificador = entrada_verificador.get().strip()
+    email = entrada_email_widget.get().strip()
+    nome_familia = entrada_nome_widget.get().strip()
+    senha = entrada_senha_widget.get().strip()
+    quantidade_pessoas_str = entrada_qmembros_widget.get().strip()
+    apartamento_str = entrada_numeroap_widget.get().strip()
+    verificador = entrada_verificador_widget.get().strip()
 
-    entradas = [email, nome_familia, senha,quantidade_pessoas,apartamento]
-
-    # Verificação: se algum campo de texto estiver vazio
-    if any(campo == "" for campo in entradas):
-        label_aviso.configure(text="Todos os campos devem ser preenchidos.", text_color="red")
+    # Verificação inicial para campos vazios
+    if not email or not nome_familia or not senha or not quantidade_pessoas_str or not apartamento_str or not verificador:
+        label_aviso_widget.configure(text="Todos os campos devem ser preenchidos.", text_color="red")
         return
 
-    # Validação da senha
-    if len(senha) < 4 or len(senha) > 20:
-        label_aviso.configure(text="A senha deve ter entre 4 e 20 caracteres.", text_color="red")
+    try:
+        quantidade_pessoas = int(quantidade_pessoas_str)
+        apartamento = int(apartamento_str)
+    except ValueError:
+        label_aviso_widget.configure(text="Quantidade de membros e Apartamento devem ser números.", text_color="red")
         return
-    
-    if len(verificador) < 4 or len(verificador) > 20:
-        label_aviso.configure(text="A senha deve ter entre 4 e 20 caracteres.", text_color="red")
-        return
-    
 
-    verificador=int(verificador)
-    conta = Cadastro(email,quantidade_pessoas,senha,nome_familia,apartamento,verificador)
+    # Validação do comprimento da senha
+    if not (4 <= len(senha) <= 20):
+        label_aviso_widget.configure(text="A senha deve ter entre 4 e 20 caracteres.", text_color="red")
+        return
+
+    # Validação do comprimento do código verificador
+    if not (4 <= len(verificador) <= 20):
+        label_aviso_widget.configure(text="O código verificador deve ter entre 4 e 20 caracteres.", text_color="red")
+        return
+
+    # Cria o objeto Cadastro, que lida com validações adicionais e salvamento
+    Cadastro(email, quantidade_pessoas, senha, nome_familia, apartamento, verificador, label_aviso_widget)
 
 
 def modo_adm():
-    """Function used to expand the frame_adm, when the user wants to go to admin mode"""
+    """Função utilizada para exibir o frame_adm, quando o usuário desejar entrar no modo administrador."""
     frame_topo.pack_forget()
     frame_conteudo.pack_forget()
     frame_lateral.pack_forget()
@@ -180,13 +225,13 @@ def modo_adm():
 
 
 def entrar_modoadm():
-    # Placeholder for admin mode entry logic
-    print("Entrar modo ADM - Logic to be implemented")
+    """Lógica para entrar no modo administrador. A ser implementada."""
+    print("Entrar modo ADM - Lógica a ser implementada")
     pass
 
 
 def sobre_nos():
-    """Function used to show the frame_sobrenos (Tells the story of the ecodrop project)"""
+    """Função utilizada para exibir o frame_sobrenos (Contando a história do projeto EcoDrop)."""
     frame_topo.pack_forget()
     frame_conteudo.pack_forget()
     frame_lateral.pack_forget()
@@ -196,14 +241,15 @@ def sobre_nos():
 
 
 def mostrar_menu(email, senha):
-    """Function used to show the frame_menu, where the available functions of the program will be seen"""
+    """Função utilizada para exibir o frame_menu, onde o usuário verá as funcionalidades disponíveis do programa."""
+    # Destrói todos os widgets da janela principal para recriar o menu
     for widget in janela.winfo_children():
         widget.destroy()
 
-    # Main frame that wraps the menu and content
+    # Frame principal que envolve o menu lateral e o conteúdo dinâmico
     frame_menu = ctk.CTkFrame(janela, fg_color="#ffffff")
 
-    # Top of the system with title
+    # Topo do sistema com título
     frame_topo_menu = ctk.CTkFrame(frame_menu, fg_color="#1A73E8", height=80)
     frame_topo_menu.pack(fill="x")
 
@@ -211,19 +257,19 @@ def mostrar_menu(email, senha):
                               font=("Arial", 24, "bold"))
     titulo.pack(pady=20)
 
-    # Side menu
+    # Menu lateral
     frame_lateral_menu = ctk.CTkFrame(frame_menu, fg_color="white", width=200)
     frame_lateral_menu.pack(side="left", fill="y")
 
-    # Content frame
+    # Frame de conteúdo principal (onde as funcionalidades serão exibidas)
     frame_conteudo_menu = ctk.CTkFrame(frame_menu, fg_color="#f0f2f5")
     frame_conteudo_menu.pack(fill="both", expand=True)
 
-    # Main content frame, where dynamic content will be displayed
+    # Frame principal para o conteúdo dinâmico do menu
     frame_principalmenu = ctk.CTkFrame(frame_conteudo_menu, fg_color="#ffffff")
     frame_principalmenu.pack(fill="both", expand=True, padx=30, pady=30)
 
-    # Helper function to reset the main content area to the default welcome view
+    # Função auxiliar para redefinir o conteúdo do frame principal do menu para a vista padrão de boas-vindas
     def reset_principal_menu_content():
         for widget in frame_principalmenu.winfo_children():
             widget.destroy()
@@ -238,14 +284,15 @@ def mostrar_menu(email, senha):
                                          wraplength=500, justify="left", font=("Arial", 12))
         texto_instrucao.pack()
 
-        imagem_menu = Image.open("fotos/mascoteprincipall.png")
-        ctk_imagem_menu = ctk.CTkImage(light_image=imagem_menu, dark_image=imagem_menu, size=(400, 400))
+        imagem_menu_principal = Image.open("fotos/mascoteprincipall.png")
+        ctk_imagem_menu_principal = ctk.CTkImage(light_image=imagem_menu_principal, dark_image=imagem_menu_principal, size=(400, 400))
 
-        label_menu_image = ctk.CTkLabel(frame_principalmenu, image=ctk_imagem_menu, text="")
-        label_menu_image.pack()
+        label_menu_principal_image = ctk.CTkLabel(frame_principalmenu, image=ctk_imagem_menu_principal, text="")
+        label_menu_principal_image.pack()
 
 
-    # ---- Side Menu Buttons ----
+    # ---- Botões do Menu Lateral ----
+    # Cada botão chama sua respectiva função, passando o frame_principalmenu e a função de reset como callback
     botao1 = ctk.CTkButton(frame_lateral_menu, text="🏆 Ranking mensal", fg_color="white", text_color="#1A73E8",
                             font=("Arial", 12), anchor="w",
                             command=lambda: mostrar_ranking(email, senha, frame_principalmenu, reset_principal_menu_content), cursor="hand2")
@@ -291,14 +338,14 @@ def mostrar_menu(email, senha):
                             command=lambda: feedback(email, senha, frame_principalmenu, reset_principal_menu_content), cursor="hand2")
     botao9.pack(fill="x", pady=10, padx=20)
 
-    # Initial content for frame_principalmenu
+    # Conteúdo inicial para o frame_principalmenu
     reset_principal_menu_content()
 
-    # Footer Frame
+    # Frame do rodapé
     frame_rodape_menu = ctk.CTkFrame(frame_menu, fg_color="#f0f0f0", height=30)
     frame_rodape_menu.pack(fill="x", side="bottom")
 
-    texto_rodape_menu = ctk.CTkLabel( # Renamed to avoid conflict
+    texto_rodape_menu = ctk.CTkLabel(
     frame_rodape_menu, text="Versão 2.0 • Suporte: ecodropsuporte@gmail.com", text_color="#5f6368", font=("Arial", 10))
     texto_rodape_menu.pack()
 
@@ -307,9 +354,9 @@ def mostrar_menu(email, senha):
 
 def mostrar_dados(email, senha, frame_principalmenu, reset_callback):
     """
-    📊 Function: Show Data
-    Displays the user's main account data (excluding password and verifier code for security).
-    Used for the user to review their registration information.
+    📊 Função: Mostrar Dados
+    Exibe os principais dados da conta do usuário (exceto senha e código verificador por segurança).
+    Utilizada para que o usuário possa revisar as informações do seu cadastro.
     """
     for widget in frame_principalmenu.winfo_children():
         widget.destroy()
@@ -318,7 +365,7 @@ def mostrar_dados(email, senha, frame_principalmenu, reset_callback):
                                  font=("Arial", 20, "bold"), text_color="#1A73E8")
     label_titulo.pack(pady=(20, 10))
 
-    global dados_familia, dados_quantidade, dados_pontos, dados_apartamento # Access global data
+    global dados_familia, dados_quantidade, dados_pontos, dados_apartamento # Acessa dados globais
 
     user_family = dados_familia.get(email, "N/A")
     user_members = dados_quantidade.get(email, "N/A")
@@ -341,225 +388,114 @@ def mostrar_dados(email, senha, frame_principalmenu, reset_callback):
     botao_voltar.pack(pady=20)
 
 
-def atualizar_dados(email, senha, frame_principalmenu,frame_menu):
+def atualizar_dados(email, senha, frame_principalmenu, reset_callback):
     """
-    🔄 Função: Atualizar Dados, onde será possível o usuário atualizar seus dados
+    🔄 Função: Atualizar Dados
+    Permite ao usuário atualizar o nome da família, quantidade de membros e senha.
     """
     for widget in frame_principalmenu.winfo_children():
         widget.destroy()
 
-    atualizar_label_titulo = ctk.CTkLabel(frame_principalmenu, text="Informe seus dados:",
-                                          fg_color="#ffffff", text_color="blue", font=("Arial", 20))
-    atualizar_label_titulo.pack(pady=1)
+    label_titulo = ctk.CTkLabel(frame_principalmenu, text="🔄 Atualizar Dados",
+                                 font=("Arial", 20, "bold"), text_color="#1A73E8")
+    label_titulo.pack(pady=(20, 10))
 
-    atualizar_label_aviso = ctk.CTkLabel(frame_principalmenu, text=" ",
-                                         fg_color="#ffffff", text_color="blue", font=("Arial", 20))
-    atualizar_label_aviso.pack(pady=1)
+    # Carrega dados atuais
+    global dados_familia, dados_quantidade, dados_conta
+    nome_atual = dados_familia.get(email, "")
+    membros_atuais = dados_quantidade.get(email, "")
 
-    # 1 - Entrada Email
-    atualizar_label_email = ctk.CTkLabel(frame_principalmenu, text="Digite seu email:",
-                                         text_color="#000000", anchor="w", width=300)
-    atualizar_label_email.pack(pady=(1, 0))
+    ctk.CTkLabel(frame_principalmenu, text="Preencha os campos que deseja atualizar:",
+                 font=("Arial", 14), text_color="#333333").pack(pady=(0, 10))
 
-    atualizar_entrada_email = ctk.CTkEntry(frame_principalmenu, width=300)
-    atualizar_entrada_email.pack(pady=1)
+    # Campo Nome da Família
+    label_nome_familia = ctk.CTkLabel(frame_principalmenu, text="Nome da Família:",
+                                       font=("Arial", 12, "bold"), text_color="#5f6368", anchor="w")
+    label_nome_familia.pack(fill="x", padx=50, pady=(10, 0))
+    entrada_nome_familia = ctk.CTkEntry(frame_principalmenu, width=300)
+    entrada_nome_familia.insert(0, nome_atual)
+    entrada_nome_familia.pack(padx=50, pady=(0, 10))
 
-    # 2 - Nome da família
-    atualizar_label_nome = ctk.CTkLabel(frame_principalmenu, text="Digite o nome da sua família",
-                                        text_color="#000000", anchor="w", width=300)
-    atualizar_label_nome.pack(pady=(1, 0))
+    # Campo Quantidade de Membros
+    label_membros = ctk.CTkLabel(frame_principalmenu, text="Quantidade de Membros:",
+                                  font=("Arial", 12, "bold"), text_color="#5f6368", anchor="w")
+    label_membros.pack(fill="x", padx=50, pady=(10, 0))
+    entrada_membros = ctk.CTkEntry(frame_principalmenu, width=300, validate="key",
+                                   validatecommand=(janela.register(validar_numeros), "%P"))
+    entrada_membros.insert(0, str(membros_atuais))
+    entrada_membros.pack(padx=50, pady=(0, 10))
 
-    atualizar_entrada_nome = ctk.CTkEntry(frame_principalmenu, width=300, validate="key", validatecommand=(
-        janela.register(validar_letras_espacos), "%P"))
-    atualizar_entrada_nome.pack(pady=1)
+    # Campo Nova Senha (opcional)
+    label_nova_senha = ctk.CTkLabel(frame_principalmenu, text="Nova Senha (deixe em branco para não alterar):",
+                                     font=("Arial", 12, "bold"), text_color="#5f6368", anchor="w")
+    label_nova_senha.pack(fill="x", padx=50, pady=(10, 0))
+    entrada_nova_senha = ctk.CTkEntry(frame_principalmenu, width=300, show="*")
+    entrada_nova_senha.pack(padx=50, pady=(0, 10))
 
-    # 3 - Senha
-    atualizar_label_senha = ctk.CTkLabel(frame_principalmenu, text="Senha (mínimo 4 caracteres):",
-                                         text_color="#000000", anchor="w", width=300)
-    atualizar_label_senha.pack(pady=(1, 0))
+    label_mensagem_atualizar = ctk.CTkLabel(frame_principalmenu, text="", text_color="red", font=("Arial", 12))
+    label_mensagem_atualizar.pack(pady=(0, 10))
 
-    atualizar_entrada_senha = ctk.CTkEntry(frame_principalmenu, width=300, show="*")
-    atualizar_entrada_senha.pack(pady=1)
+    def salvar_atualizacao_acao():
+        novo_nome = entrada_nome_familia.get().strip()
+        nova_qtde_membros_str = entrada_membros.get().strip()
+        nova_senha = entrada_nova_senha.get().strip()
 
-    # 4 - Quantidade de membros
-    atualizar_label_qmembros = ctk.CTkLabel(frame_principalmenu, text="Quantidade de membros na família:",
-                                            text_color="#000000", anchor="w", width=300)
-    atualizar_label_qmembros.pack(pady=(1, 0))
+        if not novo_nome or not nova_qtde_membros_str:
+            label_mensagem_atualizar.configure(text="Nome da família e quantidade de membros são obrigatórios.", text_color="red")
+            return
 
-    atualizar_entrada_qmembros = ctk.CTkEntry(frame_principalmenu, width=300, validate="key", validatecommand=(
-        janela.register(validar_numeros), "%P"))
-    atualizar_entrada_qmembros.pack(pady=1)
+        try:
+            nova_qtde_membros = int(nova_qtde_membros_str)
+            if nova_qtde_membros <= 0:
+                label_mensagem_atualizar.configure(text="Quantidade de membros deve ser maior que zero.", text_color="red")
+                return
+        except ValueError:
+            label_mensagem_atualizar.configure(text="Quantidade de membros deve ser um número válido.", text_color="red")
+            return
 
-    # 5 - Número do apartamento
-    atualizar_label_numeroap = ctk.CTkLabel(frame_principalmenu, text="Digite o número do seu apartamento",
-                                            text_color="#000000", anchor="w", width=300)
-    atualizar_label_numeroap.pack(pady=(1, 0))
+        if nova_senha and not (4 <= len(nova_senha) <= 20):
+            label_mensagem_atualizar.configure(text="A nova senha deve ter entre 4 e 20 caracteres.", text_color="red")
+            return
 
-    atualizar_entrada_numeroap = ctk.CTkEntry(frame_principalmenu, width=300, validate="key", validatecommand=(
-        janela.register(validar_numeros), "%P"))
-    atualizar_entrada_numeroap.pack(pady=1)
+        try:
+            with open(r"banco_dados.JSON", "r+", encoding="utf-8") as f:
+                data = json.load(f)
 
-    # 6 - Código verificador
-    atualizar_label_verificador = ctk.CTkLabel(frame_principalmenu, text="Digite seu código verificador (mínimo 4 caracteres):",
-                                               text_color="#000000", anchor="w", width=300)
-    atualizar_label_verificador.pack(pady=(1, 0))
+                data["familia"][email] = novo_nome
+                data["membros"][email] = nova_qtde_membros
+                if nova_senha: # Só atualiza a senha se um novo valor for fornecido
+                    data["senha"][email] = nova_senha
 
-    atualizar_entrada_verificador = ctk.CTkEntry(frame_principalmenu, width=300, validate="key", validatecommand=(
-        janela.register(validar_numeros), "%P"))
-    atualizar_entrada_verificador.pack(pady=1)
+                # Atualiza as variáveis globais
+                dados_familia[email] = novo_nome
+                dados_quantidade[email] = nova_qtde_membros
+                if nova_senha:
+                    dados_conta[email] = nova_senha
 
-    # Botão de atualizar
-    atualizar_botao_confirmar = ctk.CTkButton(frame_principalmenu, text="Atualizar", fg_color="blue",
-                                              text_color="#ffffff", width=300,
-                                              command=lambda: conferir_atualizar(email,
-                                                  atualizar_entrada_email,
-                                                  atualizar_entrada_nome,
-                                                  atualizar_entrada_senha,
-                                                  atualizar_entrada_qmembros,
-                                                  atualizar_entrada_numeroap,
-                                                  atualizar_entrada_verificador,
-                                                  atualizar_label_aviso,frame_menu))
-    atualizar_botao_confirmar.pack(pady=5)
+                f.seek(0)
+                json.dump(data, f, indent=4, ensure_ascii=False)
+                f.truncate()
+            label_mensagem_atualizar.configure(text="Dados atualizados com sucesso!", text_color="green")
+            entrada_nova_senha.delete(0, ctk.END) # Limpa o campo da senha após a atualização
+        except Exception as e:
+            label_mensagem_atualizar.configure(text=f"Erro ao atualizar dados: {e}", text_color="red")
 
-def conferir_atualizar(email,atualizar_entrada_email, atualizar_entrada_nome, atualizar_entrada_senha,
-                        atualizar_entrada_qmembros, atualizar_entrada_numeroap,
-                        atualizar_entrada_verificador, atualizar_label_aviso,frame_menu):
-    """
-    ✅ Função: Conferir Atualizar - Verifica se os dados inseridos são válidos antes de prosseguir com a atualização.
-    """
+    botao_salvar = ctk.CTkButton(frame_principalmenu, text="Salvar Atualizações",
+                                 fg_color="#1A73E8", text_color="white",
+                                 command=salvar_atualizacao_acao)
+    botao_salvar.pack(pady=10)
 
-    # Coletando e limpando os dados
-    email_novo = atualizar_entrada_email.get().strip()
-    nome_familia = atualizar_entrada_nome.get().strip()
-    senha = atualizar_entrada_senha.get().strip()
-    verificador = atualizar_entrada_verificador.get().strip()
-    quantidade_pessoas=atualizar_entrada_qmembros.get().strip()
-    apartamento=atualizar_entrada_numeroap.get().strip()
-
-
-    # Tenta converter os campos numéricos
-    email_antigo=email
-
-    # Lista de campos que devem estar preenchidos
-    entradas = [email_novo, nome_familia,quantidade_pessoas, apartamento]
-
-    # Verifica se algum campo está vazio
-    if any(str(campo) == "" for campo in entradas):
-        atualizar_label_aviso.configure(text="Todos os campos devem ser preenchidos.", text_color="red")
-        return
-
-    # Validação do tamanho da senha
-    if len(senha) < 4 or len(senha) > 20:
-        atualizar_label_aviso.configure(text="A senha deve ter entre 4 e 20 caracteres.", text_color="red")
-        return
-
-    # Validação do código verificador
-    if len(verificador) < 4 or len(verificador) > 20:
-        atualizar_label_aviso.configure(text="O código verificador deve ter entre 4 e 20 caracteres.", text_color="red")
-        return
-
-    # Se passou por todas as validações
-    atualizar_emailvalido(email_antigo,email_novo,senha,verificador,quantidade_pessoas,apartamento,nome_familia,atualizar_label_aviso,frame_menu)
-
-    # Aqui você pode chamar a função que realmente faz a atualização no sistema/banco
-    # exemplo: atualizar_usuario(email, nome_familia, senha, quantidade_pessoas, apartamento, verificador)
-
-def atualizar_emailvalido(email_antigo,email_novo,senha,verificador,quantidade_pessoas,apartamento,nome_familia,atualizar_label_aviso,frame_menu):
-    dominios_validos = [
-            'gmail.com', 'outlook.com', 'hotmail.com',
-            'yahoo.com', 'icloud.com'
-        ]
-
-        
-            # VERIFICA SE O FORMATO DO EMAIL ESTÁ ESCRITO CORRETAMENTE
-    if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',email_novo):
-        #label_aviso é uma variável global,não necessitando importar para edita-la
-        atualizar_label_aviso.configure(text="Formato inválido", text_color="red")
-        return
-            
-
-                  # volta pro início do while para validar de novo,caso esteja correto,irá passar pelo verificador
-
-            # VERIFICA APENAS O DOMÍNIO,SEPARA TODO O RESTO E PEGA APENAS A PARTE DO DOMÍNIO
-    dominio = email_novo.split('@')[1].lower()
-    if dominio not in dominios_validos:
-        atualizar_label_aviso.configure(text="DOMÍNIO INVÁLIDO", text_color="red")
-        return
-    atualizar_conferiremail(email_antigo,email_novo,senha,verificador,quantidade_pessoas,apartamento,nome_familia,atualizar_label_aviso,frame_menu)
-
-    pass
-
-def atualizar_conferiremail(email_antigo,email_novo,senha,verificador,quantidade_pessoas,apartamento,nome_familia,atualizar_label_aviso,frame_menu):
-    if email_novo in dados_conta:#dessa forma verificará se o email está já cadastrado ou não
-        atualizar_label_aviso.configure(text="Email já cadastrado.",text_color="red")
-        return     
-    else:
-        atualizar_conferirap(email_antigo,email_novo,senha,verificador,quantidade_pessoas,apartamento,nome_familia,atualizar_label_aviso,frame_menu)
-
-    pass
-
-def atualizar_conferirap(email_antigo,email_novo,senha,verificador,quantidade_pessoas,apartamento,nome_familia,atualizar_label_aviso,frame_menu):
-    if apartamento in dados_apartamento.values():
-            atualizar_label_aviso.configure(text="APARTAMENTO JÁ CADASTRADO.TENTE NOVAMENTE")
-    else:
-        atualizar_conta(email_antigo,email_novo,senha,verificador,quantidade_pessoas,apartamento,nome_familia,atualizar_label_aviso,frame_menu)
-
-    pass
-
-def atualizar_conta(email_antigo,email_novo,senha,verificador,quantidade_pessoas,apartamento,nome_familia,atualizar_label_aviso,frame_menu):
-    pontos=dados_pontos[email_antigo]
-
-    dados_conta.pop(email_antigo, None)
-    dados_conta[email_novo] = senha
-
-    dados_familia.pop(email_antigo, None)
-    dados_familia[email_novo] = nome_familia
-
-    dados_quantidade.pop(email_antigo, None)
-    dados_quantidade[email_novo] = quantidade_pessoas
-
-    dados_pontos.pop(email_antigo, None)
-    dados_pontos[email_novo] = pontos  # Certifique-se que a variável `pontos` esteja definida
-
-    dados_apartamento.pop(email_antigo, None)
-    dados_apartamento[email_novo] = apartamento
-
-    dados_codigov.pop(email_antigo, None)
-    dados_codigov[email_novo] = verificador
-
-# Reescreve todo o JSON com os dados atualizados
-    with open("banco_dados.JSON", "w", encoding="utf-8") as arquivo:
-        json.dump({
-        "senha": dados_conta,
-        "familia": dados_familia,
-        "membros": dados_quantidade,
-        "pontos": dados_pontos,
-        "apartamento": dados_apartamento,
-        "verificador": dados_codigov
-        }, arquivo, indent=4, ensure_ascii=False)
-
-        mostrar_frameatualizar(frame_menu)
-        pass
-
-def mostrar_frameatualizar(frame_menu):
-    
-    frame_menu.pack_forget()
-    frame_avisoatualizar=ctk.CTkFrame(janela,fg_color="#ffffff")
-    # Label de aviso
-    label = ctk.CTkLabel(frame_avisoatualizar, text="Atualização  realizada com sucesso!", font=("Arial", 50), text_color="#1A73E8")
-    label.pack(pady=(40, 20))
-    # Botão para ir para login
-    label2=ctk.CTkLabel(frame_avisoatualizar,text="Reiniciando o sistema em 7 segundos", font=("Arial", 50), text_color="#1A73E8")
-    label2.pack(pady=(40, 20))
-    frame_avisoatualizar.pack(fill="both",expand=True)
-    janela.after(7000,sair_sitema)
+    botao_voltar = ctk.CTkButton(frame_principalmenu, text="⬅ Voltar ao Menu",
+                                 fg_color="gray", text_color="white",
+                                 command=reset_callback)
+    botao_voltar.pack(pady=20)
 
 
 def deletar_conta(email, senha, frame_principalmenu, reset_callback):
     """
-    🗑 Function: Delete Account
-    Allows the user to permanently delete their account from the system.
-    After confirmation, the data is removed and they will need to register again.
+    🗑 Função: Deletar Conta
+    Permite ao usuário excluir sua conta permanentemente do sistema.
+    Após a confirmação, os dados são removidos e o usuário precisará se cadastrar novamente.
     """
     for widget in frame_principalmenu.winfo_children():
         widget.destroy()
@@ -573,7 +509,7 @@ def deletar_conta(email, senha, frame_principalmenu, reset_callback):
     label_confirmacao.pack(pady=20)
 
     def confirmar_delecao_action():
-        global dados_conta, dados_familia, dados_quantidade, dados_pontos, dados_apartamento, dados_codigov
+        global dados_conta, dados_familia, dados_quantidade, dados_pontos, dados_apartamento, dados_codigov, dados_ultimo_quiz
         try:
             with open(r"banco_dados.JSON", "r+", encoding="utf-8") as arquivo:
                 data = json.load(arquivo)
@@ -584,22 +520,27 @@ def deletar_conta(email, senha, frame_principalmenu, reset_callback):
                     del data["pontos"][email]
                     del data["apartamento"][email]
                     del data["verificador"][email]
+                    if email in data["ultimo_quiz"]: # Remove o registro do quiz também
+                        del data["ultimo_quiz"][email]
 
-                    # Update global dictionaries to reflect changes immediately
-                    dados_conta = data["senha"]
-                    dados_familia = data["familia"]
-                    dados_quantidade = data["membros"]
-                    dados_pontos = data["pontos"]
-                    dados_apartamento = data["apartamento"]
-                    dados_codigov = data["verificador"]
 
-                    arquivo.seek(0)  # Go to the beginning of the file
+                    # Atualiza os dicionários globais para refletir as mudanças imediatamente
+                    dados_conta = data.get("senha", {})
+                    dados_familia = data.get("familia", {})
+                    dados_quantidade = data.get("membros", {})
+                    dados_pontos = data.get("pontos", {})
+                    dados_apartamento = data.get("apartamento", {})
+                    dados_codigov = data.get("verificador", {})
+                    dados_ultimo_quiz = data.get("ultimo_quiz", {})
+
+
+                    arquivo.seek(0)  # Volta para o início do arquivo
                     json.dump(data, arquivo, indent=4, ensure_ascii=False)
-                    arquivo.truncate() # Remove remaining part
+                    arquivo.truncate() # Remove o restante do arquivo
 
                     label_confirmacao.configure(text="Sua conta foi deletada com sucesso.", text_color="green")
-                    # After deletion, log out and go to initial screen
-                    janela.after(1000, lambda: voltar_inicial()) # Delay a bit for message to show
+                    # Após a exclusão, desloga e vai para a tela inicial
+                    janela.after(1000, lambda: voltar_inicial()) # Atraso para a mensagem ser visível
                 else:
                     label_confirmacao.configure(text="Erro: Conta não encontrada.", text_color="red")
         except Exception as e:
@@ -619,11 +560,11 @@ def deletar_conta(email, senha, frame_principalmenu, reset_callback):
 
 def feedback(email, senha, frame_principalmenu, reset_callback):
     """
-    ✍️ Function: Feedback
-    Allows the user to send an opinion with up to 140 characters and a rating from 0 to 10.
-    Used to evaluate the system and collect improvement suggestions.
+    ✍️ Função: Feedback
+    Permite ao usuário enviar uma opinião com até 140 caracteres e uma nota de 0 a 10.
+    Serve para avaliar o sistema e coletar sugestões de melhoria.
     """
-    # Clear existing widgets in the main content frame
+    # Limpa os widgets existentes no frame de conteúdo principal
     for widget in frame_principalmenu.winfo_children():
         widget.destroy()
 
@@ -635,22 +576,22 @@ def feedback(email, senha, frame_principalmenu, reset_callback):
                                     font=("Arial", 14), text_color="#333333")
     label_instrucao.pack(pady=(0, 10))
 
-    # Feedback Text Entry
+    # Campo de Entrada de Texto do Feedback
     label_feedback_texto = ctk.CTkLabel(frame_principalmenu, text="Seu Feedback (até 140 caracteres):",
                                          font=("Arial", 12, "bold"), text_color="#5f6368", anchor="w")
     label_feedback_texto.pack(fill="x", padx=50, pady=(10, 0))
     entrada_feedback = ctk.CTkEntry(frame_principalmenu, width=400, height=80)
     entrada_feedback.pack(padx=50, pady=(0, 10))
 
-    # Rating Scale
+    # Escala de Avaliação
     label_nota = ctk.CTkLabel(frame_principalmenu, text="Sua nota para o sistema (0 a 10):",
                               font=("Arial", 12, "bold"), text_color="#5f6368", anchor="w")
     label_nota.pack(fill="x", padx=50, pady=(10, 0))
     entrada_nota = ctk.CTkEntry(frame_principalmenu, width=100, validate="key",
-                                validatecommand=(janela.register(lambda text: text.isdigit() and (len(text) <= 2 and int(text) <= 10 if text.strip() else True) or text == ""), "%P"))
+                                validatecommand=(janela.register(lambda text: text.isdigit() and (len(text) <= 2 and (int(text) >= 0 and int(text) <= 10) if text.strip() else True) or text == ""), "%P"))
     entrada_nota.pack(padx=50, pady=(0, 20), anchor="w")
 
-    # Message Label for validation
+    # Label para mensagens de validação
     label_mensagem_feedback = ctk.CTkLabel(frame_principalmenu, text="", text_color="red", font=("Arial", 12))
     label_mensagem_feedback.pack(pady=(0, 10))
 
@@ -676,14 +617,14 @@ def feedback(email, senha, frame_principalmenu, reset_callback):
             return
 
         try:
-            with open("feedback.csv", "a+", newline="", encoding="utf-8") as f: # Use "a+" to read and append
-                f.seek(0, 2) # Move to the end of the file
-                if f.tell() == 0: # Check if file is empty by checking current position
-                    # File is empty, write header
+            with open("feedback.csv", "a+", newline="", encoding="utf-8") as f: # Usa "a+" para ler e anexar
+                f.seek(0) # Move para o início do arquivo para verificar seu tamanho
+                is_empty = f.read() == ''
+                if is_empty: # Se o arquivo estiver vazio, escreve o cabeçalho
                     csv_writer = csv.writer(f)
                     csv_writer.writerow(["Email", "Feedback", "Nota", "Data/Hora"])
-                # Now write the data
-                csv_writer = csv.writer(f)
+                # Escreve os dados
+                csv_writer = csv.writer(f) # Re-cria o writer para a posição atual
                 csv_writer.writerow([email, feedback_text, nota, time.strftime("%Y-%m-%d %H:%M:%S")])
             label_mensagem_feedback.configure(text="Feedback enviado com sucesso! Agradecemos sua colaboração.", text_color="green")
             entrada_feedback.delete(0, ctk.END)
@@ -705,9 +646,9 @@ def feedback(email, senha, frame_principalmenu, reset_callback):
 
 def calculo_pontuacao(email, senha, frame_principalmenu, reset_callback):
     """
-    🧮 Function: Point Calculation
-    Calculates points based on liters saved, number of residents, and average consumption.
-    Points are converted into benefits (e.g., vouchers, discounts, miles).
+    🧮 Função: Cálculo de Pontos
+    Calcula pontos com base nos litros economizados, número de moradores e consumo médio.
+    Os pontos são convertidos em benefícios (ex: vouchers, descontos, milhas).
     """
     for widget in frame_principalmenu.winfo_children():
         widget.destroy()
@@ -716,8 +657,72 @@ def calculo_pontuacao(email, senha, frame_principalmenu, reset_callback):
                                  font=("Arial", 20, "bold"), text_color="#1A73E8")
     label_titulo.pack(pady=(20, 10))
 
-    ctk.CTkLabel(frame_principalmenu, text="Funcionalidade de cálculo de pontos em desenvolvimento.",
-                 font=("Arial", 14), text_color="#5f6368").pack(pady=10)
+    ctk.CTkLabel(frame_principalmenu, text="Informe seu consumo diário (em litros) para calcular pontos:",
+                 font=("Arial", 14), text_color="#333333").pack(pady=(0, 10))
+
+    label_consumo = ctk.CTkLabel(frame_principalmenu, text="Consumo Diário (Litros):",
+                                  font=("Arial", 12, "bold"), text_color="#5f6368", anchor="w")
+    label_consumo.pack(fill="x", padx=50, pady=(10, 0))
+
+    entrada_consumo = ctk.CTkEntry(frame_principalmenu, width=200, validate="key",
+                                   validatecommand=(janela.register(validar_numeros), "%P"))
+    entrada_consumo.pack(padx=50, pady=(0, 10), anchor="w")
+
+    label_resultado_pontos = ctk.CTkLabel(frame_principalmenu, text="", font=("Arial", 14, "bold"), text_color="green")
+    label_resultado_pontos.pack(pady=(10, 0))
+
+    label_mensagem_calculo = ctk.CTkLabel(frame_principalmenu, text="", text_color="red", font=("Arial", 12))
+    label_mensagem_calculo.pack(pady=(0, 10))
+
+    def calcular_pontos_acao():
+        consumo_str = entrada_consumo.get().strip()
+        if not consumo_str:
+            label_mensagem_calculo.configure(text="Por favor, insira o consumo diário.", text_color="red")
+            return
+
+        try:
+            consumo_diario = int(consumo_str)
+            if consumo_diario < 0:
+                label_mensagem_calculo.configure(text="O consumo não pode ser negativo.", text_color="red")
+                return
+
+            global dados_pontos, dados_quantidade # Acessa pontos e quantidade de membros
+            membros = dados_quantidade.get(email, 1) # Pega a quantidade de membros, padrão 1 se não encontrar
+
+            # Lógica de cálculo de pontos simplificada:
+            # Consumo ideal per capita (ex: 100 litros/dia)
+            consumo_ideal_total = 100 * membros
+            pontos_ganhos = 0
+
+            if consumo_diario < consumo_ideal_total:
+                litros_economizados = consumo_ideal_total - consumo_diario
+                pontos_ganhos = int(litros_economizados / 10) # 1 ponto a cada 10 litros economizados
+
+            if pontos_ganhos > 0:
+                dados_pontos[email] = dados_pontos.get(email, 0) + pontos_ganhos
+                # Atualiza o JSON com os novos pontos
+                try:
+                    with open(r"banco_dados.JSON", "r+", encoding="utf-8") as f:
+                        data = json.load(f)
+                        data["pontos"][email] = dados_pontos[email]
+                        f.seek(0)
+                        json.dump(data, f, indent=4, ensure_ascii=False)
+                        f.truncate()
+                    label_resultado_pontos.configure(text=f"Parabéns! Você ganhou {pontos_ganhos} pontos. Total: {dados_pontos[email]}", text_color="green")
+                    label_mensagem_calculo.configure(text="")
+                except Exception as e:
+                    label_mensagem_calculo.configure(text=f"Erro ao salvar pontos: {e}", text_color="red")
+            else:
+                label_resultado_pontos.configure(text="Nenhum ponto ganho desta vez. Continue economizando!", text_color="#5f6368")
+                label_mensagem_calculo.configure(text="Seu consumo foi maior ou igual ao ideal. Tente reduzir mais!", text_color="orange")
+
+        except ValueError:
+            label_mensagem_calculo.configure(text="Consumo diário deve ser um número válido.", text_color="red")
+
+    botao_calcular = ctk.CTkButton(frame_principalmenu, text="Calcular Pontos",
+                                   fg_color="#1A73E8", text_color="white",
+                                   command=calcular_pontos_acao)
+    botao_calcular.pack(pady=10)
 
     botao_voltar = ctk.CTkButton(frame_principalmenu, text="⬅ Voltar ao Menu",
                                  fg_color="gray", text_color="white",
@@ -727,9 +732,9 @@ def calculo_pontuacao(email, senha, frame_principalmenu, reset_callback):
 
 def resgatar_premio(email, senha, frame_principalmenu, reset_callback):
     """
-    🎁 Function: Redeem Prizes
-    Allows the user to redeem rewards using their accumulated points.
-    Checks if the balance is sufficient before confirming the redemption.
+    🎁 Função: Resgatar Prêmios
+    Permite ao usuário resgatar recompensas usando seus pontos acumulados.
+    Verifica se o saldo é suficiente antes de confirmar o resgate.
     """
     for widget in frame_principalmenu.winfo_children():
         widget.destroy()
@@ -738,8 +743,63 @@ def resgatar_premio(email, senha, frame_principalmenu, reset_callback):
                                  font=("Arial", 20, "bold"), text_color="#1A73E8")
     label_titulo.pack(pady=(20, 10))
 
-    ctk.CTkLabel(frame_principalmenu, text="Funcionalidade de resgate de prêmios em desenvolvimento.",
-                 font=("Arial", 14), text_color="#5f6368").pack(pady=10)
+    global dados_pontos # Acessa os pontos globais para mostrar o saldo atual
+
+    pontos_atuais = dados_pontos.get(email, 0)
+    label_pontos_saldo = ctk.CTkLabel(frame_principalmenu, text=f"Seus pontos atuais: {pontos_atuais} 🌟",
+                                       font=("Arial", 16, "bold"), text_color="#28a745")
+    label_pontos_saldo.pack(pady=(0, 20))
+
+    label_instrucao = ctk.CTkLabel(frame_principalmenu, text="Escolha um prêmio para resgatar:",
+                                    font=("Arial", 14), text_color="#333333")
+    label_instrucao.pack(pady=(0, 10))
+
+    # Frame para os prêmios com scroll
+    scroll_frame = ctk.CTkScrollableFrame(frame_principalmenu, width=500, height=300, fg_color="#f8f9fa")
+    scroll_frame.pack(pady=10, padx=20, fill="both", expand=True)
+
+    for i, premio in enumerate(premios_disponiveis):
+        premio_frame = ctk.CTkFrame(scroll_frame, fg_color="white", corner_radius=10, border_width=1, border_color="#e0e0e0")
+        premio_frame.pack(fill="x", pady=5, padx=10)
+
+        label_premio_nome = ctk.CTkLabel(premio_frame, text=premio["nome"], font=("Arial", 14, "bold"), anchor="w", text_color="#1A73E8")
+        label_premio_nome.pack(side="left", padx=10, pady=5)
+
+        label_premio_custo = ctk.CTkLabel(premio_frame, text=f"Custo: {premio['custo']} pontos", font=("Arial", 12), text_color="#6c757d")
+        label_premio_custo.pack(side="left", padx=10, pady=5)
+
+        # Usamos uma função lambda com argumentos padrão para capturar o valor correto de 'premio'
+        botao_resgatar = ctk.CTkButton(premio_frame, text="Resgatar", fg_color="#ffc107", text_color="black",
+                                       command=lambda p=premio: realizar_resgate(email, p, label_pontos_saldo, frame_principalmenu, reset_callback))
+        botao_resgatar.pack(side="right", padx=10, pady=5)
+
+    label_mensagem_resgate = ctk.CTkLabel(frame_principalmenu, text="", text_color="red", font=("Arial", 12))
+    label_mensagem_resgate.pack(pady=(10, 0))
+
+    def realizar_resgate(email_usuario, premio_selecionado, label_saldo, main_frame, reset_cb):
+        global dados_pontos
+
+        pontos_disp = dados_pontos.get(email_usuario, 0)
+        custo_premio = premio_selecionado["custo"]
+
+        if pontos_disp >= custo_premio:
+            dados_pontos[email_usuario] -= custo_premio
+            # Atualiza o arquivo JSON
+            try:
+                with open(r"banco_dados.JSON", "r+", encoding="utf-8") as f:
+                    data = json.load(f)
+                    data["pontos"][email_usuario] = dados_pontos[email_usuario]
+                    f.seek(0)
+                    json.dump(data, f, indent=4, ensure_ascii=False)
+                    f.truncate()
+                label_mensagem_resgate.configure(text=f"Prêmio '{premio_selecionado['nome']}' resgatado com sucesso!", text_color="green")
+                label_saldo.configure(text=f"Seus pontos atuais: {dados_pontos[email_usuario]} 🌟") # Atualiza o saldo na GUI
+            except Exception as e:
+                label_mensagem_resgate.configure(text=f"Erro ao salvar: {e}", text_color="red")
+        else:
+            label_mensagem_resgate.configure(text="Pontos insuficientes para resgatar este prêmio.", text_color="red")
+        
+        # Pode adicionar um log de resgate de prêmios aqui, se desejar.
 
     botao_voltar = ctk.CTkButton(frame_principalmenu, text="⬅ Voltar ao Menu",
                                  fg_color="gray", text_color="white",
@@ -749,9 +809,8 @@ def resgatar_premio(email, senha, frame_principalmenu, reset_callback):
 
 def mostrar_ranking(email, senha, frame_principalmenu, reset_callback):
     """
-    🏆 Function: Monthly Ranking
-    Displays a list of families that saved the most water in the month.
-    Uses daily average consumption as a sorting criterion.
+    🏆 Função: Ranking Mensal
+    Exibe uma lista com as famílias que mais economizaram água no mês, ordenada por pontos.
     """
     for widget in frame_principalmenu.winfo_children():
         widget.destroy()
@@ -760,24 +819,35 @@ def mostrar_ranking(email, senha, frame_principalmenu, reset_callback):
                                  font=("Arial", 20, "bold"), text_color="#1A73E8")
     label_titulo.pack(pady=(20, 10))
 
-    global dados_pontos, dados_familia # Access global data
+    global dados_pontos, dados_familia # Acessa os dados globais
 
-    # Create a list of (family_name, points) tuples
+    # Carrega dados atualizados do JSON para garantir consistência
+    try:
+        with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
+            arquivo_lido = json.load(arquivo)
+            dados_pontos = arquivo_lido.get("pontos", {})
+            dados_familia = arquivo_lido.get("familia", {})
+    except Exception as e:
+        ctk.CTkLabel(frame_principalmenu, text=f"Erro ao carregar dados do ranking: {e}", text_color="red").pack()
+        botao_voltar = ctk.CTkButton(frame_principalmenu, text="⬅ Voltar ao Menu",
+                                     fg_color="gray", text_color="white", command=reset_callback)
+        botao_voltar.pack(pady=20)
+        return
+
+    # Cria uma lista de dicionários (nome_da_familia, pontos)
     ranking_data = []
-    # Use a copy of dados_pontos.items() to avoid issues if the dictionary changes during iteration (though unlikely here)
-    for user_email, points in list(dados_pontos.items()):
-        family_name = dados_familia.get(user_email, "N/A") # Get family name, default to N/A if not found
-        ranking_data.append({"familia": family_name, "pontos": points})
+    for user_email, pontos in dados_pontos.items():
+        nome_familia = dados_familia.get(user_email, "N/A")
+        ranking_data.append({"familia": nome_familia, "pontos": pontos})
 
-    # Sort the ranking data by points in descending order
+    # Ordena a lista pelo número de pontos em ordem decrescente
     ranking_data.sort(key=lambda x: x["pontos"], reverse=True)
 
-    # Display the ranking
     if not ranking_data:
         ctk.CTkLabel(frame_principalmenu, text="Nenhum dado de ranking disponível.",
                      font=("Arial", 14), text_color="#5f6368").pack(pady=10)
     else:
-        # Create a header for the ranking table
+        # Cria um cabeçalho para a tabela do ranking
         header_frame = ctk.CTkFrame(frame_principalmenu, fg_color="transparent")
         header_frame.pack(fill="x", padx=50, pady=(10, 5))
         ctk.CTkLabel(header_frame, text="Posição", font=("Arial", 12, "bold"), width=80).pack(side="left", padx=5)
@@ -799,8 +869,8 @@ def mostrar_ranking(email, senha, frame_principalmenu, reset_callback):
 
 def quiz_semanal(email, senha, frame_principalmenu, reset_callback):
     """
-    🧠 Function: Weekly Quiz
-    Here the user can participate in a weekly quiz.
+    🧠 Função: Quiz Semanal
+    Disponibiliza 5 questões toda segunda-feira. Dependendo do desempenho, o usuário recebe pontos.
     """
     for widget in frame_principalmenu.winfo_children():
         widget.destroy()
@@ -809,18 +879,171 @@ def quiz_semanal(email, senha, frame_principalmenu, reset_callback):
                                  font=("Arial", 20, "bold"), text_color="#1A73E8")
     label_titulo.pack(pady=(20, 10))
 
-    ctk.CTkLabel(frame_principalmenu, text="Funcionalidade de quiz semanal em desenvolvimento.",
-                 font=("Arial", 14), text_color="#5f6368").pack(pady=10)
+    global dados_pontos, dados_questoes_quiz, dados_ultimo_quiz
 
-    botao_voltar = ctk.CTkButton(frame_principalmenu, text="⬅ Voltar ao Menu",
+    # Carrega questões e último quiz do JSON (garante que os dados estão atualizados)
+    try:
+        with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
+            arquivo_lido = json.load(arquivo)
+            questoes_disponiveis = arquivo_lido.get("questoes_quiz", [])
+            dados_ultimo_quiz = arquivo_lido.get("ultimo_quiz", {})
+            dados_pontos = arquivo_lido.get("pontos", {}) # Garante que os pontos globais estão atualizados
+    except Exception as e:
+        ctk.CTkLabel(frame_principalmenu, text=f"Erro ao carregar questões do quiz: {e}", text_color="red").pack()
+        botao_voltar = ctk.CTkButton(frame_principalmenu, text="⬅ Voltar ao Menu",
+                                     fg_color="gray", text_color="white", command=reset_callback)
+        botao_voltar.pack(pady=20)
+        return
+
+    data_atual = datetime.now().date() # Data atual sem a hora
+    data_ultimo_quiz_str = dados_ultimo_quiz.get(email)
+    
+    pode_fazer_quiz = True
+    if data_ultimo_quiz_str:
+        data_ultimo_quiz = datetime.strptime(data_ultimo_quiz_str, "%Y-%m-%d").date()
+        
+        # Calcula a última segunda-feira
+        hoje_wday = data_atual.weekday() # 0 = segunda, 1 = terça, ..., 6 = domingo
+        dias_para_ultima_segunda = hoje_wday # Se hoje for segunda (0), 0 dias. Se for terça (1), 1 dia para trás.
+        ultima_segunda_feira = data_atual - timedelta(days=dias_para_ultima_segunda)
+
+        # Se o último quiz foi feito após a última segunda-feira
+        if data_ultimo_quiz >= ultima_segunda_feira:
+            pode_fazer_quiz = False
+
+
+    if not questoes_disponiveis or len(questoes_disponiveis) < 5:
+        ctk.CTkLabel(frame_principalmenu, text="Não há questões suficientes para o quiz. Contate o administrador.",
+                     font=("Arial", 14), text_color="red").pack(pady=10)
+        botao_voltar = ctk.CTkButton(frame_principalmenu, text="⬅ Voltar ao Menu",
+                                     fg_color="gray", text_color="white", command=reset_callback)
+        botao_voltar.pack(pady=20)
+        return
+
+    if not pode_fazer_quiz:
+        ctk.CTkLabel(frame_principalmenu, text=f"Você já realizou o quiz esta semana. Volte na próxima segunda-feira!",
+                     font=("Arial", 14), text_color="orange").pack(pady=10)
+        botao_voltar = ctk.CTkButton(frame_principalmenu, text="⬅ Voltar ao Menu",
+                                     fg_color="gray", text_color="white", command=reset_callback)
+        botao_voltar.pack(pady=20)
+        return
+
+    # Selecionar 5 questões aleatórias
+    questoes_para_quiz = random.sample(questoes_disponiveis, 5)
+    respostas_usuario = {}
+    
+    current_question_index = 0
+    
+    question_label = ctk.CTkLabel(frame_principalmenu, text="", font=("Arial", 16, "bold"), wraplength=500, justify="left", text_color="#1A73E8")
+    question_label.pack(pady=(10, 10))
+
+    options_frame = ctk.CTkFrame(frame_principalmenu, fg_color="transparent")
+    options_frame.pack(pady=(0, 20))
+
+    quiz_message_label = ctk.CTkLabel(frame_principalmenu, text="", font=("Arial", 12), text_color="red")
+    quiz_message_label.pack(pady=(0, 10))
+
+    radio_var = ctk.StringVar(value="") # Variável para os radio buttons da questão atual
+
+    def show_question(index):
+        nonlocal current_question_index
+        current_question_index = index
+        
+        for widget in options_frame.winfo_children():
+            widget.destroy() # Limpa as opções anteriores
+
+        radio_var.set("") # Reseta a seleção do radio button
+
+        if index < len(questoes_para_quiz):
+            question = questoes_para_quiz[index]
+            question_label.configure(text=f"Questão {index + 1}: {question['pergunta']}")
+
+            for i, option in enumerate(question['opcoes']):
+                radio_button = ctk.CTkRadioButton(options_frame, text=option, variable=radio_var, value=option,
+                                                  font=("Arial", 14), text_color="#333333")
+                radio_button.pack(anchor="w", pady=5)
+            
+            # Atualiza o texto do botão "Próxima" ou "Finalizar"
+            if current_question_index == len(questoes_para_quiz) - 1:
+                botao_proxima.configure(text="Finalizar Quiz")
+            else:
+                botao_proxima.configure(text="Próxima Questão")
+        else:
+            calculate_score()
+
+    def next_question():
+        selected_option = radio_var.get()
+        if not selected_option:
+            quiz_message_label.configure(text="Por favor, selecione uma opção.", text_color="red")
+            return
+        
+        respostas_usuario[current_question_index] = selected_option
+        quiz_message_label.configure(text="")
+        
+        # Move para a próxima questão ou finaliza
+        if current_question_index < len(questoes_para_quiz) - 1:
+            show_question(current_question_index + 1)
+        else:
+            calculate_score()
+        
+    def calculate_score():
+        pontuacao = 0
+        for i, question in enumerate(questoes_para_quiz):
+            if respostas_usuario.get(i) == question['resposta_correta']:
+                pontuacao += 1
+
+        pontos_ganhos = pontuacao * 100 # Exemplo: 100 pontos por resposta correta
+
+        global dados_pontos, dados_ultimo_quiz
+        dados_pontos[email] = dados_pontos.get(email, 0) + pontos_ganhos
+        dados_ultimo_quiz[email] = data_atual.strftime("%Y-%m-%d") # Registra a data do quiz
+
+        # Atualiza o arquivo JSON com os novos pontos e a data do último quiz
+        try:
+            with open(r"banco_dados.JSON", "r+", encoding="utf-8") as f:
+                data = json.load(f)
+                data["pontos"][email] = dados_pontos[email]
+                data["ultimo_quiz"][email] = dados_ultimo_quiz[email]
+                f.seek(0)
+                json.dump(data, f, indent=4, ensure_ascii=False)
+                f.truncate()
+
+            # Exibe o resultado do quiz
+            for widget in frame_principalmenu.winfo_children():
+                widget.destroy()
+            ctk.CTkLabel(frame_principalmenu, text="🎉 Quiz Concluído! 🎉", font=("Arial", 20, "bold"), text_color="#1A73E8").pack(pady=(20, 10))
+            ctk.CTkLabel(frame_principalmenu, text=f"Você acertou {pontuacao} de {len(questoes_para_quiz)} questões.", font=("Arial", 16), text_color="#333333").pack(pady=5)
+            ctk.CTkLabel(frame_principalmenu, text=f"Você ganhou {pontos_ganhos} pontos!", font=("Arial", 16, "bold"), text_color="green").pack(pady=5)
+            ctk.CTkLabel(frame_principalmenu, text=f"Seu total de pontos agora é: {dados_pontos[email]}", font=("Arial", 14), text_color="#28a745").pack(pady=10)
+            
+            botao_voltar = ctk.CTkButton(frame_principalmenu, text="⬅ Voltar ao Menu",
+                                         fg_color="gray", text_color="white", command=reset_callback)
+            botao_voltar.pack(pady=20)
+
+        except Exception as e:
+            ctk.CTkLabel(frame_principalmenu, text=f"Erro ao salvar resultado do quiz: {e}", text_color="red").pack()
+            botao_voltar = ctk.CTkButton(frame_principalmenu, text="⬅ Voltar ao Menu",
+                                         fg_color="gray", text_color="white", command=reset_callback)
+            botao_voltar.pack(pady=20)
+
+
+    botao_proxima = ctk.CTkButton(frame_principalmenu, text="Próxima Questão",
+                                   fg_color="#1A73E8", text_color="white",
+                                   command=next_question)
+    botao_proxima.pack(pady=10)
+
+    # Botão de voltar que estará sempre presente durante o quiz
+    botao_voltar_quiz = ctk.CTkButton(frame_principalmenu, text="⬅ Voltar ao Menu",
                                  fg_color="gray", text_color="white",
                                  command=reset_callback)
-    botao_voltar.pack(pady=20)
+    botao_voltar_quiz.pack(pady=20)
+
+    show_question(current_question_index) # Inicia exibindo a primeira questão
 
 
 def area_educativa(email, senha, frame_menu):
-    """Function used to go to the frame_educativo (we will use the full screen in this function, as it is necessary to have more content.
-    Where there will be several reading options about sustainability topics)"""
+    """Função utilizada para ir para o frame_educativo (usaremos a tela inteira nesta função, por ser necessário para ter mais conteúdo.
+    Onde haverá várias opções de leitura sobre assuntos de sustentabilidade)."""
 
     for widget in janela.winfo_children():
         widget.destroy()
@@ -897,8 +1120,8 @@ def area_educativa(email, senha, frame_menu):
 
     botao_voltar = ctk.CTkButton(frame_educativo,
                                  text="⬅ Voltar",
-                                 fg_color="blue", # Changed color for consistency
-                                 text_color="#ffffff", # Changed color for consistency
+                                 fg_color="blue", # Cor alterada para consistência
+                                 text_color="#ffffff", # Cor alterada para consistência
                                  font=("Arial", 12),
                                  cursor="hand2",
                                  command=lambda: mostrar_menu(email, senha))
@@ -906,10 +1129,11 @@ def area_educativa(email, senha, frame_menu):
 
 
 def area_educativa1(frame_educativo, email, senha, frame_menu):
+    """Exibe o conteúdo da notícia 1 na área educativa."""
     for widget in frame_educativo.winfo_children():
         widget.destroy()
 
-    # Title
+    # Título
     titulo = ctk.CTkLabel(frame_educativo,
                           text="🌍 Investimento de €15 bilhões para combater a crise hídrica na Europa",
                           text_color="#1A73E8",
@@ -917,7 +1141,7 @@ def area_educativa1(frame_educativo, email, senha, frame_menu):
                           wraplength=800, justify="left")
     titulo.pack(pady=(20, 10))
 
-    # News paragraph
+    # Parágrafo da notícia
     corpo_texto = (
         "A Universidade Europeia e o Banco Europeu de Investimento anunciaram, em 7 de junho, "
         "um aporte de €15 bilhões (≈US$17bi) a projetos voltados à redução da poluição, "
@@ -935,7 +1159,7 @@ def area_educativa1(frame_educativo, email, senha, frame_menu):
                                justify="left")
     label_corpo.pack(pady=10)
 
-    # Highlight: Why this matters?
+    # Destaque: Por que isso importa?
     label_importancia = ctk.CTkLabel(frame_educativo,
                                       text="💡 Por que isso importa?",
                                       text_color="#1A73E8",
@@ -957,7 +1181,7 @@ def area_educativa1(frame_educativo, email, senha, frame_menu):
                                            justify="left")
     label_texto_importancia.pack(pady=5)
 
-    # Sources
+    # Fontes
     label_fontes = ctk.CTkLabel(frame_educativo,
                                 text="🔗 Fontes:",
                                 text_color="#1A73E8",
@@ -975,7 +1199,7 @@ def area_educativa1(frame_educativo, email, senha, frame_menu):
                             justify="left")
     lbl.pack()
 
-    # Back button
+    # Botão de voltar
     botao_voltar = ctk.CTkButton(frame_educativo,
                                  text="⬅ Voltar",
                                  fg_color="blue",
@@ -987,10 +1211,11 @@ def area_educativa1(frame_educativo, email, senha, frame_menu):
 
 
 def area_educativa2(frame_educativo, email, senha, frame_menu):
+    """Exibe o conteúdo da notícia 2 na área educativa."""
     for widget in frame_educativo.winfo_children():
         widget.destroy()
 
-    # Title
+    # Título
     titulo = ctk.CTkLabel(frame_educativo,
                           text="🎒 Extração de água potável do ar usando alimentos",
                           text_color="#1A73E8",
@@ -998,7 +1223,7 @@ def area_educativa2(frame_educativo, email, senha, frame_menu):
                           wraplength=800, justify="left")
     titulo.pack(pady=(20, 10))
 
-    # News paragraph
+    # Parágrafo da notícia
     corpo_texto = (
         "Pesquisadores da Universidade do Texas em Austin publicaram, em abril, um método inovador para captar água do ar "
         "usando hidrogéis feitos com biomassa de resíduos alimentares e conchas. Esses materiais absorvem grandes volumes "
@@ -1014,7 +1239,7 @@ def area_educativa2(frame_educativo, email, senha, frame_menu):
                                justify="left")
     label_corpo.pack(pady=10)
 
-    # Highlight: Practical impact
+    # Destaque: Impacto prático
     label_importancia = ctk.CTkLabel(frame_educativo,
                                       text="💡 Impacto prático:",
                                       text_color="#1A73E8",
@@ -1036,7 +1261,7 @@ def area_educativa2(frame_educativo, email, senha, frame_menu):
                                            justify="left")
     label_texto_importancia.pack(pady=5)
 
-    # Sources
+    # Fontes
     label_fontes = ctk.CTkLabel(frame_educativo,
                                 text="🔗 Fontes:",
                                 text_color="#1A73E8",
@@ -1053,7 +1278,7 @@ def area_educativa2(frame_educativo, email, senha, frame_menu):
                        justify="left")
     lbl.pack()
 
-    # Back button
+    # Botão de voltar
     botao_voltar = ctk.CTkButton(frame_educativo,
                                  text="⬅ Voltar",
                                  fg_color="blue",
@@ -1065,10 +1290,11 @@ def area_educativa2(frame_educativo, email, senha, frame_menu):
 
 
 def area_educativa3(frame_educativo, email, senha, frame_menu):
+    """Exibe o conteúdo da notícia 3 na área educativa."""
     for widget in frame_educativo.winfo_children():
         widget.destroy()
 
-    # Title
+    # Título
     titulo = ctk.CTkLabel(frame_educativo,
                           text="🏗️ UT Austin constrói o maior centro universitário de reúso de água nos EUA",
                           text_color="#1A73E8",
@@ -1076,7 +1302,7 @@ def area_educativa3(frame_educativo, email, senha, frame_menu):
                           wraplength=800, justify="left")
     titulo.pack(pady=(20, 10))
 
-    # News paragraph
+    # Parágrafo da notícia
     corpo_texto = (
         "Em maio, a UT anunciou a construção do WaterHub, instalação de 900m² que vai tratar até 1 milhão de galões "
         "(≈3,8 mil m³) de esgoto por dia. A previsão de operação é para o segundo semestre de 2027. O local servirá como laboratório "
@@ -1091,7 +1317,7 @@ def area_educativa3(frame_educativo, email, senha, frame_menu):
                                justify="left")
     label_corpo.pack(pady=10)
 
-    # Highlight: Why this matters?
+    # Destaque: Por que isso importa?
     label_importancia = ctk.CTkLabel(frame_educativo,
                                       text="💡 Por que isso importa?",
                                       text_color="#1A73E8",
@@ -1113,7 +1339,7 @@ def area_educativa3(frame_educativo, email, senha, frame_menu):
                                            justify="left")
     label_texto_importancia.pack(pady=5)
 
-    # Sources
+    # Fontes
     label_fontes = ctk.CTkLabel(frame_educativo,
                                 text="🔗 Fontes:",
                                 text_color="#1A73E8",
@@ -1130,7 +1356,7 @@ def area_educativa3(frame_educativo, email, senha, frame_menu):
                        justify="left")
     lbl.pack()
 
-    # Back button
+    # Botão de voltar
     botao_voltar = ctk.CTkButton(frame_educativo,
                                  text="⬅ Voltar",
                                  fg_color="blue",
@@ -1142,10 +1368,11 @@ def area_educativa3(frame_educativo, email, senha, frame_menu):
 
 
 def area_educativa4(frame_educativo, email, senha, frame_menu):
+    """Exibe o conteúdo da notícia 4 na área educativa."""
     for widget in frame_educativo.winfo_children():
         widget.destroy()
 
-    # Title
+    # Título
     titulo = ctk.CTkLabel(frame_educativo,
                           text="📰 Educação Ambiental na Índia: Estudantes de Uttar Pradesh se tornam embaixadores da limpeza",
                           text_color="#1A73E8",
@@ -1153,7 +1380,7 @@ def area_educativa4(frame_educativo, email, senha, frame_menu):
                           wraplength=800, justify="left")
     titulo.pack(pady=(20, 10))
 
-    # News paragraph
+    # Parágrafo da notícia
     corpo_texto = (
         "Em junho de 2024, o governo do estado de Uttar Pradesh, na Índia, lançou uma iniciativa educativa para envolver os alunos "
         "das escolas públicas e privadas na conservação ambiental e limpeza do rio Ganges, um dos maiores e mais sagrados rios da Ásia. "
@@ -1169,7 +1396,7 @@ def area_educativa4(frame_educativo, email, senha, frame_menu):
                                justify="left")
     label_corpo.pack(pady=10)
 
-    # Highlight: Why this matters?
+    # Destaque: Por que isso importa?
     label_importancia = ctk.CTkLabel(frame_educativo,
                                       text="💡 Por que isso importa?",
                                       text_color="#1A73E8",
@@ -1191,7 +1418,7 @@ def area_educativa4(frame_educativo, email, senha, frame_menu):
                                            justify="left")
     label_texto_importancia.pack(pady=5)
 
-    # Sources
+    # Fontes
     label_fontes = ctk.CTkLabel(frame_educativo,
                                 text="🔗 Fontes:",
                                 text_color="#1A73E8",
@@ -1208,7 +1435,7 @@ def area_educativa4(frame_educativo, email, senha, frame_menu):
                        justify="left")
     lbl.pack()
 
-    # Back button
+    # Botão de voltar
     botao_voltar = ctk.CTkButton(frame_educativo,
                                  text="⬅ Voltar",
                                  fg_color="blue",
@@ -1220,10 +1447,11 @@ def area_educativa4(frame_educativo, email, senha, frame_menu):
 
 
 def area_educativa5(frame_educativo, email, senha, frame_menu):
+    """Exibe o conteúdo da notícia 5 na área educativa."""
     for widget in frame_educativo.winfo_children():
         widget.destroy()
 
-    # Title
+    # Título
     titulo = ctk.CTkLabel(frame_educativo,
                           text="📰 Impacto dos datacenters em áreas com escassez hídrica na América Latina",
                           text_color="#1A73E8",
@@ -1231,7 +1459,7 @@ def area_educativa5(frame_educativo, email, senha, frame_menu):
                           wraplength=800, justify="left")
     titulo.pack(pady=(20, 10))
 
-    # News paragraph
+    # Parágrafo da notícia
     corpo_texto = (
         "Um artigo do The Guardian chama atenção para a instalação de grandes datacenters em regiões "
         "com escassez de água no Brasil e outros países da América Latina. Um dos casos citados em Caucaia (CE) "
@@ -1248,7 +1476,7 @@ def area_educativa5(frame_educativo, email, senha, frame_menu):
                                justify="left")
     label_corpo.pack(pady=10)
 
-    # Highlight: Why this matters?
+    # Destaque: Por que isso importa?
     label_importancia = ctk.CTkLabel(frame_educativo,
                                       text="💡 Por que isso importa?",
                                       text_color="#1A73E8",
@@ -1270,7 +1498,7 @@ def area_educativa5(frame_educativo, email, senha, frame_menu):
                                            justify="left")
     label_texto_importancia.pack(pady=5)
 
-    # Sources
+    # Fontes
     label_fontes = ctk.CTkLabel(frame_educativo,
                                 text="🔗 Fontes:",
                                 text_color="#1A73E8",
@@ -1287,7 +1515,7 @@ def area_educativa5(frame_educativo, email, senha, frame_menu):
                        justify="left")
     lbl.pack()
 
-    # Back button
+    # Botão de voltar
     botao_voltar = ctk.CTkButton(frame_educativo,
                                  text="⬅ Voltar",
                                  fg_color="blue",
@@ -1298,17 +1526,18 @@ def area_educativa5(frame_educativo, email, senha, frame_menu):
     botao_voltar.pack(pady=50)
 
 def area_educativa6(frame_educativo, email, senha, frame_menu):
+    """Exibe o conteúdo da notícia 6 (lista de filmes) na área educativa."""
     for widget in frame_educativo.winfo_children():
         widget.destroy()
 
-    # Smaller main title with less spacing
+    # Título principal menor e com menos espaçamento
     titulo = ctk.CTkLabel(frame_educativo,
                           text="🌿 8 Filmes sobre Sustentabilidade para Crianças",
                           text_color="#1A73E8",
-                          font=("Arial", 16, "bold"),  # smaller font
+                          font=("Arial", 16, "bold"),  # fonte menor
                           wraplength=800,
                           justify="left")
-    titulo.pack(pady=(10, 5))  # less spacing
+    titulo.pack(pady=(10, 5))  # menos espaçamento
 
     filmes = [
         ("Wall-E (2008)", "Um clássico da Pixar! Mostra um futuro onde a Terra foi tomada pelo lixo e a humanidade vive no espaço. Wall-E, um robô solitário, nos ensina sobre consumo, lixo e amor pelo planeta."),
@@ -1325,20 +1554,20 @@ def area_educativa6(frame_educativo, email, senha, frame_menu):
         label_filme_titulo = ctk.CTkLabel(frame_educativo,
                                           text=titulo_filme,
                                           text_color="#1A73E8",
-                                          font=("Arial", 14, "bold"),  # smaller font
+                                          font=("Arial", 14, "bold"),  # fonte menor
                                           wraplength=800,
                                           justify="left")
-        label_filme_titulo.pack(padx=20, pady=(8, 2), anchor="w")  # less spacing
+        label_filme_titulo.pack(padx=20, pady=(8, 2), anchor="w")  # menos espaçamento
 
         label_filme_desc = ctk.CTkLabel(frame_educativo,
                                         text=descricao,
                                         text_color="#333333",
-                                        font=("Arial", 12),  # smaller font
+                                        font=("Arial", 12),  # fonte menor
                                         wraplength=800,
                                         justify="left")
-        label_filme_desc.pack(padx=20, pady=(0, 6), anchor="w")  # less spacing
+        label_filme_desc.pack(padx=20, pady=(0, 6), anchor="w")  # menos espaçamento
 
-    # Back button
+    # Botão de voltar
     botao_voltar = ctk.CTkButton(frame_educativo,
                                  text="⬅ Voltar",
                                  fg_color="blue",
@@ -1350,18 +1579,18 @@ def area_educativa6(frame_educativo, email, senha, frame_menu):
 
 
 def sair_sitema():
-    """Function used to close the system"""
-    janela.destroy()  # Closes the main window
+    """Função utilizada para fechar o sistema."""
+    janela.destroy()  # Fecha a janela principal
 
 
 ######################################################################
-# Main window configuration
+# Configuração da janela principal
 janela = ctk.CTk()
 janela.title("ECODROP SYSTEM")
 janela.geometry("1000x800+400+150")
 janela.resizable(False, False)
 
-# Create a frame just for the header at the top
+# Cria um frame apenas para o cabeçalho do topo
 frame_topo = ctk.CTkFrame(janela, fg_color="#1A73E8", height=80)
 frame_topo.pack(fill="x")
 
@@ -1369,15 +1598,15 @@ titulo = ctk.CTkLabel(frame_topo, text="💧 ECODROP",
                       text_color="#f0f0f0", font=("Arial", 24, "bold"))
 titulo.pack(pady=20)
 
-# Main content division (side menu and content)
+# Divisão em colunas principais (menu lateral e conteúdo)
 frame_conteudo = ctk.CTkFrame(janela, fg_color="#f0f0f0")
 frame_conteudo.pack(fill="both", expand=True)
 
-# Side menu
+# Menu lateral
 frame_lateral = ctk.CTkFrame(frame_conteudo, fg_color="#f0f0f0", width=200)
 frame_lateral.pack(side="left", fill="y")
 
-# Menu buttons
+# Botões do menu inicial
 botao1 = ctk.CTkButton(frame_lateral, text="Login", fg_color="#f0f0f0",
                        text_color="#1A73E8", font=("Arial", 12), anchor="w", command=mostrar_login)
 botao1.pack(fill="x", pady=(20, 10), padx=10)
@@ -1396,7 +1625,7 @@ botao4.pack(fill="x", pady=10, padx=10)
 
 
 ####################################################
-# Main content area
+# Área principal de conteúdo
 frame_principal = ctk.CTkFrame(frame_conteudo, fg_color="#f0f0f0")
 frame_principal.pack(side="left", fill="both", expand=True, padx=30, pady=30)
 
@@ -1409,15 +1638,15 @@ texto_instrucao = ctk.CTkLabel(frame_principal, text="Menos consumo, mais consci
                                text_color="#5f6368", wraplength=500, justify="left", font=("Arial", 18))
 texto_instrucao.pack()
 
-image_initial = Image.open("fotos/mascoteprincipall.png") # Renamed to avoid global conflict
+image_initial = Image.open("fotos/mascoteprincipall.png")
 ctk_image_initial = ctk.CTkImage(
     light_image=image_initial, dark_image=image_initial, size=(400, 400))
 
-label_initial_image = ctk.CTkLabel(frame_principal, image=ctk_image_initial, text="") # Renamed
+label_initial_image = ctk.CTkLabel(frame_principal, image=ctk_image_initial, text="")
 label_initial_image.pack()
 
 ############################################################
-# Footer Frame
+# Frame do rodapé
 frame_rodape = ctk.CTkFrame(frame_principal, fg_color="#f0f0f0", height=30)
 frame_rodape.pack(fill="x", side="bottom")
 
@@ -1426,7 +1655,7 @@ texto_rodape = ctk.CTkLabel(
 texto_rodape.pack()
 
 ###########################################################
-"""Part of the login frame"""
+"""Parte do frame de login"""
 
 frame_login = ctk.CTkFrame(janela, fg_color="#ffffff")
 label_login = ctk.CTkLabel(frame_login, text="Informe seus dados:",
@@ -1436,7 +1665,7 @@ label_avisologin = ctk.CTkLabel(
     frame_login, text=" ", fg_color="#ffffff", text_color="blue", font=("Arial", 20))
 label_avisologin.pack(pady=2)
 
-# 1-email entry
+# 1-entrada email
 label_emaillogin = ctk.CTkLabel(
     frame_login, text="Digite seu email:", text_color="#000000", anchor="w", width=300)
 label_emaillogin.pack(pady=(2, 0))
@@ -1444,7 +1673,7 @@ label_emaillogin.pack(pady=(2, 0))
 entrada_emaillogin = ctk.CTkEntry(frame_login, width=300)
 entrada_emaillogin.pack(pady=2)
 
-# 2-password entry
+# 2-entrada senha
 label_senhalogin = ctk.CTkLabel(
     frame_login, text="Digite sua senha:", text_color="#000000", anchor="w", width=300)
 label_senhalogin.pack(pady=(2, 0))
@@ -1452,18 +1681,18 @@ label_senhalogin.pack(pady=(2, 0))
 entrada_senhalogin = ctk.CTkEntry(frame_login, width=300, show="*")
 entrada_senhalogin.pack(pady=2)
 
-# login button
+# botão logar
 botao_logar = ctk.CTkButton(frame_login, text="Logar", fg_color="blue",
                             text_color="#ffffff", width=300, command=lambda: conferir_logar(entrada_emaillogin, entrada_senhalogin))
 botao_logar.pack(pady=2)
-# back button
-botao_voltarinicial_login = ctk.CTkButton( # Renamed
+# botão voltar
+botao_voltarinicial_login = ctk.CTkButton(
     frame_login, text="Voltar", fg_color="blue", text_color="#ffffff", width=300, command=voltar_inicial)
 botao_voltarinicial_login.pack()
 
 
 ##############################################
-"""Part of the registration frame"""
+"""Parte do frame de cadastro"""
 frame_cadastro = ctk.CTkFrame(janela, fg_color="#ffffff")
 label_cadastro = ctk.CTkLabel(frame_cadastro, text="Informe seus dados:",
                               fg_color="#ffffff", text_color="blue", font=("Arial", 20))
@@ -1474,7 +1703,7 @@ label_aviso = ctk.CTkLabel(frame_cadastro, text=" ",
                            fg_color="#ffffff", text_color="blue", font=("Arial", 20))
 label_aviso.pack(pady=1)
 
-# 1-Email Entry
+# 1-Entrada Email
 label_email = ctk.CTkLabel(frame_cadastro, text="Digite seu email:",
                            text_color="#000000", anchor="w", width=300)
 label_email.pack(pady=(1, 0))
@@ -1482,7 +1711,7 @@ label_email.pack(pady=(1, 0))
 entrada_email = ctk.CTkEntry(frame_cadastro, width=300)
 entrada_email.pack(pady=1)
 
-# 2-Family Name Entry
+# 2-entrada nome da família
 label_nome = ctk.CTkLabel(frame_cadastro, text="Digite o nome da sua família",
                           text_color="#000000", anchor="w", width=300)
 label_nome.pack(pady=(1, 0))
@@ -1491,7 +1720,7 @@ entrada_nome = ctk.CTkEntry(frame_cadastro, width=300, validate="key", validatec
     janela.register(validar_letras_espacos), "%P"))
 entrada_nome.pack(pady=1)
 
-# 3-Password Entry
+# 3-Entrada Senha
 label_senha = ctk.CTkLabel(frame_cadastro, text="Senha (mínimo 4 caracteres):",
                            text_color="#000000", anchor="w", width=300)
 label_senha.pack(pady=(1, 0))
@@ -1499,7 +1728,7 @@ label_senha.pack(pady=(1, 0))
 entrada_senha = ctk.CTkEntry(frame_cadastro, width=300, show="*")
 entrada_senha.pack(pady=1)
 
-# 4. Number of Members Field
+# 4. Campo Quantidade de membros
 label_qmembros = ctk.CTkLabel(
     frame_cadastro, text="Quantidade de membros na família:", text_color="#000000", anchor="w", width=300)
 label_qmembros.pack(pady=(1, 0))
@@ -1507,7 +1736,7 @@ entrada_qmembros = ctk.CTkEntry(frame_cadastro, width=300, validate="key", valid
     janela.register(validar_numeros), "%P"))
 entrada_qmembros.pack(pady=1)
 
-# 5. Apartment Number
+# 5. Número do apartamento
 label_numeroap = ctk.CTkLabel(
     frame_cadastro, text="Digite o número do seu apartamento", text_color="#000000", anchor="w", width=300)
 label_numeroap.pack(pady=(1, 0))
@@ -1515,13 +1744,13 @@ entrada_numeroap = ctk.CTkEntry(frame_cadastro, width=300, validate="key", valid
     janela.register(validar_numeros), "%P"))
 entrada_numeroap.pack(pady=1)
 
-# 6. Verifier Code
+# 6. Código verificador
 label_verificador = ctk.CTkLabel(
     frame_cadastro, text="Digite seu código verificador (mínimo 4 caracteres):", text_color="#000000", anchor="w", width=300)
 label_verificador.pack(pady=(1, 0))
 
 entrada_verificador = ctk.CTkEntry(frame_cadastro, width=300, show="*", validate="key", validatecommand=(
-    janela.register(validar_numeros), "%P")) # Added validation for verifier code
+    janela.register(validar_numeros), "%P"))
 entrada_verificador.pack(pady=1)
 
 
@@ -1531,14 +1760,14 @@ botao_cadastrar = ctk.CTkButton(frame_cadastro, text="Cadastrar", fg_color="blue
                                                                                                     entrada_numeroap, entrada_verificador, label_aviso))
 botao_cadastrar.pack(pady=1)
 
-# back button
-botao_voltarinicial_cadastro = ctk.CTkButton( # Renamed
+# botão de voltar
+botao_voltarinicial_cadastro = ctk.CTkButton(
     frame_cadastro, text="Voltar", fg_color="blue", text_color="#ffffff", width=300, command=voltar_inicial)
 botao_voltarinicial_cadastro.pack()
 
 
 #####################################
-"""Part of the admin frame (administrator mode)"""
+"""Parte do frame do modo administrador"""
 frame_adm = ctk.CTkFrame(janela, fg_color="#ffffff")
 label_adm_title = ctk.CTkLabel(frame_adm, text="Modo Administrador", fg_color="#ffffff", text_color="blue", font=("Arial", 30))
 label_adm_title.pack(pady=1)
@@ -1546,27 +1775,27 @@ label_adm_title.pack(pady=1)
 label_adm_message = ctk.CTkLabel(frame_adm, text=" ", fg_color="#ffffff", text_color="blue", font=("Arial", 25))
 label_adm_message.pack(pady=1)
 
-# 1-Admin Code Entry
+# 1-Entrada do Código de Administrador
 label_codigo = ctk.CTkLabel(frame_adm, text="Digite o código de administrador:",
                            text_color="blue", anchor="w", width=300)
 label_codigo.pack(pady=(1, 0))
 
-entrada_codigo = ctk.CTkEntry(frame_adm, width=300, show="*") # Mask input for admin code
+entrada_codigo = ctk.CTkEntry(frame_adm, width=300, show="*") # Máscara de entrada para o código de administrador
 entrada_codigo.pack(pady=1)
 
 botao_modoadm = ctk.CTkButton(frame_adm, text="Entrar modo adm", fg_color="blue",
                                text_color="#ffffff", width=300, command=entrar_modoadm)
 botao_modoadm.pack(pady=1)
-# back button
-botao_voltarinicial_adm = ctk.CTkButton(frame_adm, text="Voltar", fg_color="blue", text_color="#ffffff", width=300, command=voltar_inicial) # Renamed
+# botão de voltar
+botao_voltarinicial_adm = ctk.CTkButton(frame_adm, text="Voltar", fg_color="blue", text_color="#ffffff", width=300, command=voltar_inicial)
 botao_voltarinicial_adm.pack()
 
 
 ######################################################
-"""Part of the about us frame (Tells the story of ecodrop)"""
+"""Parte do frame "Sobre Nós" (Conta a história do EcoDrop)"""
 frame_sobrenos = ctk.CTkFrame(janela, fg_color="#ffffff")
 
-# Main title
+# Título principal
 titulo_sobrenos = ctk.CTkLabel(frame_sobrenos, text="💧 Projeto ECODROP", font=("Arial", 22, "bold"), text_color="#1A73E8")
 titulo_sobrenos.pack(pady=(20, 10))
 
@@ -1607,30 +1836,31 @@ botao_voltarinicial_sobrenos = ctk.CTkButton(frame_sobrenos, text="Voltar", fg_c
 botao_voltarinicial_sobrenos.pack(pady=30)
 
 #######################################
-"""Part of the warning frame (only used when the user correctly completes the registration, with the option to go to login or exit the system)"""
+"""Parte do frame de aviso (Será usado apenas quando o usuário concluir o cadastro com sucesso, oferecendo a opção de ir para o login ou sair do sistema)"""
 frame_aviso=ctk.CTkFrame(janela,fg_color="#ffffff")
-# Warning label
+# Label de aviso
 label_aviso_success = ctk.CTkLabel(frame_aviso, text="Cadastro realizado com sucesso!", font=("Arial", 20), text_color="green")
 label_aviso_success.pack(pady=(40, 20))
 
-# Button to go to login
+# Botão para ir para o login
 botao_login_aviso = ctk.CTkButton(frame_aviso, text="Ir para Login", width=200, command=mostrar_login)
 botao_login_aviso.pack(pady=(0, 10))
 
-# Button to exit the system
+# Botão para sair do sistema
 botao_sair_aviso = ctk.CTkButton(frame_aviso, text="Sair do Sistema", width=200, fg_color="red", hover_color="#cc0000", command=sair_sitema)
 botao_sair_aviso.pack()
 
 
 ###############################################
 
+
 class Cadastro:
     """
-    Essa Classe tem o objetivo de cadastrar os usuários, recebendo os dados básicos como parâmetros.
+    Esta classe tem o objetivo de cadastrar os usuários, recebendo os dados básicos como parâmetros.
     Ela realiza o cadastro de uma conta e verifica o código de segurança fornecido.
     """
 
-    def __init__(self, email, quantidade_pessoas, senha, nome_familia, apartamento, verificador):
+    def __init__(self, email, quantidade_pessoas, senha, nome_familia, apartamento, verificador, label_aviso_widget):
         # Dados básicos de cadastro
         self.email = email
         self.quantidade = quantidade_pessoas
@@ -1639,78 +1869,68 @@ class Cadastro:
         self.pontos = 0  # Pontos começam zerados
         self.apartamento = apartamento
         self.verificador = verificador
-        print("entrei cadastro")
+        self.label_aviso_widget = label_aviso_widget # Armazena o label para atualizar as mensagens na GUI
+        print("Iniciando processo de cadastro...")
         self.email_valido()
 
-        # Chamada para verificar o código de segurança
-        
-
-
     def email_valido(self):
-        
-        #FUNÇÃO UTILIZADA PARA CONFERIR SE O EMAIL É VÁLIDO OU NÃO
+        """Função utilizada para verificar se o email é válido ou não."""
         dominios_validos = [
             'gmail.com', 'outlook.com', 'hotmail.com',
             'yahoo.com', 'icloud.com'
         ]
 
-        
-            # VERIFICA SE O FORMATO DO EMAIL ESTÁ ESCRITO CORRETAMENTE
         if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', self.email):
-            #label_aviso é uma variável global,não necessitando importar para edita-la
-            label_aviso.configure(text="Formato inválido", text_color="red")
+            self.label_aviso_widget.configure(text="FORMATO DE EMAIL INVÁLIDO. Utilize um domínio válido.", text_color="red")
             return
-            
 
-                  # volta pro início do while para validar de novo,caso esteja correto,irá passar pelo verificador
-
-            # VERIFICA APENAS O DOMÍNIO,SEPARA TODO O RESTO E PEGA APENAS A PARTE DO DOMÍNIO
         dominio = self.email.split('@')[1].lower()
         if dominio not in dominios_validos:
-            label_aviso.configure(text="Domínio não aceito", text_color="red")
+            self.label_aviso_widget.configure(text="Domínio não aceito. Use: Gmail, Outlook, Yahoo, iCloud, etc.", text_color="red")
             return
 
-                # continuar o loop sem parar
-                
-
-        # Se chegou aqui, formato e domínio estão corretos
-            
-
-        
         self.conferir_email()
 
-    
     def conferir_email(self):
-        
-        #FUNÇÃO UTILIZADA PARA CONFERIR SE O EMAIL JÁ ESTÁ CADASTRADO OU NÃO
-        
-        with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
-            arquivo_lido = json.load(arquivo)
-            dados_conta = arquivo_lido["senha"]
-            dados_familia = arquivo_lido["familia"]
-            dados_quantidade = arquivo_lido["membros"]
-            dados_pontos = arquivo_lido["pontos"]
-            dados_apartamento = arquivo_lido["apartamento"]
-            dados_codigov = arquivo_lido["verificador"]
+        """Função utilizada para verificar se o email já está cadastrado ou não."""
+        global dados_conta # Acessa dados globais
 
-            if self.email.strip() in dados_conta:#dessa forma verificará se o email está já cadastrado ou não
-                label_aviso.configure(text="Email já cadastrado.",text_color="red")
-                return
-            
-            else:
-                self.conferir_ap()  # Continua o processo normalmente
+        try:
+            with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
+                arquivo_lido = json.load(arquivo)
+                dados_conta = arquivo_lido.get("senha", {})
+        except Exception as e:
+            self.label_aviso_widget.configure(text=f"Erro ao carregar dados: {e}", text_color="red")
+            return
+
+        if self.email in dados_conta:
+            self.label_aviso_widget.configure(text="EMAIL JÁ POSSUI UMA CONTA.", text_color="red")
+            return # Interrompe o processo de cadastro
+        else:
+            self.conferir_ap()
 
     def conferir_ap(self):
-        
-       #FUNÇÃO UTILIZADA PARA ANALISAR SE O APARTAMENTO JÁ ESTÁ CADASTRADO OU NÃO
+        """Função utilizada para analisar se o apartamento já está cadastrado ou não."""
+        global dados_apartamento # Acessa dados globais
+
+        try:
+            with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
+                arquivo_lido = json.load(arquivo)
+                dados_apartamento = arquivo_lido.get("apartamento", {})
+        except Exception as e:
+            self.label_aviso_widget.configure(text=f"Erro ao carregar dados: {e}", text_color="red")
+            return
+
+        # Verifica se o número do apartamento existe em qualquer valor de dados_apartamento
         if self.apartamento in dados_apartamento.values():
-            label_aviso.configure(text="APARTAMENTO JÁ CADASTRADO.TENTE NOVAMENTE")
+            self.label_aviso_widget.configure(text="APARTAMENTO JÁ CADASTRADO.", text_color="red")
+            return # Interrompe o processo de cadastro
         else:
             self.cadastrar_conta()
 
     def cadastrar_conta(self):
-        
-        ##FUNÇÃO UTILIZADA PARA CADASTRAR CONTA NO BANCO DE DADOS
+        """Função utilizada para cadastrar a conta no banco de dados."""
+        global dados_conta, dados_familia, dados_quantidade, dados_pontos, dados_apartamento, dados_codigov
 
         dados_conta[self.email] = self.senha
         dados_familia[self.email] = self.nome_familia
@@ -1719,13 +1939,17 @@ class Cadastro:
         dados_apartamento[self.email] = self.apartamento
         dados_codigov[self.email] = self.verificador
 
-        # PARA ARQUIVO TIPO JSON É MELHOR USAR "w" pois qualquer errinho de formatação pode quebrar o sistema
-        with open(r"banco_dados.JSON", "w", encoding="utf-8") as arquivo:
-            # Aqui, estamos criando um dicionário com duas chaves:
-            json.dump({"senha": dados_conta, "familia": dados_familia, "membros": dados_quantidade, "pontos": dados_pontos,
-                       "apartamento": dados_apartamento, "verificador": dados_codigov}, arquivo, indent=4, ensure_ascii=False)
-            aviso_sistema()
-
+        # É melhor usar "w" para arquivos JSON, pois qualquer erro de formatação pode quebrar o sistema
+        try:
+            with open(r"banco_dados.JSON", "w", encoding="utf-8") as arquivo:
+                json.dump({"senha": dados_conta, "familia": dados_familia, "membros": dados_quantidade, "pontos": dados_pontos,
+                            "apartamento": dados_apartamento, "verificador": dados_codigov,
+                            "questoes_quiz": dados_questoes_quiz, "ultimo_quiz": dados_ultimo_quiz}, # Inclui dados do quiz
+                           arquivo, indent=4, ensure_ascii=False)
+            self.label_aviso_widget.configure(text="Cadastro realizado com sucesso!", text_color="green")
+            aviso_sistema() # Exibe a tela de sucesso
+        except Exception as e:
+            self.label_aviso_widget.configure(text=f"Erro ao salvar cadastro: {e}", text_color="red")
 
 
 janela.mainloop()
