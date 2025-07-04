@@ -26,6 +26,7 @@
         "ediclorofila@gmail.com": "123456",
         "joaozinho12345@gmail.com": "34352532",
         "kylianmbappe7@gmail.com": "432432423432"
+
     },
     "familia": {
         "joao.silva@email.com": "Silva",
@@ -54,6 +55,7 @@
         "ediclorofila@gmail.com": "Clorofila",
         "joaozinho12345@gmail.com": "Santos",
         "kylianmbappe7@gmail.com": "Mbappé"
+
     },
     "membros": {
         "joao.silva@email.com": 4,
@@ -82,6 +84,7 @@
         "ediclorofila@gmail.com": 4,
         "joaozinho12345@gmail.com": 3232,
         "kylianmbappe7@gmail.com": 5
+
     },
     "pontos": {
         "joao.silva@email.com": 150,
@@ -89,7 +92,7 @@
         "carlos.pereira@email.com": 120,
         "ana.costa@email.com": 180,
         "gabriel.escobar@gmail.com": 200,
-        "matheus1903@gmail.com": 200,
+        "matheus1903@gmail.com": 700,
         "samuel.andrade@gmail.com": 100,
         "vinicastro@gmail.com": 60,
         "julinhacastro1907@gmail.com": 30,
@@ -110,6 +113,7 @@
         "ediclorofila@gmail.com": 210,
         "joaozinho12345@gmail.com": 0,
         "kylianmbappe7@gmail.com": 0
+
     },
     "apartamento": {
         "joao.silva@email.com": 101,
@@ -138,6 +142,8 @@
         "ediclorofila@gmail.com": 1020,
         "joaozinho12345@gmail.com": 3232,
         "kylianmbappe7@gmail.com": "2907"
+
+
     },
     "verificador": {
         "joao.silva@email.com": 83456,
@@ -166,5 +172,6 @@
         "ediclorofila@gmail.com": 323432423,
         "joaozinho12345@gmail.com": 33524523,
         "kylianmbappe7@gmail.com": 34243242
+
     }
 }
