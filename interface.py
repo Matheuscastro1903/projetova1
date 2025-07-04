@@ -230,6 +230,7 @@ def entrar_modoadm():
     pass
 
 
+
 def sobre_nos():
     """Função utilizada para exibir o frame_sobrenos (Contando a história do projeto EcoDrop)."""
     frame_topo.pack_forget()
@@ -491,7 +492,11 @@ def atualizar_dados(email, senha, frame_principalmenu, reset_callback):
     botao_voltar.pack(pady=20)
 
 
+def atualizar_dados(email, senha, frame_principalmenu,frame_menu):
+
+
 def deletar_conta(email, senha, frame_principalmenu, reset_callback):
+
     """
     🗑 Função: Deletar Conta
     Permite ao usuário excluir sua conta permanentemente do sistema.
@@ -500,6 +505,84 @@ def deletar_conta(email, senha, frame_principalmenu, reset_callback):
     for widget in frame_principalmenu.winfo_children():
         widget.destroy()
 
+
+    atualizar_label_titulo = ctk.CTkLabel(frame_principalmenu, text="Informe seus dados:",
+                                          fg_color="#ffffff", text_color="blue", font=("Arial", 20))
+    atualizar_label_titulo.pack(pady=1)
+
+    atualizar_label_aviso = ctk.CTkLabel(frame_principalmenu, text=" ",
+                                         fg_color="#ffffff", text_color="blue", font=("Arial", 20))
+    atualizar_label_aviso.pack(pady=1)
+
+    # 1 - Entrada Email
+    atualizar_label_email = ctk.CTkLabel(frame_principalmenu, text="Digite seu email:",
+                                         text_color="#000000", anchor="w", width=300)
+    atualizar_label_email.pack(pady=(1, 0))
+
+    atualizar_entrada_email = ctk.CTkEntry(frame_principalmenu, width=300)
+    atualizar_entrada_email.pack(pady=1)
+
+    # 2 - Nome da família
+    atualizar_label_nome = ctk.CTkLabel(frame_principalmenu, text="Digite o nome da sua família",
+                                        text_color="#000000", anchor="w", width=300)
+    atualizar_label_nome.pack(pady=(1, 0))
+
+    atualizar_entrada_nome = ctk.CTkEntry(frame_principalmenu, width=300, validate="key", validatecommand=(
+        janela.register(validar_letras_espacos), "%P"))
+    atualizar_entrada_nome.pack(pady=1)
+
+    # 3 - Senha
+    atualizar_label_senha = ctk.CTkLabel(frame_principalmenu, text="Senha (mínimo 4 caracteres):",
+                                         text_color="#000000", anchor="w", width=300)
+    atualizar_label_senha.pack(pady=(1, 0))
+
+    atualizar_entrada_senha = ctk.CTkEntry(frame_principalmenu, width=300, show="*")
+    atualizar_entrada_senha.pack(pady=1)
+
+    # 4 - Quantidade de membros
+    atualizar_label_qmembros = ctk.CTkLabel(frame_principalmenu, text="Quantidade de membros na família:",
+                                            text_color="#000000", anchor="w", width=300)
+    atualizar_label_qmembros.pack(pady=(1, 0))
+
+    atualizar_entrada_qmembros = ctk.CTkEntry(frame_principalmenu, width=300, validate="key", validatecommand=(
+        janela.register(validar_numeros), "%P"))
+    atualizar_entrada_qmembros.pack(pady=1)
+
+    # 5 - Número do apartamento
+    atualizar_label_numeroap = ctk.CTkLabel(frame_principalmenu, text="Digite o número do seu apartamento",
+                                            text_color="#000000", anchor="w", width=300)
+    atualizar_label_numeroap.pack(pady=(1, 0))
+
+    atualizar_entrada_numeroap = ctk.CTkEntry(frame_principalmenu, width=300, validate="key", validatecommand=(
+        janela.register(validar_numeros), "%P"))
+    atualizar_entrada_numeroap.pack(pady=1)
+
+    # 6 - Código verificador
+    atualizar_label_verificador = ctk.CTkLabel(frame_principalmenu, text="Digite seu código verificador (mínimo 4 caracteres):",
+                                               text_color="#000000", anchor="w", width=300)
+    atualizar_label_verificador.pack(pady=(1, 0))
+
+    atualizar_entrada_verificador = ctk.CTkEntry(frame_principalmenu, width=300, validate="key", validatecommand=(
+        janela.register(validar_numeros), "%P"))
+    atualizar_entrada_verificador.pack(pady=1)
+
+    # Botão de atualizar
+    atualizar_botao_confirmar = ctk.CTkButton(frame_principalmenu, text="Atualizar", fg_color="blue",
+                                              text_color="#ffffff", width=300,
+                                              command=lambda: conferir_atualizar(email,
+                                                  atualizar_entrada_email,
+                                                  atualizar_entrada_nome,
+                                                  atualizar_entrada_senha,
+                                                  atualizar_entrada_qmembros,
+                                                  atualizar_entrada_numeroap,
+                                                  atualizar_entrada_verificador,
+                                                  atualizar_label_aviso,frame_menu))
+    atualizar_botao_confirmar.pack(pady=5)
+
+def conferir_atualizar(email,atualizar_entrada_email, atualizar_entrada_nome, atualizar_entrada_senha,
+                        atualizar_entrada_qmembros, atualizar_entrada_numeroap,
+                        atualizar_entrada_verificador, atualizar_label_aviso,frame_menu):
+=======
     label_titulo = ctk.CTkLabel(frame_principalmenu, text="🗑 Deletar Conta",
                                  font=("Arial", 20, "bold"), text_color="#1A73E8")
     label_titulo.pack(pady=(20, 10))
@@ -559,6 +642,7 @@ def deletar_conta(email, senha, frame_principalmenu, reset_callback):
 
 
 def feedback(email, senha, frame_principalmenu, reset_callback):
+
     """
     ✍️ Função: Feedback
     Permite ao usuário enviar uma opinião com até 140 caracteres e uma nota de 0 a 10.
@@ -1210,6 +1294,8 @@ def area_educativa1(frame_educativo, email, senha, frame_menu):
     botao_voltar.pack(pady=50)
 
 
+
+
 def area_educativa2(frame_educativo, email, senha, frame_menu):
     """Exibe o conteúdo da notícia 2 na área educativa."""
     for widget in frame_educativo.winfo_children():
@@ -1288,7 +1374,6 @@ def area_educativa2(frame_educativo, email, senha, frame_menu):
                                  command=lambda: area_educativa(email, senha, frame_menu))
     botao_voltar.pack(pady=50)
 
-
 def area_educativa3(frame_educativo, email, senha, frame_menu):
     """Exibe o conteúdo da notícia 3 na área educativa."""
     for widget in frame_educativo.winfo_children():
@@ -1365,7 +1450,6 @@ def area_educativa3(frame_educativo, email, senha, frame_menu):
                                  cursor="hand2",
                                  command=lambda: area_educativa(email, senha, frame_menu))
     botao_voltar.pack(pady=50)
-
 
 def area_educativa4(frame_educativo, email, senha, frame_menu):
     """Exibe o conteúdo da notícia 4 na área educativa."""
@@ -1444,7 +1528,6 @@ def area_educativa4(frame_educativo, email, senha, frame_menu):
                                  cursor="hand2",
                                  command=lambda: area_educativa(email, senha, frame_menu))
     botao_voltar.pack(pady=50)
-
 
 def area_educativa5(frame_educativo, email, senha, frame_menu):
     """Exibe o conteúdo da notícia 5 na área educativa."""
