@@ -23,7 +23,9 @@
         "ronaldinho10@gmail.com": "101010",
         "matheusmm@gmail.com": "190190",
         "endrick123@gmail.com": "12345",
-        "ediclorofila@gmail.com": "123456"
+        "ediclorofila@gmail.com": "123456",
+        "joaozinho12345@gmail.com": "34352532",
+        "kylianmbappe7@gmail.com": "432432423432"
     },
     "familia": {
         "joao.silva@email.com": "Silva",
@@ -49,7 +51,9 @@
         "ronaldinho10@gmail.com": "Ronaldinho",
         "matheusmm@gmail.com": "Morais",
         "endrick123@gmail.com": "Endrick",
-        "ediclorofila@gmail.com": "Clorofila"
+        "ediclorofila@gmail.com": "Clorofila",
+        "joaozinho12345@gmail.com": "Santos",
+        "kylianmbappe7@gmail.com": "Mbappé"
     },
     "membros": {
         "joao.silva@email.com": 4,
@@ -71,11 +75,13 @@
         "carol.fernandes@gmail.com": 2,
         "bianca.oliveira@gmail.com": 3,
         "lionelmessi10@gmail.com": 5,
-        "lamineyamal19@gmail.com": "4",
-        "ronaldinho10@gmail.com": "5",
-        "matheusmm@gmail.com": "6",
-        "endrick123@gmail.com": "4",
-        "ediclorofila@gmail.com": "4"
+        "lamineyamal19@gmail.com": 4,
+        "ronaldinho10@gmail.com": 5,
+        "matheusmm@gmail.com": 6,
+        "endrick123@gmail.com": 4,
+        "ediclorofila@gmail.com": 4,
+        "joaozinho12345@gmail.com": 3232,
+        "kylianmbappe7@gmail.com": 5
     },
     "pontos": {
         "joao.silva@email.com": 150,
@@ -101,7 +107,9 @@
         "ronaldinho10@gmail.com": 0,
         "matheusmm@gmail.com": 0,
         "endrick123@gmail.com": 195,
-        "ediclorofila@gmail.com": 210
+        "ediclorofila@gmail.com": 210,
+        "joaozinho12345@gmail.com": 0,
+        "kylianmbappe7@gmail.com": 0
     },
     "apartamento": {
         "joao.silva@email.com": 101,
@@ -123,11 +131,13 @@
         "carol.fernandes@gmail.com": 1203,
         "bianca.oliveira@gmail.com": 1402,
         "lionelmessi10@gmail.com": 1010,
-        "lamineyamal19@gmail.com": "1919",
-        "ronaldinho10@gmail.com": "1010",
-        "matheusmm@gmail.com": "7878",
-        "endrick123@gmail.com": "4",
-        "ediclorofila@gmail.com": "1020"
+        "lamineyamal19@gmail.com": 1919,
+        "ronaldinho10@gmail.com": 1010,
+        "matheusmm@gmail.com": 7878,
+        "endrick123@gmail.com": 4,
+        "ediclorofila@gmail.com": 1020,
+        "joaozinho12345@gmail.com": 3232,
+        "kylianmbappe7@gmail.com": "2907"
     },
     "verificador": {
         "joao.silva@email.com": 83456,
@@ -153,6 +163,8 @@
         "ronaldinho10@gmail.com": 1000000000000,
         "matheusmm@gmail.com": 342424,
         "endrick123@gmail.com": 65636,
-        "ediclorofila@gmail.com": "323432423"
+        "ediclorofila@gmail.com": 323432423,
+        "joaozinho12345@gmail.com": 33524523,
+        "kylianmbappe7@gmail.com": 34243242
     }
 }
