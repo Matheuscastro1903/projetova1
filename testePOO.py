@@ -588,8 +588,17 @@ class TelaModoAdm(ctk.CTkFrame):
         self.frame_adm.pack(fill="both", expand=True)
 
     def conferir_adm(self):
+            entrada_senha=self.entrada_senhaadm.get().strip()
+            if entrada_senha=="!GaMa@1903#*!":
+                self.tela_inicial_adm()
+            else:
+                self.label_avisoadm.configure(text="Código inválido",text_color="Red")
             pass
     def tela_inicial_adm(self):
+            for widget in self.frame_adm.winfo_children():
+                widget.destroy()
+
+            
             pass
     def tela_ver_dados(self):
             pass
