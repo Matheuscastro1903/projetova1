@@ -6,6 +6,7 @@ import csv
 import time
 import re
 import random
+import pandas as pd
 
 
 with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
@@ -554,21 +555,21 @@ class TelaModoAdm(ctk.CTkFrame):
     def __init__(self, master, voltar_inicial):
         super().__init__(master)
         self.frame_adm = ctk.CTkFrame(self, fg_color="#ffffff")
-        label_adm = ctk.CTkLabel(self.frame_adm, text="Informe seus dados:",
+        label_adm = ctk.CTkLabel(self.frame_adm, text="Insira o código de acesso \npara entrar no modo administrador:",
                                    fg_color="#ffffff", text_color="blue", font=("Arial", 20))
         label_adm.pack(pady=2)
         self.label_avisoadm = ctk.CTkLabel(self.frame_adm, text=" ", fg_color="#ffffff", text_color="blue", font=("Arial", 20))
         self.label_avisoadm.pack(pady=2)
 
         # 1-entrada email
-        label_emailadm = ctk.CTkLabel(self.frame_adm, text="Digite seu email:", text_color="#000000", anchor="w", width=300)
-        label_emailadm.pack(pady=(2, 0))
+        #label_emailadm = ctk.CTkLabel(self.frame_adm, text="Digite seu email:", text_color="#000000", anchor="w", width=300)
+        #label_emailadm.pack(pady=(2, 0))
 
-        self.entrada_emailadm = ctk.CTkEntry(self.frame_adm, width=300)
-        self.entrada_emailadm.pack(pady=2)
+        #self.entrada_emailadm = ctk.CTkEntry(self.frame_adm, width=300)
+        #self.entrada_emailadm.pack(pady=2)
 
         # 2-entrada senha
-        label_senhaadm= ctk.CTkLabel(self.frame_adm, text="Digite sua senha:", text_color="#000000", anchor="w", width=300)
+        label_senhaadm= ctk.CTkLabel(self.frame_adm, text="Digite código de acesso:", text_color="#000000", anchor="w", width=300)
         label_senhaadm.pack(pady=(2, 0))
 
         self.entrada_senhaadm = ctk.CTkEntry(self.frame_adm, width=300, show="*")
@@ -594,18 +595,100 @@ class TelaModoAdm(ctk.CTkFrame):
             else:
                 self.label_avisoadm.configure(text="Código inválido",text_color="Red")
             pass
+    
+    
+    
+    
     def tela_inicial_adm(self):
             for widget in self.frame_adm.winfo_children():
                 widget.destroy()
+            #A IDENTAÇÃO TEM QUE FICAR DESSA FORMA OU A CADA INTERAÇÃO,SERÁ CRIADO MAIS FRAMES DESSA TELA DE INÍCIO DO 
+            #MODO ADM
+            frame_topo = ctk.CTkFrame(self.frame_adm, fg_color="#1A73E8", height=80)
+            frame_topo.pack(fill="x")
+
+            titulo = ctk.CTkLabel(frame_topo, text="💧 MODO ADM",text_color="#f0f0f0", font=("Arial", 24, "bold"))
+            titulo.pack(pady=20)
+
+            frame_conteudo = ctk.CTkFrame(self.frame_adm, fg_color="#f0f0f0")
+
+            botao_ver_dados = ctk.CTkButton(frame_conteudo, text="Ver dados", fg_color="blue",
+                                                text_color="#ffffff", width=300, command=self.tela_ver_dados)
+            botao_ver_dados.pack(pady=10)
+
+            botao_editar_dados = ctk.CTkButton(frame_conteudo, text="Editar dados", fg_color="blue",
+                                                text_color="#ffffff", width=300, command=self.tela_editar_dados)
+            botao_editar_dados.pack(pady=10)
+
+            botao_analise_dados = ctk.CTkButton(frame_conteudo, text="Analisar dados", fg_color="blue",
+                                                text_color="#ffffff", width=300, command=self.tela_analise_dados)
+            botao_analise_dados.pack(pady=10)
+
+            frame_conteudo.pack(fill="both", expand=True)
 
             
             pass
+    
+    
+    
     def tela_ver_dados(self):
+            for widget in self.frame_adm.winfo_children():
+                widget.destroy()
+            tabela=self.gerar_tabela()
+            frame_topo = ctk.CTkFrame(self.frame_adm, fg_color="#1A73E8", height=80)
+            frame_topo.pack(fill="x")
+
+            titulo = ctk.CTkLabel(frame_topo, text="💧 MODO ADM",text_color="#ffffff", font=("Arial", 24, "bold"))
+            titulo.pack(pady=20)
+
+        
+
+            #criação de um frame com scroll para que seja possível ver todos os dados
+            frame_scroll = ctk.CTkScrollableFrame(self.frame_adm,fg_color="#ffffff")
+            frame_scroll.pack(fill="both", expand=True, padx=10, pady=10)
+            
+
+            #perguntar o porque é melhor usar a fonte courier
+            label_tabela = ctk.CTkLabel(frame_scroll, text=tabela, font=("Courier", 12), anchor="w", justify="left")
+            label_tabela.pack(padx=10, pady=10)
+
+            #fazer botão de voltar para o menu
+           
             pass
+    
+    
+    
     def tela_editar_dados(self):
+            for widget in self.frame_adm.winfo_children():
+                widget.destroy()
             pass
+    
+    
+    
     def tela_analise_dados(self):
+            for widget in self.frame_adm.winfo_children():
+                widget.destroy()
             pass
+    
+    def gerar_tabela(self):
+        
+        #Cria um dataframe(Tabela criada pelo pandas,similar ao de banco de dados)
+        df = pd.DataFrame({
+            "Email": list(dados_conta.keys()),
+            "Família": list(dados_familia.values()),
+            "Membros": list(dados_quantidade.values()),
+            "Pontos": list(dados_pontos.values()),
+            "Apartamento": list(dados_apartamento.values()),
+            "Verificador": list(dados_codigov.values()),
+        })
+        # Transforma o DataFrame para string formatada
+        tabela_formatada = df.to_string()
+        print(tabela_formatada)
+        return tabela_formatada
+
+        pass
+    
+        
 
 
 
