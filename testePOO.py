@@ -38,7 +38,8 @@ class App(ctk.CTk):
         self.tela_cadastro = None
         self.tela_sobrenos = None
         self.tela_modoadm = None
-
+        self.tela_menu = None
+        
         # Lista para ocultar todas as telas
         self.telas = []
         # chamemento da função criar_tela_inicial
@@ -56,7 +57,8 @@ class App(ctk.CTk):
         self.esquercer_frames()
         if self.tela_login is None:
             self.tela_login = TelaLogin(
-                self, voltar_inicial=self.criar_tela_inicial)
+                self, voltar_inicial=self.criar_tela_inicial, 
+                mostrar_menu=self.criar_tela_menu)
             self.telas.append(self.tela_login)
 
         self.tela_login.pack(fill="both", expand=True)
@@ -65,7 +67,9 @@ class App(ctk.CTk):
         self.esquercer_frames()
         if self.tela_cadastro is None:
             self.tela_cadastro = TelaCadastro(
-                self, voltar_inicial=self.criar_tela_inicial, mostrar_login=self.criar_tela_login)
+                self, 
+                voltar_inicial=self.criar_tela_inicial, 
+                mostrar_login=self.criar_tela_login)
             self.telas.append(self.tela_cadastro)
         self.tela_cadastro.pack(fill="both", expand=True)
 
@@ -90,7 +94,14 @@ class App(ctk.CTk):
         self.tela_sobrenos.pack(fill="both", expand=True)
 
     def criar_tela_menu(self):
-        pass
+        
+        self.esquecer_frames()
+
+        self.tela_menu = Menu(self, email_logado = email_logado, voltar_incial=self.criar_tela_inicial)
+        self.telas.append(self.tela_menu)
+        self.tela_menu.pack(fill='both', expand=True)
+
+
 
     def criar_tela_educativa(self):
         pass
@@ -180,8 +191,10 @@ class TelaInicial(ctk.CTkFrame):
 
 
 class TelaLogin(ctk.CTkFrame):
-    def __init__(self, master, voltar_inicial):
+    def __init__(self, master, voltar_inicial, mostrar_menu):
         super().__init__(master)
+        self.voltar_inicial = voltar_inicial
+        self.mostrar_menu = mostrar_menu
         self.frame_login = ctk.CTkFrame(self, fg_color="#ffffff")
         label_login = ctk.CTkLabel(self.frame_login, text="Informe seus dados:",
                                    fg_color="#ffffff", text_color="blue", font=("Arial", 20))
@@ -244,7 +257,7 @@ class TelaLogin(ctk.CTkFrame):
             if self.email in dados_conta:
                 if dados_conta[self.email] == self.senha:
 
-                    self.mostrar_menu()
+                    self.mostrar_menu(self.email)
                     return
                 else:
                     self.label_avisologin.configure(
@@ -695,8 +708,135 @@ class TelaModoAdm(ctk.CTkFrame):
 
 
 
-class Menu():
-    pass
+class Menu(ctk.CTkFrame):
+    def __init__ (self, master):
+        super().__init__(master)
+        self.frame_menu = ctk.CTkFrame(self, fg_color="#ffffff")
+       
+        self.frame_topo_menu = ctk.CTkFrame(self.frame_menu, fg_color= "#1A73E8", height=80)
+        self.frame_topo_menu.pack(fill="x")
+
+        label_titulo_menu = ctk.CTkLabel(self.frame_topo_menu, text="EcoDrop", fg_color= "#1A73E8", text_color="white",
+                                         font=("Arial", 25, 'bold'))
+        label_titulo_menu.pack(pady=20)
+
+        self.frame_lateral_menu = ctk.CTkFrame(self.frame_menu, fg_color='white', width=200)
+        self.frame_lateral_menu.pack(side='left', fill='y')
+
+        self.frame_conteudo_menu = ctk.CTkFrame(self.frame_menu, fg_color="#f0f2f5")
+        self.frame_conteudo_menu.pack(fill="both", expand=True)
+
+        self.frameprincipalmenu = ctk.CTkFrame(self.frame_conteudo_menu, fg_color="#ffffff")
+        self.frameprincipalmenu.pack(fill='both', expand=True, padx=30, pady=30)
+
+    def reset_principal_menu_content(self):
+        for widget in self.frameprincipalmenu.winfo_children():
+            widget.destroy()
+
+        texto_bem_vindo = ctk.CTkLabel(self.frameprincipalmenu, text="Bem-vindo ao EcoDrop",
+                                         fg_color="#ffffff", text_color="#202124", font=("Arial", 18, "bold"))
+        texto_bem_vindo.pack(pady=(0, 20))
+
+        texto_instrucao = ctk.CTkLabel(self.frameprincipalmenu,
+                                         text=random.choice(mensagens_agua),
+                                         fg_color="#ffffff", text_color="#5f6368",
+                                         wraplength=500, justify="left", font=("Arial", 12))
+        texto_instrucao.pack()
+
+        imagem_menu_principal = Image.open("fotos/mascoteprincipall.png")
+        ctk_imagem_menu_principal = ctk.CTkImage(light_image=imagem_menu_principal, dark_image=imagem_menu_principal, size=(400, 400))
+
+        label_menu_principal_image = ctk.CTkLabel(self.frameprincipalmenu, image=ctk_imagem_menu_principal, text="")
+        label_menu_principal_image.pack()
+
+        #Botões do menu lateral
+
+         # ---- Botões do Menu Lateral ----
+         # ---- Botões do Menu Lateral ----
+    # Cada botão chama sua respectiva função, passando o frame_principalmenu e a função de reset como callback
+        botao1 = ctk.CTkButton(self.frame_lateral_menu, text="🏆 Ranking mensal", fg_color="white", text_color="#1A73E8",
+                            font=("Arial", 12), anchor="w",
+                            command=lambda: mostrar_ranking(email, senha, frame_principalmenu, reset_principal_menu_content), cursor="hand2")
+        botao1.pack(fill="x", pady=(20, 10), padx=20)
+
+        botao2 = ctk.CTkButton(self.frame_lateral_menu, text="🎁 Resgatar prêmios", fg_color="white", text_color="#1A73E8",
+                            font=("Arial", 12), anchor="w",
+                            command=lambda: resgatar_premio(email, senha, frame_principalmenu, reset_principal_menu_content), cursor="hand2")
+        botao2.pack(fill="x", pady=10, padx=20)
+
+        botao3 = ctk.CTkButton(self.frame_lateral_menu, text="🧮 Cálculo de pontos", fg_color="white", text_color="#1A73E8",
+                            font=("Arial", 12), anchor="w",
+                            command=lambda: calculo_pontuacao(email, senha, frame_principalmenu, reset_principal_menu_content), cursor="hand2")
+        botao3.pack(fill="x", pady=10, padx=20)
+
+        botao4 = ctk.CTkButton(self.frame_lateral_menu, text="🧠 Quiz semanal", fg_color="white", text_color="#1A73E8",
+                            font=("Arial", 12), anchor="w",
+                            command=lambda: quiz_semanal(email, senha, frame_principalmenu, reset_principal_menu_content), cursor="hand2")
+        botao4.pack(fill="x", pady=10, padx=20)
+
+        botao5 = ctk.CTkButton(self.frame_lateral_menu, text="📘 Área educativa", fg_color="white", text_color="#1A73E8",
+                            font=("Arial", 12), anchor="w",
+                            command=lambda: area_educativa(email, senha, frame_menu), cursor="hand2")
+        botao5.pack(fill="x", pady=10, padx=20)
+
+        botao6 = ctk.CTkButton(self.frame_lateral_menu, text="📊 Mostrar dados", fg_color="white", text_color="#1A73E8",
+                            font=("Arial", 12), anchor="w",
+                            command=lambda: mostrar_dados(email, senha, frame_principalmenu, reset_principal_menu_content), cursor="hand2")
+        botao6.pack(fill="x", pady=10, padx=20)
+
+        botao7 = ctk.CTkButton(self.frame_lateral_menu, text="🔄 Atualizar dados", fg_color="white", text_color="#1A73E8",
+                            font=("Arial", 12), anchor="w",
+                            command=lambda: atualizar_dados(email, senha, frame_principalmenu, reset_principal_menu_content), cursor="hand2")
+        botao7.pack(fill="x", pady=10, padx=20)
+
+        botao8 = ctk.CTkButton(self.frame_lateral_menu, text="🗑 Deletar conta", fg_color="white", text_color="#1A73E8",
+                            font=("Arial", 12), anchor="w",
+                            command=lambda: deletar_conta(email, senha, frame_principalmenu, reset_principal_menu_content), cursor="hand2")
+        botao8.pack(fill="x", pady=10, padx=20)
+
+        botao9 = ctk.CTkButton(self.frame_lateral_menu, text="✍️ Enviar feedback", fg_color="white", text_color="#1A73E8",
+                            font=("Arial", 12), anchor="w",
+                            command=lambda: feedback(email, senha, frame_principalmenu, reset_principal_menu_content), cursor="hand2")
+        botao9.pack(fill="x", pady=10, padx=20)
+
+
+        #Frame rodapé
+        frame_rodape_menu = ctk.CTkFrame(self.frame_menu, fg_color="#f0f0f0", height=30)
+        frame_rodape_menu.pack(fill='x', side ='bottom')
+
+        texto_rodape_menu = ctk.CTkLabel(
+        frame_rodape_menu, text = 'Versão 2.0 • Suporte: ecodropsuporte@gmail.com', text_color="#5f6368", font =("Arial", 10))
+        frame_rodape_menu.pack()
+
+        self.frame_menu.pack(fill='both', expand=True)
+
+    def mostrar_ranking(self):
+        
+
+    def resgatar_premio(self):
+        
+    def calculo_pontuacao(self):
+
+    def quiz_semanal(self):
+    
+    def area_educativa(self):
+    
+    def mostrar_dados(self):
+
+    def atualizar_dados(self):
+
+    def deletar_conta(self):
+
+    def feedback(self):
+   
+        
+
+
+
+
+        self.mostrar_menu()
+
+        
 
 
 
