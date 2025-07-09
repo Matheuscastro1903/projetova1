@@ -1,5 +1,7 @@
 import customtkinter as ctk
 import customtkinter as ctk
+from customtkinter import CTkImage, CTkLabel
+
 from PIL import Image
 import json
 import csv
@@ -7,6 +9,11 @@ import time
 import re
 import random
 import pandas as pd
+import matplotlib as plt
+from collections import Counter
+from io import BytesIO
+import matplotlib.pyplot as plt
+
 
 
 with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
@@ -23,6 +30,10 @@ with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
     dados_apartamento = arquivo_lido["apartamento"]
     dados_codigov = arquivo_lido["verificador"]
 
+
+with open(r"dados_usuarios.json", "r", encoding="utf-8") as arquivo:
+    dados_lidos=json.load(arquivo)
+    dados_consumo=dados_lidos["consumo"]
 
 mensagens_agua = [
     "💧 Cada gota conta. Economize água!",
@@ -669,15 +680,15 @@ class TelaModoAdm(ctk.CTkFrame):
 
             frame_conteudo = ctk.CTkFrame(self.frame_adm, fg_color="#f0f0f0")
 
-            botao_ver_dados = ctk.CTkButton(frame_conteudo, text="Ver dados", fg_color="blue",
+            botao_ver_dados = ctk.CTkButton(frame_conteudo, text="🔍Ver dados", fg_color="blue",
                                                 text_color="#ffffff", width=300, command=self.tela_ver_dados)
             botao_ver_dados.pack(pady=10)
 
-            botao_editar_dados = ctk.CTkButton(frame_conteudo, text="Editar dados", fg_color="blue",
+            botao_editar_dados = ctk.CTkButton(frame_conteudo, text="✏️Editar dados", fg_color="blue",
                                                 text_color="#ffffff", width=300, command=self.tela_editar_dados)
             botao_editar_dados.pack(pady=10)
 
-            botao_analise_dados = ctk.CTkButton(frame_conteudo, text="Analisar dados", fg_color="blue",
+            botao_analise_dados = ctk.CTkButton(frame_conteudo, text="📊Analisar dados", fg_color="blue",
                                                 text_color="#ffffff", width=300, command=self.tela_analise_dados)
             botao_analise_dados.pack(pady=10)
 
@@ -709,6 +720,8 @@ class TelaModoAdm(ctk.CTkFrame):
             label_tabela = ctk.CTkLabel(frame_scroll, text=tabela, font=("Courier", 12), anchor="w", justify="left")
             label_tabela.pack(padx=10, pady=10)
 
+            
+
             #fazer botão de voltar para o menu
            
             pass
@@ -725,6 +738,33 @@ class TelaModoAdm(ctk.CTkFrame):
     def tela_analise_dados(self):
             for widget in self.frame_adm.winfo_children():
                 widget.destroy()
+            
+            frame_topo = ctk.CTkFrame(self.frame_adm, fg_color="#1A73E8", height=80)
+            frame_topo.pack(fill="x")
+
+            titulo = ctk.CTkLabel(frame_topo, text="💧 MODO ADM",text_color="#f0f0f0", font=("Arial", 24, "bold"))
+            titulo.pack(pady=20)
+
+            frame_conteudo = ctk.CTkFrame(self.frame_adm, fg_color="#f0f0f0")
+            frame_conteudo.pack(fill="both", expand=True)
+
+            frame_lado_esquerdo=ctk.CTkFrame(frame_conteudo,fg_color="#b41111")
+            frame_lado_esquerdo.pack(side="left",fill="both",expand=True)
+
+            frame_lado_direito=ctk.CTkFrame(frame_conteudo,fg_color="#09ec6f")
+            frame_lado_direito.pack(side="right",fill="both",expand=True)
+            
+            
+            
+            
+            
+            
+            #grafico_pizza=self.gerar_grafico1()
+
+            #img_ctk = CTkImage(dark_image=grafico_pizza, size=(400, 400))
+
+            #label = CTkLabel(master=self.frame_adm, image=img_ctk, text="")
+            #label.pack()
             pass
     
     def gerar_tabela(self):
@@ -745,8 +785,67 @@ class TelaModoAdm(ctk.CTkFrame):
 
         pass
     
-        
+    def gerar_grafico1(self):
+        #Método responsável pela geração do gráfico de pizza que será feito em relação a quantidade de membros 
 
+        #esse counter é uma classe nativa do python que contará a repetição de cada valor do dicionário dados_quantidade 
+        #e armazenará em um dicionário por exemplo. {2:5,...}-->o número 2 se repete 5 vezes
+        contagem = Counter(dados_quantidade.values())
+
+
+        #Nesse loop for dentro da variável label,será criado mensagens do tipo "2 membros","3 membros" e armazerá em uma lista na variável.
+        #O loop irá rolar e irá criar um label para cada tipo de quantidade "2","3" e etc
+        labels = [f"{membros} membros" for membros in contagem.keys()]
+
+        #essa variável sizes irá criar uma lista da quantidade de vezes que o valor aparece.Por exemplo,se o valor 3 aparece 5 vezes,ele terá o valor 5
+        sizes = list(contagem.values())
+
+        # Criar gráfico de pizza
+        # Criar figura e eixo do gráfico
+
+        #fig é a janela geral do gráfico e area_usada é a área específica onde o gráfico será desenhado
+        fig, area_usada = plt.subplots(figsize=(8,8)) #fgsize define o tamanho do gráfico em polegadas
+        
+        #Desenha o gráfico pizza na área a area_usada
+        area_usada.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=140)
+        #size define o tamanho de cada fatia
+        #labels+define o texto de cada fatia
+        #autopct='%1.1f%%' mostra as porcentagens dentro da fatia
+        #startangle=140: gira o gráfico para ficar mais esteticamente agradável.
+
+
+
+        area_usada.set_title("Distribuição de famílias por número de membros", fontsize=14)#define o título do gráfico e a fonte
+
+        area_usada.axis('equal')#garante que o gráfico seja um círculo perfeito
+
+        # Salvar o gráfico em memória como imagem PNG
+        buffer = BytesIO()#cria um buffer de memória que simula um arquivo png,mas que ficará dentro da memória
+        fig.savefig(buffer, format='png', bbox_inches='tight') #salva a figura dentro do buffer
+        #bbox_inches='tight' remove os espaços em branco entre o gráfico
+        plt.close(fig)  #Fecha o gráfico da memória do matplotlib para liberar RAM e evitar vazamentos.
+        buffer.seek(0) #Move o cursor do buffer para o início do conteúdo.
+
+        
+        imagem = Image.open(buffer)
+
+        return imagem
+
+    def gerar_grafico2(self):
+        #Método responsável por gerar o gráfico de consu
+        pass
+
+    def gerar_grafico3(self):
+        pass
+
+    def gerar_valor_media(self):
+        consumo_listado=list(dados_consumo)
+        quantidade_consumo_registrado=len(consumo_listado)
+        media_consumo_condominio=sum(dados_consumo)/quantidade_consumo_registrado
+
+        return media_consumo_condominio
+
+    
 
 
 class Menu(ctk.CTkFrame):
