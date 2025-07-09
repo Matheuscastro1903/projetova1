@@ -25,8 +25,9 @@
         "endrick123@gmail.com": "12345",
         "ediclorofila@gmail.com": "123456",
         "joaozinho12345@gmail.com": "34352532",
-        "kylianmbappe7@gmail.com": "432432423432"
-
+        "kylianmbappe7@gmail.com": "432432423432",
+        "diegoshowza87@gmail.com": "87878787",
+        "pedroailton@gmail.com": "iloveifpe"
     },
     "familia": {
         "joao.silva@email.com": "Silva",
@@ -54,13 +55,14 @@
         "endrick123@gmail.com": "Endrick",
         "ediclorofila@gmail.com": "Clorofila",
         "joaozinho12345@gmail.com": "Santos",
-        "kylianmbappe7@gmail.com": "Mbappé"
-
+        "kylianmbappe7@gmail.com": "Mbappé",
+        "diegoshowza87@gmail.com": "Showza",
+        "pedroailton@gmail.com": "Ailton"
     },
     "membros": {
-        "joao.silva@email.com": 4,
+        "joao.silva@email.com": 1,
         "maria.souza@email.com": 3,
-        "carlos.pereira@email.com": 5,
+        "carlos.pereira@email.com": 2,
         "ana.costa@email.com": 2,
         "gabriel.escobar@gmail.com": 4,
         "matheus1903@gmail.com": 4,
@@ -68,7 +70,7 @@
         "vinicastro@gmail.com": 4,
         "julinhacastro1907@gmail.com": 4,
         "albuquerquegustavo@hotmail.com": 4,
-        "leonardo.lima@gmail.com": 3,
+        "leonardo.lima@gmail.com": 2,
         "roberto.tavares@gmail.com": 2,
         "aline.martins@hotmail.com": 3,
         "davi.almeida@gmail.com": 5,
@@ -82,9 +84,10 @@
         "matheusmm@gmail.com": 6,
         "endrick123@gmail.com": 4,
         "ediclorofila@gmail.com": 4,
-        "joaozinho12345@gmail.com": 3232,
-        "kylianmbappe7@gmail.com": 5
-
+        "joaozinho12345@gmail.com": 3,
+        "kylianmbappe7@gmail.com": 5,
+        "diegoshowza87@gmail.com": 6,
+        "pedroailton@gmail.com": 4
     },
     "pontos": {
         "joao.silva@email.com": 150,
@@ -112,38 +115,39 @@
         "endrick123@gmail.com": 195,
         "ediclorofila@gmail.com": 210,
         "joaozinho12345@gmail.com": 0,
-        "kylianmbappe7@gmail.com": 0
-
+        "kylianmbappe7@gmail.com": 0,
+        "diegoshowza87@gmail.com": 0,
+        "pedroailton@gmail.com": 0
     },
     "apartamento": {
-        "joao.silva@email.com": 101,
-        "maria.souza@email.com": 102,
-        "carlos.pereira@email.com": 201,
-        "ana.costa@email.com": 203,
-        "gabriel.escobar@gmail.com": 301,
-        "matheus1903@gmail.com": 304,
-        "samuel.andrade@gmail.com": 402,
-        "vinicastro@gmail.com": 405,
-        "julinhacastro1907@gmail.com": 503,
-        "albuquerquegustavo@hotmail.com": 601,
-        "leonardo.lima@gmail.com": 602,
-        "roberto.tavares@gmail.com": 703,
-        "aline.martins@hotmail.com": 804,
-        "davi.almeida@gmail.com": 902,
-        "luana.ribeiro@gmail.com": 1001,
-        "lucas.barbosa@hotmail.com": 1105,
-        "carol.fernandes@gmail.com": 1203,
-        "bianca.oliveira@gmail.com": 1402,
-        "lionelmessi10@gmail.com": 1010,
-        "lamineyamal19@gmail.com": 1919,
-        "ronaldinho10@gmail.com": 1010,
-        "matheusmm@gmail.com": 7878,
-        "endrick123@gmail.com": 4,
-        "ediclorofila@gmail.com": 1020,
-        "joaozinho12345@gmail.com": 3232,
-        "kylianmbappe7@gmail.com": "2907"
-
-
+        "joao.silva@email.com": 1001,
+        "maria.souza@email.com": 1002,
+        "carlos.pereira@email.com": 1003,
+        "ana.costa@email.com": 1004,
+        "gabriel.escobar@gmail.com": 1005,
+        "matheus1903@gmail.com": 2001,
+        "samuel.andrade@gmail.com": 2002,
+        "vinicastro@gmail.com": 2003,
+        "julinhacastro1907@gmail.com": 2004,
+        "albuquerquegustavo@hotmail.com": 2005,
+        "leonardo.lima@gmail.com": 3001,
+        "roberto.tavares@gmail.com": 3002,
+        "aline.martins@hotmail.com": 3003,
+        "davi.almeida@gmail.com": 3004,
+        "luana.ribeiro@gmail.com": 3005,
+        "lucas.barbosa@hotmail.com": 4001,
+        "carol.fernandes@gmail.com": 4002,
+        "bianca.oliveira@gmail.com": 4003,
+        "lionelmessi10@gmail.com": 4004,
+        "lamineyamal19@gmail.com": 4005,
+        "ronaldinho10@gmail.com": 5001,
+        "matheusmm@gmail.com": 5002,
+        "endrick123@gmail.com": 5003,
+        "ediclorofila@gmail.com": 5004,
+        "joaozinho12345@gmail.com": 5005,
+        "kylianmbappe7@gmail.com": 6001,
+        "diegoshowza87@gmail.com": 6002,
+        "pedroailton@gmail.com": 9001
     },
     "verificador": {
         "joao.silva@email.com": 83456,
@@ -171,7 +175,8 @@
         "endrick123@gmail.com": 65636,
         "ediclorofila@gmail.com": 323432423,
         "joaozinho12345@gmail.com": 33524523,
-        "kylianmbappe7@gmail.com": 34243242
-
+        "kylianmbappe7@gmail.com": 34243242,
+        "diegoshowza87@gmail.com": 878787878787,
+        "pedroailton@gmail.com": 5435252
     }
 }

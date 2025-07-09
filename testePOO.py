@@ -24,6 +24,24 @@ with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
     dados_codigov = arquivo_lido["verificador"]
 
 
+mensagens_agua = [
+    "💧 Cada gota conta. Economize água!",
+    "🚿 Banhos curtos, planeta mais saudável.",
+    "🌍 Água é vida. Preserve cada gota.",
+    "🧼 Feche a torneira ao escovar os dentes.",
+    "💦 Pequenas atitudes salvam grandes recursos.",
+    "🔧 Torneiras pingando desperdiçam litros por dia!",
+    "🌱 Use a água da chuva para regar plantas.",
+    "❌ Água não é infinita. Use com consciência.",
+    "🪣 Reutilize a água sempre que puder.",
+    "🐳 Preserve os rios, lagos e oceanos.",
+    "📉 Menos desperdício, mais futuro.",
+    "🧽 Economize água ao lavar louça ou roupa.",
+    "🏡 Sua casa também pode ser sustentável.",
+    "👶 Ensine as crianças a cuidar da água.",
+    "💙 Água limpa é direito de todos. Preserve!"
+]
+
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
@@ -389,7 +407,8 @@ class TelaCadastro(ctk.CTkFrame):
 
         entradas = [email, nome_familia, senha,
                     quantidade_pessoas, apartamento]
-
+        possiveis_andares=["10","20","30","40","50","60","70","80","90"]
+        possiveis_apartamentos=["01","02","03","04","05"]
     # Verificação: se algum campo de texto estiver vazio
         if any(campo == "" for campo in entradas):
             self.label_aviso.configure(
@@ -406,6 +425,31 @@ class TelaCadastro(ctk.CTkFrame):
             self.label_aviso.configure(
                 text="O código verificador deve ter entre 4 e 20 caracteres.", text_color="red")
             return
+        
+        #ESSES VERIFICADORES SERVIRÃO PARA DIZER SE O ANDAR E O APARTAMENTO É VÁLIDO OU NÃO
+        andar_valido = False
+        apto_valido = False
+
+        for andar in possiveis_andares:
+            #SÓ VALIDARÁ SE APARTAMENTO INICIAR COM O INTERÁVEL DA LISTA ANDAR
+            if apartamento.startswith(andar):
+                andar_valido = True
+                #BREAK IRÁ QUEBRAR O LOOP FOR,ACABANDO A INTERAÇÃO
+                break
+
+        for apto in possiveis_apartamentos:
+             #SÓ VALIDARÁ SE APARTAMENTO INICIAR COM O INTERÁVEL DA LISTA APARTAMENTO
+            if apartamento.endswith(apto):
+                apto_valido = True
+                #BREAK IRÁ QUEBRAR O LOOP FOR,ACABANDO COM A INTERAÇÃO
+                break
+
+        if not (andar_valido and apto_valido): #VERIFICA SE AMBOS SÃO VÁLIDOS(TRUE)
+            self.label_aviso.configure(text="Apartamento inválido", text_color="red")
+            #return irá parar a função caso o aviso apareça
+            return
+
+
 
         quantidade_pessoas = int(quantidade_pessoas)
         verificador = int(verificador)
@@ -416,7 +460,7 @@ class TelaCadastro(ctk.CTkFrame):
         self.nome_familia = nome_familia
         self.quantidade = quantidade_pessoas
         self.pontos = 0
-        self.apartamento = apartamento
+        self.apartamento = int(apartamento)
         self.verificador = int(verificador)
 
         self.email_valido()
@@ -582,7 +626,7 @@ class TelaModoAdm(ctk.CTkFrame):
         #self.entrada_emailadm.pack(pady=2)
 
         # 2-entrada senha
-        label_senhaadm= ctk.CTkLabel(self.frame_adm, text="Digite código de acesso:", text_color="#000000", anchor="w", width=300)
+        label_senhaadm= ctk.CTkLabel(self.frame_adm, text="Digite o código de acesso:", text_color="#000000", anchor="w", width=300)
         label_senhaadm.pack(pady=(2, 0))
 
         self.entrada_senhaadm = ctk.CTkEntry(self.frame_adm, width=300, show="*")
@@ -705,9 +749,6 @@ class TelaModoAdm(ctk.CTkFrame):
 
 
 
-
-
-
 class Menu(ctk.CTkFrame):
     def __init__ (self, master):
         super().__init__(master)
@@ -756,22 +797,22 @@ class Menu(ctk.CTkFrame):
     # Cada botão chama sua respectiva função, passando o frame_principalmenu e a função de reset como callback
         botao1 = ctk.CTkButton(self.frame_lateral_menu, text="🏆 Ranking mensal", fg_color="white", text_color="#1A73E8",
                             font=("Arial", 12), anchor="w",
-                            command=lambda: mostrar_ranking(email, senha, frame_principalmenu, reset_principal_menu_content), cursor="hand2")
+                            command=self.mostrar_ranking(), cursor="hand2")
         botao1.pack(fill="x", pady=(20, 10), padx=20)
 
         botao2 = ctk.CTkButton(self.frame_lateral_menu, text="🎁 Resgatar prêmios", fg_color="white", text_color="#1A73E8",
                             font=("Arial", 12), anchor="w",
-                            command=lambda: resgatar_premio(email, senha, frame_principalmenu, reset_principal_menu_content), cursor="hand2")
+                            command=self.resgatar_premio(), cursor="hand2")
         botao2.pack(fill="x", pady=10, padx=20)
 
         botao3 = ctk.CTkButton(self.frame_lateral_menu, text="🧮 Cálculo de pontos", fg_color="white", text_color="#1A73E8",
                             font=("Arial", 12), anchor="w",
-                            command=lambda: calculo_pontuacao(email, senha, frame_principalmenu, reset_principal_menu_content), cursor="hand2")
+                            command=self.calculo_pontuacao(), cursor="hand2")
         botao3.pack(fill="x", pady=10, padx=20)
 
         botao4 = ctk.CTkButton(self.frame_lateral_menu, text="🧠 Quiz semanal", fg_color="white", text_color="#1A73E8",
                             font=("Arial", 12), anchor="w",
-                            command=lambda: quiz_semanal(email, senha, frame_principalmenu, reset_principal_menu_content), cursor="hand2")
+                            command=self.quiz_semanal(), cursor="hand2")
         botao4.pack(fill="x", pady=10, padx=20)
 
         botao5 = ctk.CTkButton(self.frame_lateral_menu, text="📘 Área educativa", fg_color="white", text_color="#1A73E8",
@@ -811,23 +852,32 @@ class Menu(ctk.CTkFrame):
         self.frame_menu.pack(fill='both', expand=True)
 
     def mostrar_ranking(self):
+        pass
         
 
     def resgatar_premio(self):
+        pass
         
     def calculo_pontuacao(self):
+        pass
 
     def quiz_semanal(self):
+        pass
     
     def area_educativa(self):
+        pass
     
     def mostrar_dados(self):
+        pass
 
     def atualizar_dados(self):
+        pass
 
     def deletar_conta(self):
+        pass
 
     def feedback(self):
+        pass
    
         
 
