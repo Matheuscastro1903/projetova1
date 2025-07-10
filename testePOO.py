@@ -1,11 +1,19 @@
 import customtkinter as ctk
 import customtkinter as ctk
+from customtkinter import CTkImage, CTkLabel
+
 from PIL import Image
 import json
 import csv
 import time
 import re
 import random
+import pandas as pd
+import matplotlib as plt
+from collections import Counter
+from io import BytesIO
+import matplotlib.pyplot as plt
+
 
 
 with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
@@ -23,6 +31,28 @@ with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
     dados_codigov = arquivo_lido["verificador"]
 
 
+with open(r"dados_usuarios.json", "r", encoding="utf-8") as arquivo:
+    dados_lidos=json.load(arquivo)
+    dados_consumo=dados_lidos["consumo"]
+
+mensagens_agua = [
+    "💧 Cada gota conta. Economize água!",
+    "🚿 Banhos curtos, planeta mais saudável.",
+    "🌍 Água é vida. Preserve cada gota.",
+    "🧼 Feche a torneira ao escovar os dentes.",
+    "💦 Pequenas atitudes salvam grandes recursos.",
+    "🔧 Torneiras pingando desperdiçam litros por dia!",
+    "🌱 Use a água da chuva para regar plantas.",
+    "❌ Água não é infinita. Use com consciência.",
+    "🪣 Reutilize a água sempre que puder.",
+    "🐳 Preserve os rios, lagos e oceanos.",
+    "📉 Menos desperdício, mais futuro.",
+    "🧽 Economize água ao lavar louça ou roupa.",
+    "🏡 Sua casa também pode ser sustentável.",
+    "👶 Ensine as crianças a cuidar da água.",
+    "💙 Água limpa é direito de todos. Preserve!"
+]
+
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
@@ -37,7 +67,8 @@ class App(ctk.CTk):
         self.tela_cadastro = None
         self.tela_sobrenos = None
         self.tela_modoadm = None
-
+        self.tela_menu = None
+        
         # Lista para ocultar todas as telas
         self.telas = []
         # chamemento da função criar_tela_inicial
@@ -55,7 +86,8 @@ class App(ctk.CTk):
         self.esquercer_frames()
         if self.tela_login is None:
             self.tela_login = TelaLogin(
-                self, voltar_inicial=self.criar_tela_inicial)
+                self, voltar_inicial=self.criar_tela_inicial, 
+                mostrar_menu=self.criar_tela_menu)
             self.telas.append(self.tela_login)
 
         self.tela_login.pack(fill="both", expand=True)
@@ -64,7 +96,9 @@ class App(ctk.CTk):
         self.esquercer_frames()
         if self.tela_cadastro is None:
             self.tela_cadastro = TelaCadastro(
-                self, voltar_inicial=self.criar_tela_inicial, mostrar_login=self.criar_tela_login)
+                self, 
+                voltar_inicial=self.criar_tela_inicial, 
+                mostrar_login=self.criar_tela_login)
             self.telas.append(self.tela_cadastro)
         self.tela_cadastro.pack(fill="both", expand=True)
 
@@ -89,7 +123,14 @@ class App(ctk.CTk):
         self.tela_sobrenos.pack(fill="both", expand=True)
 
     def criar_tela_menu(self):
-        pass
+        
+        self.esquecer_frames()
+
+        self.tela_menu = Menu(self, email_logado = email_logado, voltar_incial=self.criar_tela_inicial)
+        self.telas.append(self.tela_menu)
+        self.tela_menu.pack(fill='both', expand=True)
+
+
 
     def criar_tela_educativa(self):
         pass
@@ -179,8 +220,10 @@ class TelaInicial(ctk.CTkFrame):
 
 
 class TelaLogin(ctk.CTkFrame):
-    def __init__(self, master, voltar_inicial):
+    def __init__(self, master, voltar_inicial, mostrar_menu):
         super().__init__(master)
+        self.voltar_inicial = voltar_inicial
+        self.mostrar_menu = mostrar_menu
         self.frame_login = ctk.CTkFrame(self, fg_color="#ffffff")
         label_login = ctk.CTkLabel(self.frame_login, text="Informe seus dados:",
                                    fg_color="#ffffff", text_color="blue", font=("Arial", 20))
@@ -243,7 +286,7 @@ class TelaLogin(ctk.CTkFrame):
             if self.email in dados_conta:
                 if dados_conta[self.email] == self.senha:
 
-                    self.mostrar_menu()
+                    self.mostrar_menu(self.email)
                     return
                 else:
                     self.label_avisologin.configure(
@@ -375,7 +418,8 @@ class TelaCadastro(ctk.CTkFrame):
 
         entradas = [email, nome_familia, senha,
                     quantidade_pessoas, apartamento]
-
+        possiveis_andares=["10","20","30","40","50","60","70","80","90"]
+        possiveis_apartamentos=["01","02","03","04","05"]
     # Verificação: se algum campo de texto estiver vazio
         if any(campo == "" for campo in entradas):
             self.label_aviso.configure(
@@ -392,6 +436,31 @@ class TelaCadastro(ctk.CTkFrame):
             self.label_aviso.configure(
                 text="O código verificador deve ter entre 4 e 20 caracteres.", text_color="red")
             return
+        
+        #ESSES VERIFICADORES SERVIRÃO PARA DIZER SE O ANDAR E O APARTAMENTO É VÁLIDO OU NÃO
+        andar_valido = False
+        apto_valido = False
+
+        for andar in possiveis_andares:
+            #SÓ VALIDARÁ SE APARTAMENTO INICIAR COM O INTERÁVEL DA LISTA ANDAR
+            if apartamento.startswith(andar):
+                andar_valido = True
+                #BREAK IRÁ QUEBRAR O LOOP FOR,ACABANDO A INTERAÇÃO
+                break
+
+        for apto in possiveis_apartamentos:
+             #SÓ VALIDARÁ SE APARTAMENTO INICIAR COM O INTERÁVEL DA LISTA APARTAMENTO
+            if apartamento.endswith(apto):
+                apto_valido = True
+                #BREAK IRÁ QUEBRAR O LOOP FOR,ACABANDO COM A INTERAÇÃO
+                break
+
+        if not (andar_valido and apto_valido): #VERIFICA SE AMBOS SÃO VÁLIDOS(TRUE)
+            self.label_aviso.configure(text="Apartamento inválido", text_color="red")
+            #return irá parar a função caso o aviso apareça
+            return
+
+
 
         quantidade_pessoas = int(quantidade_pessoas)
         verificador = int(verificador)
@@ -402,7 +471,7 @@ class TelaCadastro(ctk.CTkFrame):
         self.nome_familia = nome_familia
         self.quantidade = quantidade_pessoas
         self.pontos = 0
-        self.apartamento = apartamento
+        self.apartamento = int(apartamento)
         self.verificador = int(verificador)
 
         self.email_valido()
@@ -553,22 +622,33 @@ class TelaSobreNos(ctk.CTkFrame):
 class TelaModoAdm(ctk.CTkFrame):
     def __init__(self, master, voltar_inicial):
         super().__init__(master)
+        #define self.operaco como None para criar um objeto da classe
+        # operações  apenas se o self.operacao não tiver sido criado ainda
+        self.operacao=None
+        self.tabela=None
+        self.grafico_pizza=None
+        self.grafico_consumopessoa=None
+        self.grafico_consumoap=None
+        self.media=None
+        
+        
+        
         self.frame_adm = ctk.CTkFrame(self, fg_color="#ffffff")
-        label_adm = ctk.CTkLabel(self.frame_adm, text="Informe seus dados:",
+        label_adm = ctk.CTkLabel(self.frame_adm, text="Insira o código de acesso \npara entrar no modo administrador:",
                                    fg_color="#ffffff", text_color="blue", font=("Arial", 20))
         label_adm.pack(pady=2)
         self.label_avisoadm = ctk.CTkLabel(self.frame_adm, text=" ", fg_color="#ffffff", text_color="blue", font=("Arial", 20))
         self.label_avisoadm.pack(pady=2)
 
         # 1-entrada email
-        label_emailadm = ctk.CTkLabel(self.frame_adm, text="Digite seu email:", text_color="#000000", anchor="w", width=300)
-        label_emailadm.pack(pady=(2, 0))
+        #label_emailadm = ctk.CTkLabel(self.frame_adm, text="Digite seu email:", text_color="#000000", anchor="w", width=300)
+        #label_emailadm.pack(pady=(2, 0))
 
-        self.entrada_emailadm = ctk.CTkEntry(self.frame_adm, width=300)
-        self.entrada_emailadm.pack(pady=2)
+        #self.entrada_emailadm = ctk.CTkEntry(self.frame_adm, width=300)
+        #self.entrada_emailadm.pack(pady=2)
 
         # 2-entrada senha
-        label_senhaadm= ctk.CTkLabel(self.frame_adm, text="Digite sua senha:", text_color="#000000", anchor="w", width=300)
+        label_senhaadm= ctk.CTkLabel(self.frame_adm, text="Digite o código de acesso:", text_color="#000000", anchor="w", width=300)
         label_senhaadm.pack(pady=(2, 0))
 
         self.entrada_senhaadm = ctk.CTkEntry(self.frame_adm, width=300, show="*")
@@ -588,29 +668,335 @@ class TelaModoAdm(ctk.CTkFrame):
         self.frame_adm.pack(fill="both", expand=True)
 
     def conferir_adm(self):
+            entrada_senha=self.entrada_senhaadm.get().strip()
+            if entrada_senha=="!GaMa@1903#*!":
+                self.tela_inicial_adm()
+            else:
+                self.label_avisoadm.configure(text="Código inválido",text_color="Red")
             pass
+    
+    
+    
+    
     def tela_inicial_adm(self):
+            for widget in self.frame_adm.winfo_children():
+                widget.destroy()
+            #A IDENTAÇÃO TEM QUE FICAR DESSA FORMA OU A CADA INTERAÇÃO,SERÁ CRIADO MAIS FRAMES DESSA TELA DE INÍCIO DO 
+            #MODO ADM
+            frame_topo = ctk.CTkFrame(self.frame_adm, fg_color="#1A73E8", height=80)
+            frame_topo.pack(fill="x")
+
+            titulo = ctk.CTkLabel(frame_topo, text="💧 MODO ADM",text_color="#f0f0f0", font=("Arial", 24, "bold"))
+            titulo.pack(pady=20)
+
+            frame_conteudo = ctk.CTkFrame(self.frame_adm, fg_color="#ffffff")
+
+            botao_ver_dados = ctk.CTkButton(frame_conteudo, text="🔍Ver dados", fg_color="blue",
+                                                text_color="#ffffff", width=300, command=self.tela_ver_dados)
+            botao_ver_dados.pack(pady=10)
+
+            botao_editar_dados = ctk.CTkButton(frame_conteudo, text="✏️Editar dados", fg_color="blue",
+                                                text_color="#ffffff", width=300, command=self.tela_editar_dados)
+            botao_editar_dados.pack(pady=10)
+
+            botao_analise_dados = ctk.CTkButton(frame_conteudo, text="📊Analisar dados", fg_color="blue",
+                                                text_color="#ffffff", width=300, command=self.tela_analise_dados)
+            botao_analise_dados.pack(pady=10)
+
+            imagem = Image.open("fotos/mascoteadm.png")
+            ctk_imagem = ctk.CTkImage(light_image=imagem, dark_image=imagem, size=(400, 400))
+
+            label = ctk.CTkLabel(frame_conteudo, image=ctk_imagem, text="")
+            label.pack(pady=30)
+
+            frame_conteudo.pack(fill="both", expand=True)
+
+            
             pass
+    
+    
+    
     def tela_ver_dados(self):
+            for widget in self.frame_adm.winfo_children():
+                widget.destroy()
+            
+             
+            if self.operacao is None:
+                self.operacao=OperacoesAdm()
+            if self.tabela is None:
+                self.tabela=self.operacao.gerar_tabela()
+
+            frame_topo = ctk.CTkFrame(self.frame_adm, fg_color="#1A73E8", height=80)
+            frame_topo.pack(fill="x")
+
+            titulo = ctk.CTkLabel(frame_topo, text="💧 MODO ADM",text_color="#ffffff", font=("Arial", 24, "bold"))
+            titulo.pack(pady=20)
+
+        
+
+            #criação de um frame com scroll para que seja possível ver todos os dados
+            frame_scroll = ctk.CTkScrollableFrame(self.frame_adm,fg_color="#ffffff")
+            frame_scroll.pack(fill="both", expand=True, padx=10, pady=10)
+            
+
+            #perguntar o porque é melhor usar a fonte courier
+            label_tabela = ctk.CTkLabel(frame_scroll, text=self.tabela, font=("Courier", 12), anchor="w", justify="left")
+            label_tabela.pack(padx=10, pady=10)
+
+            botao_menuadm=ctk.CTkButton(frame_scroll,width=300,text="Voltar",fg_color="white",text_color="#1A73E8",command=self.tela_inicial_adm)
+            botao_menuadm.pack(pady=30)
+            
+
+            #fazer botão de voltar para o menu
+           
             pass
+    
+    
+    
     def tela_editar_dados(self):
-            pass
+            for widget in self.frame_adm.winfo_children():
+                widget.destroy()
+            frame_topo = ctk.CTkFrame(self.frame_adm, fg_color="#1A73E8", height=80)
+            frame_topo.pack(fill="x")
+
+            titulo = ctk.CTkLabel(frame_topo, text="💧 MODO ADM",text_color="#f0f0f0", font=("Arial", 24, "bold"))
+            titulo.pack(pady=20)
+
+            frame_conteudo = ctk.CTkFrame(self.frame_adm, fg_color="#f0f0f0")
+            frame_conteudo.pack(fill="both", expand=True)
+
+            self.label_avisoadm=ctk.CTkLabel(frame_conteudo,text="")
+
+            label_atualizar_email=ctk.CTkLabel(frame_conteudo,text="Digite o email da conta que você deseja atualizar",text_color="#1A73E8",font=("Arial", 16, "bold"))
+            label_atualizar_email.pack(pady=10)
+            entrada_atualizar_email=ctk.CTkEntry(frame_conteudo,width=300)
+            entrada_atualizar_email.pack(pady=10)
+
+            botao_atualizar_conta=ctk.CTkButton(frame_conteudo,text="Atualizar dados",text_color="#1A73E8",width=300,command=self.verificar_email_editacao)
+            botao_atualizar_conta.pack(pady=20)
+
+            botao_menuadm=ctk.CTkButton(frame_conteudo,width=300,text="Voltar",fg_color="white",text_color="#1A73E8",command=self.tela_inicial_adm)
+            botao_menuadm.pack(pady=20)
+    
+    
+    def verificar_email_editacao(self):
+        pass
+
+    
     def tela_analise_dados(self):
+            for widget in self.frame_adm.winfo_children():
+                widget.destroy()
+            
+            frame_topo = ctk.CTkFrame(self.frame_adm, fg_color="#1A73E8", height=80)
+            frame_topo.pack(fill="x")
+
+            titulo = ctk.CTkLabel(frame_topo, text="💧 MODO ADM",text_color="#f0f0f0", font=("Arial", 24, "bold"))
+            titulo.pack(pady=20)
+
+            frame_conteudo = ctk.CTkFrame(self.frame_adm, fg_color="#f0f0f0")
+            frame_conteudo.pack(fill="both", expand=True)
+
+            frame_lado_esquerdo=ctk.CTkFrame(frame_conteudo,fg_color="#6e005c")
+            frame_lado_esquerdo.pack(side="left",fill="both",expand=True)
+
+            frame_lado_direito=ctk.CTkFrame(frame_conteudo,fg_color="#09ec6f")
+            frame_lado_direito.pack(side="right",fill="both",expand=True)
+            
+            #Gerando gráfico de pizza com a porcentagem de famílias que possuem certa quantidade de membros
+            if self.operacao is None:
+                self.operacao=OperacoesAdm()
+            if self.grafico_pizza is None:
+                self.grafico_pizza=self.operacao.gerar_grafico_pizza()
+            if self.grafico_consumopessoa is None:
+                self.grafico_consumopessoa=self.operacao.gerar_grafico2()
+            
+
+            img_pizza = CTkImage(dark_image=self.grafico_pizza, size=(400, 400))
+
+            label_pizza = CTkLabel(frame_lado_esquerdo, image=img_pizza, text="")
+            label_pizza.pack()
+
+            img_grafico2=CTkImage(dark_image=self.grafico_consumopessoa,size=(400,400))
+            label_grafico2=CTkLabel(frame_lado_direito,image=img_grafico2, text="")
+            label_grafico2.pack()
+
+            
             pass
+    
+    
+    
+class OperacoesAdm():
+    def __init__(self):
+        print("entrei operações adm")
+        
+        pass
+    
+    def gerar_tabela(self):
+        #Cria um dataframe(Tabela criada pelo pandas,similar ao de banco de dados)
+        df = pd.DataFrame({
+            "Email": list(dados_conta.keys()),
+            "Família": list(dados_familia.values()),
+            "Membros": list(dados_quantidade.values()),
+            "Pontos": list(dados_pontos.values()),
+            "Apartamento": list(dados_apartamento.values()),
+            "Verificador": list(dados_codigov.values()),
+        })
+        # Transforma o DataFrame para string formatada
+        tabela_formatada = df.to_string()
+        
+        
+        return tabela_formatada
+
+        
+    
+    def gerar_grafico_pizza(self):
+        #Método responsável pela geração do gráfico de pizza que será feito em relação a quantidade de membros 
+
+        #esse counter é uma classe nativa do python que contará a repetição de cada valor do dicionário dados_quantidade 
+        #e armazenará em um dicionário por exemplo. {2:5,...}-->o número 2 se repete 5 vezes
+        contagem = Counter(dados_quantidade.values())
+
+
+        #Nesse loop for dentro da variável label,será criado mensagens do tipo "2 membros","3 membros" e armazerá em uma lista na variável.
+        #O loop irá rolar e irá criar um label para cada tipo de quantidade "2","3" e etc
+        labels = [f"{membros} membros" for membros in contagem.keys()]
+
+        #essa variável sizes irá criar uma lista da quantidade de vezes que o valor aparece.Por exemplo,se o valor 3 aparece 5 vezes,ele terá o valor 5
+        sizes = list(contagem.values())
+
+        # Criar gráfico de pizza
+        # Criar figura e eixo do gráfico
+
+        #fig é a janela geral do gráfico e area_usada é a área específica onde o gráfico será desenhado
+        fig, area_usada = plt.subplots(figsize=(8,8)) #fgsize define o tamanho do gráfico em polegadas
+        
+        #Desenha o gráfico pizza na área a area_usada
+        area_usada.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=140)
+        #size define o tamanho de cada fatia
+        #labels+define o texto de cada fatia
+        #autopct='%1.1f%%' mostra as porcentagens dentro da fatia
+        #startangle=140: gira o gráfico para ficar mais esteticamente agradável.
 
 
 
+        area_usada.set_title("Distribuição de famílias por número de membros", fontsize=20, pad=30)#define o título do gráfico e a fonte
+
+        area_usada.axis('equal')#garante que o gráfico seja um círculo perfeito
+
+        # Salvar o gráfico em memória como imagem PNG
+        buffer = BytesIO()#cria um buffer de memória que simula um arquivo png,mas que ficará dentro da memória
+        fig.savefig(buffer, format='png', bbox_inches='tight') #salva a figura dentro do buffer
+        #bbox_inches='tight' remove os espaços em branco entre o gráfico
+        plt.close(fig)  #Fecha o gráfico da memória do matplotlib para liberar RAM e evitar vazamentos.
+        buffer.seek(0) #Move o cursor do buffer para o início do conteúdo.
+
+        
+        imagem = Image.open(buffer)
+
+        print("gráfico pizza gerado")
+
+        return imagem
+
+    def gerar_grafico2(self):
+        #Método responsável por gerar o gráfico de consumo por quantidade
+        dicionario_grafico={}
+
+        for email in dados_quantidade:
+            if email in dados_consumo:
+                qtd_membros = dados_quantidade[email]
+                consumo = dados_consumo[email]
+                valor_quantidade=str(qtd_membros)
+
+                if valor_quantidade in dicionario_grafico:
+                    dicionario_grafico[valor_quantidade] += consumo
+                else:
+                    dicionario_grafico[valor_quantidade] = consumo
+
+                
+        #Lista em ordem das chaves.Foi necessário passar temporariamente para inteiro para ser possível ordenar
+        #quantidade=Eixo x
+        quantidades = sorted(dicionario_grafico.keys(), key=int)
+        
+        #Aqui usará um loop for para as quantidades já ordenadas,para ser possível colocar o consumo na ordem correta em
+        #relação a cada chave
+        #Consumo=Eixo y
+        consumos=[]    
+        for qtd in quantidades:
+            consumos.append(dicionario_grafico[qtd])
+
+        
+
+       # Criar figura e área onde o gráfico será desenhado
+       #fig="janela" que será utilizada para armazenar a area_utilizada pela figura
+        fig, area_utilizada = plt.subplots(figsize=(10, 6))
+
+        # Criar gráfico de barras de consumo(eixoy) x quantidade(eixo x) com a cor skyblue
+        area_utilizada.bar(quantidades, consumos, color='skyblue')
+
+        #Título do gráfico
+        area_utilizada.set_title('Consumo total por quantidade de moradores', fontsize=16, pad=20)
+        #Título relação eixo x
+        area_utilizada.set_xlabel('Quantidade de moradores', fontsize=12)
+        #Título relação eixo y
+        area_utilizada.set_ylabel('Consumo total (litros ou m³)', fontsize=12)
+        #cria linhas no eixo y para ajudar a visualizar na análise de dados
+        area_utilizada.grid(axis='y', linestyle='--', alpha=0.7)
+
+        # Função enumerate retorna o índice do valor e o valor que está na lista
+        for i, valor in enumerate(consumos):
+            #+1 serve para posicionar o texto acima da barra.Valor é o valor no eixo y
+            #passa o valor para string para ser possível colocar em texto
+            #ha=centraliza o texto
+            #
+            area_utilizada.text(i, valor + 1, str(valor), ha='center', va='bottom', fontsize=10)
+
+        #AJUSTA AUTOMATICAMENTE O CONTEÚDO DA FIGURA PARA QUE NENHUM TEXTO OU LABEL FIQUE CORTADO   
+        plt.tight_layout()
+
+        #aqui cria um buffer na memória(um arquivo temporário na memória)
+        buffer = BytesIO()
+        #salva a figura no buffer,como se fosse uma imagem sendo "salva em um frame"
+        fig.savefig(buffer, format='png', bbox_inches='tight')
+        #bbox_inches='tight' corta os espaços em branco 
+        #fecha a imagem para liberar RAM e evitar vazamento de memória
+        plt.close(fig)
+
+        
+        buffer.seek(0)
+
+        #abre o buffer como imagem PIL
+        imagem = Image.open(buffer)
+
+        return imagem
 
 
+        
 
-class Menu():
+            
+        
+
+        
+            
+        
+
+        
+
+            
+
+        pass
+
+    def gerar_grafico3(self):
+        pass
+
+    def gerar_valor_media(self):
+        consumo_listado=list(dados_consumo.values())
+        quantidade_consumo_registrado=len(consumo_listado)
+        media_consumo_condominio=sum(dados_consumo)/quantidade_consumo_registrado
+        
+
+        return media_consumo_condominio
     pass
 
 
-
-
-
-
-
-app = App()
+app=App()
 app.mainloop()
