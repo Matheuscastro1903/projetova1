@@ -494,9 +494,6 @@ def atualizar_dados(email, senha, frame_principalmenu, reset_callback):
 
 def atualizar_dados(email, senha, frame_principalmenu,frame_menu):
 
-
-def deletar_conta(email, senha, frame_principalmenu, reset_callback):
-
     """
     🗑 Função: Deletar Conta
     Permite ao usuário excluir sua conta permanentemente do sistema.
@@ -582,7 +579,10 @@ def deletar_conta(email, senha, frame_principalmenu, reset_callback):
 def conferir_atualizar(email,atualizar_entrada_email, atualizar_entrada_nome, atualizar_entrada_senha,
                         atualizar_entrada_qmembros, atualizar_entrada_numeroap,
                         atualizar_entrada_verificador, atualizar_label_aviso,frame_menu):
-=======
+    pass
+
+
+def deletar_conta():
     label_titulo = ctk.CTkLabel(frame_principalmenu, text="🗑 Deletar Conta",
                                  font=("Arial", 20, "bold"), text_color="#1A73E8")
     label_titulo.pack(pady=(20, 10))

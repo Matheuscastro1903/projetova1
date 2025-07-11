@@ -418,8 +418,6 @@ class TelaCadastro(ctk.CTkFrame):
 
         entradas = [email, nome_familia, senha,
                     quantidade_pessoas, apartamento]
-        possiveis_andares=["10","20","30","40","50","60","70","80","90"]
-        possiveis_apartamentos=["01","02","03","04","05"]
     # Verificação: se algum campo de texto estiver vazio
         if any(campo == "" for campo in entradas):
             self.label_aviso.configure(
@@ -438,8 +436,16 @@ class TelaCadastro(ctk.CTkFrame):
             return
         
         #ESSES VERIFICADORES SERVIRÃO PARA DIZER SE O ANDAR E O APARTAMENTO É VÁLIDO OU NÃO
+        possiveis_andares=["10","20","30","40","50","60","70","80","90"]
+        possiveis_apartamentos=["01","02","03","04","05"]
+
         andar_valido = False
         apto_valido = False
+        numero_valido=False
+        
+        
+        if len(apartamento)==4:
+            numero_valido=True
 
         for andar in possiveis_andares:
             #SÓ VALIDARÁ SE APARTAMENTO INICIAR COM O INTERÁVEL DA LISTA ANDAR
@@ -455,7 +461,7 @@ class TelaCadastro(ctk.CTkFrame):
                 #BREAK IRÁ QUEBRAR O LOOP FOR,ACABANDO COM A INTERAÇÃO
                 break
 
-        if not (andar_valido and apto_valido): #VERIFICA SE AMBOS SÃO VÁLIDOS(TRUE)
+        if not (andar_valido and apto_valido and numero_valido): #VERIFICA SE AMBOS SÃO VÁLIDOS(TRUE)
             self.label_aviso.configure(text="Apartamento inválido", text_color="red")
             #return irá parar a função caso o aviso apareça
             return
@@ -762,27 +768,210 @@ class TelaModoAdm(ctk.CTkFrame):
             titulo = ctk.CTkLabel(frame_topo, text="💧 MODO ADM",text_color="#f0f0f0", font=("Arial", 24, "bold"))
             titulo.pack(pady=20)
 
-            frame_conteudo = ctk.CTkFrame(self.frame_adm, fg_color="#f0f0f0")
-            frame_conteudo.pack(fill="both", expand=True)
+            self.frame_conteudo = ctk.CTkFrame(self.frame_adm, fg_color="#f0f0f0")
+            self.frame_conteudo.pack(fill="both", expand=True)
 
-            self.label_avisoadm=ctk.CTkLabel(frame_conteudo,text="")
+            self.label_avisoedicao=ctk.CTkLabel(self.frame_conteudo,text="")
+            self.label_avisoedicao.pack()
 
-            label_atualizar_email=ctk.CTkLabel(frame_conteudo,text="Digite o email da conta que você deseja atualizar",text_color="#1A73E8",font=("Arial", 16, "bold"))
-            label_atualizar_email.pack(pady=10)
-            entrada_atualizar_email=ctk.CTkEntry(frame_conteudo,width=300)
-            entrada_atualizar_email.pack(pady=10)
+            # Nome
+            label_nome = ctk.CTkLabel(self.frame_conteudo, text="Digite o email da conta que você deseja atualiza(Obrigatório):", 
+                                      text_color="#000000", font=("Arial", 16, "bold"))
+            label_nome.pack(pady=10)
+            self.entrada_email=ctk.CTkEntry(self.frame_conteudo, width=300)
+            self.entrada_email.pack(pady=10)
 
-            botao_atualizar_conta=ctk.CTkButton(frame_conteudo,text="Atualizar dados",text_color="#1A73E8",width=300,command=self.verificar_email_editacao)
-            botao_atualizar_conta.pack(pady=20)
+            # Família
+            label_familia = ctk.CTkLabel(self.frame_conteudo, text="Digite o nome da família associada à conta(Obrigatório):", 
+                                         text_color="#000000", font=("Arial", 16, "bold"))
+            label_familia.pack(pady=10)
+            self.entrada_familia = ctk.CTkEntry(self.frame_conteudo, width=300,
+                                         validate="key",
+                                         validatecommand=(self.register(self.validar_letras_espacos), "%P"))
+            self.entrada_familia.pack(pady=1)
 
-            botao_menuadm=ctk.CTkButton(frame_conteudo,width=300,text="Voltar",fg_color="white",text_color="#1A73E8",command=self.tela_inicial_adm)
-            botao_menuadm.pack(pady=20)
+            # Quantidade de Membros
+            label_qmembros = ctk.CTkLabel(self.frame_conteudo, text="Digite a quantidade de membros da família(Obrigatório):", 
+                                         text_color="#000000", font=("Arial", 16, "bold"))
+            label_qmembros.pack(pady=10)
+            self.entrada_qmembros = ctk.CTkEntry(self.frame_conteudo, width=300,
+                                             validate="key",
+                                             validatecommand=(self.register(self.validar_numeros), "%P"))
+            self.entrada_qmembros.pack(pady=1)
+
+            # Apartamento
+            label_apartamento = ctk.CTkLabel(self.frame_conteudo, text="Digite o número do apartamento:", 
+                                             text_color="#000000", font=("Arial", 16, "bold"))
+            label_apartamento.pack(pady=10)
+            self.entrada_apartamento = ctk.CTkEntry(self.frame_conteudo, width=300,
+                                             validate="key",
+                                             validatecommand=(self.register(self.validar_numeros), "%P"))
+            self.entrada_apartamento.pack(pady=1)
+
+            # Consumo
+            label_consumo = ctk.CTkLabel(self.frame_conteudo, text="Digite o consumo registrado (em m³):\n(Obrigatório)", 
+                                         text_color="#000000", font=("Arial", 16, "bold"))
+            label_consumo.pack(pady=10)
+            self.entrada_consumo = ctk.CTkEntry(self.frame_conteudo, width=300,
+                                             validate="key",
+                                             validatecommand=(self.register(self.validar_numeros), "%P"))
+            self.entrada_consumo.pack(pady=1)
+
+
+
+
+            botao_atualizar_conta=ctk.CTkButton(self.frame_conteudo,text="Atualizar dados",text_color="#1A73E8",width=300,fg_color="#f0f0f0",
+                                                command=self.conferir_entradas)
+            botao_atualizar_conta.pack(pady=(10,5))
+
+            botao_menuadm=ctk.CTkButton(self.frame_conteudo,width=300,text="Voltar",fg_color="#f0f0f0",text_color="#1A73E8",
+                                        command=self.tela_inicial_adm)
+            botao_menuadm.pack(pady=5)
+
+            #Apartamento
+            #Família
+            #Pontos
+            #Consumo
+            #Membros
+
+    @staticmethod  # Permite usar funções que não estão na classe diretamente,sem precisar passar self
+    def validar_numeros(novo_texto):
+        """Função utilizada para permitir digitar apenas números"""
+        return novo_texto.isdigit() or novo_texto == ""
+
+    @staticmethod  # Permite usar funções que não estão na classe diretamente,sem precisar passar self
+    def validar_letras_espacos(novo_texto):
+        """Função utilizada para deixar apenas digitar letras e espaços"""
+        return all(c.isalpha() or c.isspace() for c in novo_texto) or novo_texto == ""
+    
+    def conferir_entradas(self):
+        print(1)
+        self.email=self.entrada_email.get().strip()
+        self.apartamento=self.entrada_apartamento.get().strip()
+        self.quantidade_pessoas=self.entrada_qmembros.get().strip()
+        self.consumo=int(self.entrada_consumo.get().strip())
+        self.nome_familia=self.entrada_familia.get().strip()
+
+        entradas = [self.email, self.nome_familia,
+                    self.quantidade_pessoas,self.consumo] 
+    # Verificação: se algum campo de texto estiver vazio
+        if any(campo == "" for campo in entradas):
+            self.label_avisoedicao.configure(
+                text="Preencha os campos obrigatórios.", text_color="red")
+            return
+
+        
+        
+        if self.apartamento!="":
+            possiveis_andares=["10","20","30","40","50","60","70","80","90"]
+            possiveis_apartamentos=["01","02","03","04","05"]
+            #ESSES VERIFICADORES SERVIRÃO PARA DIZER SE O ANDAR E O APARTAMENTO É VÁLIDO OU NÃO
+            numero_valido=False
+            andar_valido = False
+            apto_valido = False
+        
+            if len(self.apartamento)==4:
+                numero_valido=True
+
+            for andar in possiveis_andares:
+                #SÓ VALIDARÁ SE APARTAMENTO INICIAR COM O INTERÁVEL DA LISTA ANDAR
+                if self.apartamento.startswith(andar):
+                    andar_valido = True
+                    #BREAK IRÁ QUEBRAR O LOOP FOR,ACABANDO A INTERAÇÃO
+                    break
+
+            for apto in possiveis_apartamentos:
+                #SÓ VALIDARÁ SE APARTAMENTO INICIAR COM O INTERÁVEL DA LISTA APARTAMENTO
+                if self.apartamento.endswith(apto):
+                    apto_valido = True
+                    #BREAK IRÁ QUEBRAR O LOOP FOR,ACABANDO COM A INTERAÇÃO
+                    break
+
+            if not (andar_valido and apto_valido and numero_valido): #VERIFICA SE AMBOS SÃO VÁLIDOS(TRUE)
+                print("Apartamento inváldio")
+                self.label_avisoedicao.configure(text="Apartamento inválido", text_color="red")
+                #return irá parar a função caso o aviso apareça
+                return
+        
+            self.apartamento=int(self.apartamento)
+        else:
+            self.apartamento=dados_apartamento[self.email]
+        
+        self.verificar_email_edicao()
+
     
     
-    def verificar_email_editacao(self):
+    
+    def verificar_email_edicao(self):
+        print(2)
+        
+        
+        
+        #Verificação se o email já tinha sido cadastrado anteriormente
+        if self.email not in dados_conta:
+            self.label_avisoedicao.configure(text="Email não cadastrado anteriormente.",text_color="Red")
+            return
+        self.salvar_edicao_dados()
         pass
-
     
+    def salvar_edicao_dados(self):
+        print(3)
+        try:
+            # Atualiza os dados que o admin pode alterar no
+            dados_familia[self.email] = self.nome_familia
+            dados_quantidade[self.email] =int(self.quantidade_pessoas)
+            dados_apartamento[self.email] = self.apartamento
+            dados_consumo[self.email]=self.consumo
+            
+            
+
+            # Reescreve o banco de dados inteiro, incluindo os dados que não foram alterados
+            with open("banco_dados.JSON", "w", encoding="utf-8") as arquivo:
+                json.dump({"senha": dados_conta,"familia": dados_familia,"membros": dados_quantidade,"pontos": dados_pontos,
+                           "apartamento": dados_apartamento,"verificador": dados_codigov}, arquivo, indent=4, ensure_ascii=False)
+        
+            self.mostrar_aviso_adm()
+        except Exception as e:
+            self.label_avisoedicao.configure(text=f"ERRO {e}.\nTente mais tarde!",text_color="red")
+            print("Erro salvamento")
+
+    def mostrar_aviso_adm(self):
+        for widget in self.frame_adm.winfo_children():
+                widget.destroy()
+
+        frame_topo = ctk.CTkFrame(self.frame_adm, fg_color="#1A73E8", height=80)
+        frame_topo.pack(fill="x")
+
+        titulo = ctk.CTkLabel(frame_topo, text="💧 MODO ADM",text_color="#f0f0f0", font=("Arial", 24, "bold"))
+        titulo.pack(pady=10)
+
+        frame_conteudo = ctk.CTkFrame(self.frame_adm, fg_color="#ffffff")
+        label_sucesso=ctk.CTkLabel(frame_conteudo,text="ATUALIZAÇÃO REALIZADA COM SUCESSO!!",text_color="#1A73E8",font=("arial",25))
+        label_sucesso.pack()
+        label_aviso_sucesso=ctk.CTkLabel(frame_conteudo,text="REINICIALIZAÇÃO NECESSÁRIA EM 7 SEGUNDOS.",text_color="#1A73E8",font=("arial",25))
+        label_aviso_sucesso.pack(pady=10)
+        
+        imagem = Image.open("fotos/mascoteadm.png")
+        ctk_imagem = ctk.CTkImage(light_image=imagem, dark_image=imagem, size=(400, 400))
+
+        label = ctk.CTkLabel(frame_conteudo, image=ctk_imagem, text="")
+        label.pack(pady=30)
+
+
+        frame_conteudo.pack(fill="both",expand=True)
+
+        self.after(7000, self.sair_sistema)
+    
+        pass
+    
+    def sair_sistema(self):
+        """Função utilizada para fechar sistema """
+        # Fechando dessa forma irá "destruir" a janela que foi definida no master
+        self.master.destroy()  # Fecha a janela principal
+    # Ou qualquer outra lógica de saída que você preferir
+
+
+
     def tela_analise_dados(self):
             for widget in self.frame_adm.winfo_children():
                 widget.destroy()
@@ -822,11 +1011,17 @@ class TelaModoAdm(ctk.CTkFrame):
 
             label_dados=CTkLabel(frame_lado_esquerdo,text="Dados importantes:",font=("Arial",20,"bold"))
             label_dados.pack(pady=10)
+            
             label_media_brasileira=CTkLabel(frame_lado_esquerdo,text="-Média brasileira de gasto de água por dia é de 154L por pessoa")
             label_media_brasileira.pack(pady=5)
-            label_media_brasileira=CTkLabel(frame_lado_esquerdo,text=f"-Média de gasto do condomínio é {self.media}")
-            label_media_brasileira.pack(pady=5)
+            
+            label_media_condominio=CTkLabel(frame_lado_esquerdo,text=f"-Total de água gasto pelo condomínio {self.media}")
+            label_media_condominio.pack(pady=5)
 
+            
+
+            
+            
             botao_voltar=ctk.CTkButton(frame_lado_esquerdo,text="Voltar",text_color="#ffffff",fg_color="#1A73E8",command=self.tela_inicial_adm)
             botao_voltar.pack(pady=10)
             
@@ -1098,8 +1293,7 @@ class OperacoesAdm():
     def gerar_valor_media(self):
         
         consumo_listado=list(dados_consumo.values())
-        quantidade_consumo_registrado=len(consumo_listado)
-        media_consumo_condominio=sum(consumo_listado)/quantidade_consumo_registrado
+        media_consumo_condominio=sum(consumo_listado)
         
 
         return media_consumo_condominio
