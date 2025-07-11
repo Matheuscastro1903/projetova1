@@ -749,6 +749,12 @@ class TelaModoAdm(ctk.CTkFrame):
             label_tabela = ctk.CTkLabel(frame_scroll, text=self.tabela, font=("Courier", 12), anchor="w", justify="left")
             label_tabela.pack(padx=10, pady=10)
 
+            label_atencao=ctk.CTkLabel(frame_scroll, text="ATENÇÃO!!", font=("Arial", 20,"bold"), anchor="w", justify="left")
+            label_atencao.pack(padx=10)
+
+            label_mensagem_atencao=ctk.CTkLabel(frame_scroll, text="Dados com 'N/A' não possuem valores.", font=("Arial", 20,"bold"), anchor="w", justify="left")
+            label_mensagem_atencao.pack(padx=10)
+
             botao_menuadm=ctk.CTkButton(frame_scroll,width=300,text="Voltar",fg_color="white",text_color="#1A73E8",command=self.tela_inicial_adm)
             botao_menuadm.pack(pady=30)
             
@@ -1053,14 +1059,28 @@ class OperacoesAdm():
             if (email in dados_familia and email in dados_quantidade and email in dados_pontos and 
                 email in dados_apartamento and 
                 email in dados_codigov):
-                dados_organizados.append({
-                    "Email": email,
-                    "Família": dados_familia[email],
-                    "Membros": dados_quantidade[email],
-                    "Pontos": dados_pontos[email],
-                    "Apartamento": dados_apartamento[email],
-                    "Verificador": dados_codigov[email]
-                })
+                if email in dados_consumo:        
+                    dados_organizados.append({
+                        "Email": email,
+                        "Família": dados_familia[email],
+                        "Membros": dados_quantidade[email],
+                        "Pontos": dados_pontos[email],
+                        "Apartamento": dados_apartamento[email],
+                        "Verificador": dados_codigov[email],
+                        "Consumo":dados_consumo[email]
+
+                    })
+                else:
+                    dados_organizados.append({
+                        "Email": email,
+                        "Família": dados_familia[email],
+                        "Membros": dados_quantidade[email],
+                        "Pontos": dados_pontos[email],
+                        "Apartamento": dados_apartamento[email],
+                        "Verificador": dados_codigov[email],
+                        "Consumo":"N/A"
+
+                    })
 
         df = pd.DataFrame(dados_organizados)
         tabela_formatada = df.to_string(index=False)
