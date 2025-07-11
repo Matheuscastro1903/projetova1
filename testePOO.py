@@ -669,7 +669,7 @@ class TelaModoAdm(ctk.CTkFrame):
 
     def conferir_adm(self):
             entrada_senha=self.entrada_senhaadm.get().strip()
-            if entrada_senha=="!GaMa@1903#*!":
+            if entrada_senha=="!GaMa#1903!":
                 self.tela_inicial_adm()
             else:
                 self.label_avisoadm.configure(text="Código inválido",text_color="Red")
@@ -687,7 +687,7 @@ class TelaModoAdm(ctk.CTkFrame):
             frame_topo.pack(fill="x")
 
             titulo = ctk.CTkLabel(frame_topo, text="💧 MODO ADM",text_color="#f0f0f0", font=("Arial", 24, "bold"))
-            titulo.pack(pady=20)
+            titulo.pack(pady=10)
 
             frame_conteudo = ctk.CTkFrame(self.frame_adm, fg_color="#ffffff")
 
@@ -790,16 +790,16 @@ class TelaModoAdm(ctk.CTkFrame):
             frame_topo = ctk.CTkFrame(self.frame_adm, fg_color="#1A73E8", height=80)
             frame_topo.pack(fill="x")
 
-            titulo = ctk.CTkLabel(frame_topo, text="💧 MODO ADM",text_color="#f0f0f0", font=("Arial", 24, "bold"))
+            titulo = ctk.CTkLabel(frame_topo, text="💧 MODO ADM",text_color="#ffffff", font=("Arial", 24, "bold"))
             titulo.pack(pady=20)
 
-            frame_conteudo = ctk.CTkFrame(self.frame_adm, fg_color="#f0f0f0")
+            frame_conteudo = ctk.CTkFrame(self.frame_adm, fg_color="#ffffff")
             frame_conteudo.pack(fill="both", expand=True)
 
-            frame_lado_esquerdo=ctk.CTkFrame(frame_conteudo,fg_color="#6e005c")
+            frame_lado_esquerdo=ctk.CTkFrame(frame_conteudo,fg_color="#ffffff")
             frame_lado_esquerdo.pack(side="left",fill="both",expand=True)
 
-            frame_lado_direito=ctk.CTkFrame(frame_conteudo,fg_color="#09ec6f")
+            frame_lado_direito=ctk.CTkFrame(frame_conteudo,fg_color="#ffffff")
             frame_lado_direito.pack(side="right",fill="both",expand=True)
             
             #Gerando gráfico de pizza com a porcentagem de famílias que possuem certa quantidade de membros
@@ -809,6 +809,10 @@ class TelaModoAdm(ctk.CTkFrame):
                 self.grafico_pizza=self.operacao.gerar_grafico_pizza()
             if self.grafico_consumopessoa is None:
                 self.grafico_consumopessoa=self.operacao.gerar_grafico2()
+            if self.grafico_consumoap is None:
+                self.grafico_consumoap=self.operacao.gerar_grafico3()
+            if self.media is None:
+                self.media=self.operacao.gerar_valor_media()
             
 
             img_pizza = CTkImage(dark_image=self.grafico_pizza, size=(400, 400))
@@ -816,9 +820,24 @@ class TelaModoAdm(ctk.CTkFrame):
             label_pizza = CTkLabel(frame_lado_esquerdo, image=img_pizza, text="")
             label_pizza.pack()
 
-            img_grafico2=CTkImage(dark_image=self.grafico_consumopessoa,size=(400,400))
+            label_dados=CTkLabel(frame_lado_esquerdo,text="Dados importantes:",font=("Arial",20,"bold"))
+            label_dados.pack(pady=10)
+            label_media_brasileira=CTkLabel(frame_lado_esquerdo,text="-Média brasileira de gasto de água por dia é de 154L por pessoa")
+            label_media_brasileira.pack(pady=5)
+            label_media_brasileira=CTkLabel(frame_lado_esquerdo,text=f"-Média de gasto do condomínio é {self.media}")
+            label_media_brasileira.pack(pady=5)
+
+            botao_voltar=ctk.CTkButton(frame_lado_esquerdo,text="Voltar",text_color="#ffffff",fg_color="#1A73E8",command=self.tela_inicial_adm)
+            botao_voltar.pack(pady=10)
+            
+
+            img_grafico2=CTkImage(dark_image=self.grafico_consumopessoa,size=(300,300))
             label_grafico2=CTkLabel(frame_lado_direito,image=img_grafico2, text="")
             label_grafico2.pack()
+
+            img_grafico3=CTkImage(dark_image=self.grafico_consumoap,size=(300,300))
+            label_grafico3=CTkLabel(frame_lado_direito,image=img_grafico3, text="")
+            label_grafico3.pack(pady=20)
 
             
             pass
@@ -832,18 +851,24 @@ class OperacoesAdm():
         pass
     
     def gerar_tabela(self):
-        #Cria um dataframe(Tabela criada pelo pandas,similar ao de banco de dados)
-        df = pd.DataFrame({
-            "Email": list(dados_conta.keys()),
-            "Família": list(dados_familia.values()),
-            "Membros": list(dados_quantidade.values()),
-            "Pontos": list(dados_pontos.values()),
-            "Apartamento": list(dados_apartamento.values()),
-            "Verificador": list(dados_codigov.values()),
-        })
-        # Transforma o DataFrame para string formatada
-        tabela_formatada = df.to_string()
         
+        dados_organizados = []
+        
+        for email in dados_conta:
+            if (email in dados_familia and email in dados_quantidade and email in dados_pontos and 
+                email in dados_apartamento and 
+                email in dados_codigov):
+                dados_organizados.append({
+                    "Email": email,
+                    "Família": dados_familia[email],
+                    "Membros": dados_quantidade[email],
+                    "Pontos": dados_pontos[email],
+                    "Apartamento": dados_apartamento[email],
+                    "Verificador": dados_codigov[email]
+                })
+
+        df = pd.DataFrame(dados_organizados)
+        tabela_formatada = df.to_string(index=False)
         
         return tabela_formatada
 
@@ -931,16 +956,16 @@ class OperacoesAdm():
         fig, area_utilizada = plt.subplots(figsize=(10, 6))
 
         # Criar gráfico de barras de consumo(eixoy) x quantidade(eixo x) com a cor skyblue
-        area_utilizada.bar(quantidades, consumos, color='skyblue')
+        area_utilizada.bar(quantidades, consumos, color="skyblue")
 
         #Título do gráfico
-        area_utilizada.set_title('Consumo total por quantidade de moradores', fontsize=16, pad=20)
+        area_utilizada.set_title("Consumo total por quantidade de moradores", fontsize=16, pad=20)
         #Título relação eixo x
-        area_utilizada.set_xlabel('Quantidade de moradores', fontsize=12)
+        area_utilizada.set_xlabel("Quantidade de moradores", fontsize=12)
         #Título relação eixo y
-        area_utilizada.set_ylabel('Consumo total (litros ou m³)', fontsize=12)
+        area_utilizada.set_ylabel("Consumo total (litros ou m³)", fontsize=12)
         #cria linhas no eixo y para ajudar a visualizar na análise de dados
-        area_utilizada.grid(axis='y', linestyle='--', alpha=0.7)
+        area_utilizada.grid(axis="y", linestyle="--", alpha=0.7)
 
         # Função enumerate retorna o índice do valor e o valor que está na lista
         for i, valor in enumerate(consumos):
@@ -948,7 +973,8 @@ class OperacoesAdm():
             #passa o valor para string para ser possível colocar em texto
             #ha=centraliza o texto
             #
-            area_utilizada.text(i, valor + 1, str(valor), ha='center', va='bottom', fontsize=10)
+            area_utilizada.text(i, valor + 1, str(valor), ha=
+                                "center", va="bottom", fontsize=10)
 
         #AJUSTA AUTOMATICAMENTE O CONTEÚDO DA FIGURA PARA QUE NENHUM TEXTO OU LABEL FIQUE CORTADO   
         plt.tight_layout()
@@ -956,7 +982,7 @@ class OperacoesAdm():
         #aqui cria um buffer na memória(um arquivo temporário na memória)
         buffer = BytesIO()
         #salva a figura no buffer,como se fosse uma imagem sendo "salva em um frame"
-        fig.savefig(buffer, format='png', bbox_inches='tight')
+        fig.savefig(buffer, format="png", bbox_inches="tight")
         #bbox_inches='tight' corta os espaços em branco 
         #fecha a imagem para liberar RAM e evitar vazamento de memória
         plt.close(fig)
@@ -970,28 +996,110 @@ class OperacoesAdm():
         return imagem
 
 
-        
-
-            
-        
-
-        
-            
-        
-
-        
-
-            
-
-        pass
 
     def gerar_grafico3(self):
-        pass
+        dicionario_grafico2={}
+       
+        dicionario_andares = {
+            "10": 0,
+                            "20": 0,
+                            "30":0,
+                            "40": 0,
+                            "50": 0,
+                            "60": 0,
+                            "70":0,
+                            "80": 0,
+                            "90": 0}
+
+        for email in dados_apartamento:
+            if email in dados_consumo:
+                apartamento=str(dados_apartamento[email])
+                consumo=dados_consumo[email]
+                dicionario_grafico2[apartamento]=consumo
+
+        for apartamentos_validos in dicionario_grafico2:
+            if apartamentos_validos.startswith("10"):
+                dicionario_andares["10"] += dicionario_grafico2[apartamentos_validos]
+            elif apartamentos_validos.startswith("20"):
+                dicionario_andares["20"] += dicionario_grafico2[apartamentos_validos]
+            elif apartamentos_validos.startswith("30"):
+                dicionario_andares["30"] += dicionario_grafico2[apartamentos_validos]
+            elif apartamentos_validos.startswith("40"):
+                dicionario_andares["40"] += dicionario_grafico2[apartamentos_validos]
+            elif apartamentos_validos.startswith("50"):
+                dicionario_andares["50"] += dicionario_grafico2[apartamentos_validos]
+            elif apartamentos_validos.startswith("60"):
+                dicionario_andares["60"] += dicionario_grafico2[apartamentos_validos]
+            elif apartamentos_validos.startswith("70"):
+                dicionario_andares["70"] += dicionario_grafico2[apartamentos_validos]
+            elif apartamentos_validos.startswith("80"):
+                dicionario_andares["80"] += dicionario_grafico2[apartamentos_validos]
+            elif apartamentos_validos.startswith("90"):
+                dicionario_andares["90"] += dicionario_grafico2[apartamentos_validos]
+        #Lista em ordem das chaves.Foi necessário passar temporariamente para inteiro para ser possível ordenar
+        #quantidade=Eixo x
+        
+        #Lista os valores das chaves do dicionário
+        andares=list(dicionario_andares.keys())
+
+        #Lista os valores das chaves
+        consumos=list(dicionario_andares.values())
+        
+
+       # Criar figura e área onde o gráfico será desenhado
+       #fig="janela" que será utilizada para armazenar a area_utilizada pela figura
+        fig, area_utilizada = plt.subplots(figsize=(10, 6))
+
+        # Criar gráfico de barras de consumo(eixoy) x quantidade(eixo x) com a cor skyblue
+        area_utilizada.bar(andares, consumos, color="skyblue")
+
+        #Título do gráfico
+        area_utilizada.set_title("Consumo total por andar", fontsize=16, pad=20)
+        #Título relação eixo x
+        area_utilizada.set_xlabel("Andar correspondente", fontsize=12)
+        #Título relação eixo y
+        area_utilizada.set_ylabel("Consumo total (litros ou m³)", fontsize=12)
+        #cria linhas no eixo y para ajudar a visualizar na análise de dados
+        area_utilizada.grid(axis="y", linestyle="--", alpha=0.7)
+
+        # Função enumerate retorna o índice do valor e o valor que está na lista
+        for i, valor in enumerate(consumos):
+            #+1 serve para posicionar o texto acima da barra.Valor é o valor no eixo y
+            #passa o valor para string para ser possível colocar em texto
+            #ha=centraliza o texto
+            #
+            area_utilizada.text(i, valor + 1, str(valor), ha="center", va="bottom", fontsize=10)
+
+        #AJUSTA AUTOMATICAMENTE O CONTEÚDO DA FIGURA PARA QUE NENHUM TEXTO OU LABEL FIQUE CORTADO   
+        plt.tight_layout()
+
+        #aqui cria um buffer na memória(um arquivo temporário na memória)
+        buffer = BytesIO()
+        #salva a figura no buffer,como se fosse uma imagem sendo "salva em um frame"
+        fig.savefig(buffer, format="png", bbox_inches="tight")
+        #bbox_inches='tight' corta os espaços em branco 
+        #fecha a imagem para liberar RAM e evitar vazamento de memória
+        plt.close(fig)
+
+        
+        buffer.seek(0)
+
+        #abre o buffer como imagem PIL
+        imagem = Image.open(buffer)
+
+        return imagem
+
+        
+        
+
+        
+            
 
     def gerar_valor_media(self):
+        
         consumo_listado=list(dados_consumo.values())
         quantidade_consumo_registrado=len(consumo_listado)
-        media_consumo_condominio=sum(dados_consumo)/quantidade_consumo_registrado
+        media_consumo_condominio=sum(consumo_listado)/quantidade_consumo_registrado
         
 
         return media_consumo_condominio
