@@ -1,4 +1,4 @@
-import customtkinter as ctk
+
 import customtkinter as ctk
 from PIL import Image
 import json
@@ -8,6 +8,38 @@ import re
 import random
 import pandas as pd
 from datetime import datetime, timedelta
+
+
+premios_disponiveis = [
+    {"nome": "Voucher de R$20 em delivery", "custo": 200},
+    {"nome": "Desconto de 10% na conta de água", "custo": 500},
+    {"nome": "Kit de sementes para horta caseira", "custo": 150},
+    {"nome": "E-book sobre sustentabilidade", "custo": 100},
+    {"nome": "Doação de 50L de água para causas sociais", "custo": 250},
+    {"nome": "Copo reutilizável EcoDrop", "custo": 300}
+]
+
+
+mensagens_agua =[
+    "💧 Cada gota conta. Economize água!",
+    "🚿 Banhos curtos, planeta mais saudável.",
+    "🌍 Água é vida. Preserve cada gota.",
+    "🧼 Feche a torneira ao escovar os dentes.",
+    "💦 Pequenas atitudes salvam grandes recursos.",
+    "🔧 Torneiras pingando desperdiçam litros por dia!",
+    "🌱 Use a água da chuva para regar plantas.",
+    "❌ Água não é infinita. Use com consciência.",
+    "🪣 Reutilize a água sempre que puder.",
+    "🐳 Preserve os rios, lagos e oceanos.",
+    "📉 Menos desperdício, mais futuro.",
+    "🧽 Economize água ao lavar louça ou roupa.",
+    "🏡 Sua casa também pode ser sustentável.",
+    "👶 Ensine as crianças a cuidar da água.",
+    "💙 Água limpa é direito de todos. Preserve!"
+]
+
+
+
 
 
 
@@ -460,17 +492,29 @@ class TelaCadastro(ctk.CTkFrame):
     def conferir_ap(self):
 
        # FUNÇÃO UTILIZADA PARA ANALISAR SE O APARTAMENTO JÁ ESTÁ CADASTRADO OU NÃO
-        if self.apartamento in dados_apartamento.values():
+        dados_lidos = self._carregar_dados() # Load data here
+        dados_apartamento_cadastro = dados_lidos["apartamento"]
+
+        if self.apartamento in dados_apartamento_cadastro.values():
             self.label_aviso.configure(
-                text="APARTAMENTO JÁ CADASTRADO.TENTE NOVAMENTE", text_color="red")
+                text="APARTAMENTO JÁ CADASTRADO. TENTE NOVAMENTE", text_color="red")
         else:
             self.cadastrar_conta()
+
+    def _carregar_dados(self): # Add this method to TelaCadastro
+        with open(r"banco_dados.JSON", "r", encoding="utf-8") as f:
+            return json.load(f)
+
+    def _salvar_dados(self, dados_completos): # Add this method to TelaCadastro
+        with open(r"banco_dados.JSON", "w", encoding="utf-8") as f:
+            json.dump(dados_completos, f, indent=4, ensure_ascii=False)
 
     def cadastrar_conta(self):
 
         # FUNÇÃO UTILIZADA PARA CADASTRAR CONTA NO BANCO DE DADOS
 
         try:
+            dados = self._carregar_dados()
             dados_conta[self.email] = self.senha
             dados_familia[self.email] = self.nome_familia
             dados_quantidade[self.email] = self.quantidade
@@ -875,7 +919,7 @@ class Game(ctk.CTkFrame):
 
     def resgatar_premio(self):
         self.limpar_conteudo()
-        dados_atuais=self.carregar_dados()
+        dados_atuais=self._carregar_dados()
         pontos_usuario=dados_atuais["pontos"].get(self.email,0)
 
         label_titulo = ctk.CTkLabel(self.content_frame, text="🎁 Resgatar Prêmios", font=("Arial", 20, "bold"), text_color="#1A73E8")
@@ -933,7 +977,7 @@ class Game(ctk.CTkFrame):
                                        validatecommand=(self.register(self.validar_numeros), "%P"))
         entrada_consumo.pack(padx=50, pady=(0, 10), anchor="w")
 
-        botao_voltar = ctk.CTkButton(self.content_frame, text="⬅ Voltar ao Menu", fg_color="gray",
+        botao_voltar = ctk.CTkButton(self.content_frame, text=" Voltar ao Menu", fg_color="gray",
                                    command=self.reset_callback)
         
         label_resultado=ctk.CTkLabel(self.content_frame, text='', font=("Arial", 15, 'bold'))
@@ -968,7 +1012,7 @@ class Game(ctk.CTkFrame):
             except Exception as e:
                 label_resultado.configure(text=f"Erro: {e}", text_color="red")
 
-        botao_calcular=ctk.CTkButton(self.content.frame, text='Voltar ao Menu', fg_color='grey', command=self.reset_callback)
+        botao_calcular=ctk.CTkButton(self.content_frame, text='Voltar ao Menu', fg_color='gray', command=self.reset_callback)
         botao_calcular.pack(pady=10)
         botao_voltar = ctk.CTkButton(self.content_frame, text="⬅ Voltar ao Menu", fg_color="gray", command=self.reset_callback)
         botao_voltar.pack(pady=20)
@@ -976,7 +1020,7 @@ class Game(ctk.CTkFrame):
 
     def quiz_semanal(self):
         self.limpar_conteudo()
-        label_titulo = ctk.CTkLabel(self.content_frane, text = "🧠 Quiz Semanal", font=("Arial", 20, "bold"), text_color="#1A73E8")
+        label_titulo = ctk.CTkLabel(self.content_frame, text = "🧠 Quiz Semanal", font=("Arial", 20, "bold"), text_color="#1A73E8")
         label_titulo.pack(pady=(20, 10))
 
         try:
@@ -989,14 +1033,14 @@ class Game(ctk.CTkFrame):
 
             if data_ultimo_quiz_str:
                 data_ultimo_quiz = datetime.strptime(data_ultimo_quiz_str, "%Y-%m-%d").date()
-                if data_ultimo_quiz > data_atual - timedelta(days=data_atual.weekday() +  7):  #Verifica se o usuário já fez na semana atual
+                if data_ultimo_quiz >= data_atual - timedelta(days=data_atual.weekday() +  7):  #Verifica se o usuário já fez na semana atual
                     pode_fazer_quiz = False
             if not pode_fazer_quiz:
                 ctk.CTkLabel(self. content_frame, text='Você já realizou o quiz esta semana', text_color= 'red', font=("Arial", 14)). pack(pady=20)
                 ctk.CTkButton(self.content_frame, text='Voltar', fg_color="gray", command=self.reset_callback).pack()
                 return
             if len (questoes_disponiveis) < 5:
-                ctk.CTklabel(self.content_frame, text= 'Quiz indisponível. Contate o ADM.', font=("Arial", 15)).pack(pady=20)
+                ctk.CTkLabel(self.content_frame, text= 'Quiz indisponível. Contate o ADM.', font=("Arial", 15)).pack(pady=20)
                 ctk.CTkButton(self.content_frame, text='Voltar', fg_color='gray', command= self.reset_callback).pack()
                 return
         except Exception as e:
@@ -1038,7 +1082,7 @@ class Game(ctk.CTkFrame):
             quiz_message_label.configure(text='')
             respostas_usuario[current_question_index] = radio_var.get()
 
-            current_question_index += ''
+            current_question_index += 1
             if current_question_index < len(questoes_para_quiz):
                 mostrar_questao(current_question_index)
             else:
@@ -1135,7 +1179,7 @@ class GerenciarUsuario(ctk.CTkFrame):
             user_family = dados['familia'].get(self.email, "N/A")
             user_membros= dados['membros'].get(self.email, 'N/A')
             user_points= dados['pontos'].get(self.email, 'N/A')
-            user_apartment= dados['apartamento']
+            user_apartment= dados['apartamento'].get(self.email, 'N/A')
 
             data_text = f'''
             Email: {self.email}
@@ -1202,7 +1246,7 @@ class GerenciarUsuario(ctk.CTkFrame):
 
                 if not novo_nome or not nova_qtde_membros_str:
                     label_mensagem_atualizar.configure(text="Nome da família e quantidade de membros são obrigatórios.", text_color="red")
-                return
+                
 
                 try:
                     nova_qtde_membros = int(nova_qtde_membros_str)
@@ -1253,7 +1297,7 @@ class GerenciarUsuario(ctk.CTkFrame):
                 try:
                     data=self._carregar_dados()
                     if self.email in data['senha']:
-                        del data["senha"][self.mail]
+                        del data["senha"][self.email]
                         del data["familia"][self.email]
                         del data["membros"][self.email]
                         del data["pontos"][self.email]
