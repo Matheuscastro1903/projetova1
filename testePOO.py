@@ -1,7 +1,5 @@
-import customtkinter as ctk
-import customtkinter as ctk
-from customtkinter import CTkImage, CTkLabel
 
+import customtkinter as ctk
 from PIL import Image
 import json
 import csv
@@ -9,10 +7,39 @@ import time
 import re
 import random
 import pandas as pd
-import matplotlib as plt
-from collections import Counter
-from io import BytesIO
-import matplotlib.pyplot as plt
+from datetime import datetime, timedelta
+
+
+premios_disponiveis = [
+    {"nome": "Voucher de R$20 em delivery", "custo": 200},
+    {"nome": "Desconto de 10% na conta de água", "custo": 500},
+    {"nome": "Kit de sementes para horta caseira", "custo": 150},
+    {"nome": "E-book sobre sustentabilidade", "custo": 100},
+    {"nome": "Doação de 50L de água para causas sociais", "custo": 250},
+    {"nome": "Copo reutilizável EcoDrop", "custo": 300}
+]
+
+
+mensagens_agua =[
+    "💧 Cada gota conta. Economize água!",
+    "🚿 Banhos curtos, planeta mais saudável.",
+    "🌍 Água é vida. Preserve cada gota.",
+    "🧼 Feche a torneira ao escovar os dentes.",
+    "💦 Pequenas atitudes salvam grandes recursos.",
+    "🔧 Torneiras pingando desperdiçam litros por dia!",
+    "🌱 Use a água da chuva para regar plantas.",
+    "❌ Água não é infinita. Use com consciência.",
+    "🪣 Reutilize a água sempre que puder.",
+    "🐳 Preserve os rios, lagos e oceanos.",
+    "📉 Menos desperdício, mais futuro.",
+    "🧽 Economize água ao lavar louça ou roupa.",
+    "🏡 Sua casa também pode ser sustentável.",
+    "👶 Ensine as crianças a cuidar da água.",
+    "💙 Água limpa é direito de todos. Preserve!"
+]
+
+
+
 
 
 
@@ -31,28 +58,6 @@ with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
     dados_codigov = arquivo_lido["verificador"]
 
 
-with open(r"dados_usuarios.json", "r", encoding="utf-8") as arquivo:
-    dados_lidos=json.load(arquivo)
-    dados_consumo=dados_lidos["consumo"]
-
-mensagens_agua = [
-    "💧 Cada gota conta. Economize água!",
-    "🚿 Banhos curtos, planeta mais saudável.",
-    "🌍 Água é vida. Preserve cada gota.",
-    "🧼 Feche a torneira ao escovar os dentes.",
-    "💦 Pequenas atitudes salvam grandes recursos.",
-    "🔧 Torneiras pingando desperdiçam litros por dia!",
-    "🌱 Use a água da chuva para regar plantas.",
-    "❌ Água não é infinita. Use com consciência.",
-    "🪣 Reutilize a água sempre que puder.",
-    "🐳 Preserve os rios, lagos e oceanos.",
-    "📉 Menos desperdício, mais futuro.",
-    "🧽 Economize água ao lavar louça ou roupa.",
-    "🏡 Sua casa também pode ser sustentável.",
-    "👶 Ensine as crianças a cuidar da água.",
-    "💙 Água limpa é direito de todos. Preserve!"
-]
-
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
@@ -67,7 +72,7 @@ class App(ctk.CTk):
         self.tela_cadastro = None
         self.tela_sobrenos = None
         self.tela_modoadm = None
-        self.tela_menu = None
+        self.tela_usuario_logado = None
         
         # Lista para ocultar todas as telas
         self.telas = []
@@ -75,7 +80,7 @@ class App(ctk.CTk):
         self.criar_tela_inicial()
 
     def criar_tela_inicial(self):
-        self.esquercer_frames()
+        self.esquecer_frames()
         if self.tela_inicial is None:
             self.tela_inicial = TelaInicial(self, mostrar_login=self.criar_tela_login, mostrar_cadastro=self.criar_tela_cadastro,
                                             modo_adm=self.criar_tela_modoadm, sobre_nos=self.criar_tela_sobrenos)
@@ -83,17 +88,17 @@ class App(ctk.CTk):
         self.tela_inicial.pack(fill="both", expand=True)
 
     def criar_tela_login(self):
-        self.esquercer_frames()
+        self.esquecer_frames()
         if self.tela_login is None:
             self.tela_login = TelaLogin(
                 self, voltar_inicial=self.criar_tela_inicial, 
-                mostrar_menu=self.criar_tela_menu)
+                mostrar_usuario_logado=self.criar_tela_usuario_logado)
             self.telas.append(self.tela_login)
 
         self.tela_login.pack(fill="both", expand=True)
 
     def criar_tela_cadastro(self):
-        self.esquercer_frames()
+        self.esquecer_frames()
         if self.tela_cadastro is None:
             self.tela_cadastro = TelaCadastro(
                 self, 
@@ -103,7 +108,7 @@ class App(ctk.CTk):
         self.tela_cadastro.pack(fill="both", expand=True)
 
     def criar_tela_modoadm(self):
-        self.esquercer_frames()
+        self.esquecer_frames()
 
         if self.tela_modoadm is None:
             self.tela_modoadm = TelaModoAdm(self, voltar_inicial=self.criar_tela_inicial)
@@ -114,7 +119,7 @@ class App(ctk.CTk):
 
     def criar_tela_sobrenos(self):
 
-        self.esquercer_frames()
+        self.esquecer_frames()
         if self.tela_sobrenos is None:
             self.tela_sobrenos = TelaSobreNos(
                 self, voltar_inicial=self.criar_tela_inicial)
@@ -122,20 +127,20 @@ class App(ctk.CTk):
 
         self.tela_sobrenos.pack(fill="both", expand=True)
 
-    def criar_tela_menu(self):
+    def criar_tela_usuario_logado(self, email_logado):
         
         self.esquecer_frames()
 
-        self.tela_menu = Menu(self, email_logado = email_logado, voltar_incial=self.criar_tela_inicial)
-        self.telas.append(self.tela_menu)
-        self.tela_menu.pack(fill='both', expand=True)
-
+        self.tela_usuario_logado = UsuarioLogado(self, email_logado = email_logado)
+        if self.tela_usuario_logado not in self.telas:
+            self.telas.append(self.tela_usuario_logado)
+        self.tela_usuario_logado.pack(fill='both', expand=True)
 
 
     def criar_tela_educativa(self):
         pass
 
-    def esquercer_frames(self):
+    def esquecer_frames(self):
         for frames in self.telas:
             if frames:
                 frames.pack_forget()
@@ -220,10 +225,10 @@ class TelaInicial(ctk.CTkFrame):
 
 
 class TelaLogin(ctk.CTkFrame):
-    def __init__(self, master, voltar_inicial, mostrar_menu):
+    def __init__(self, master, voltar_inicial, mostrar_usuario_logado):
         super().__init__(master)
         self.voltar_inicial = voltar_inicial
-        self.mostrar_menu = mostrar_menu
+        self.mostrar_usuario_logado= mostrar_usuario_logado
         self.frame_login = ctk.CTkFrame(self, fg_color="#ffffff")
         label_login = ctk.CTkLabel(self.frame_login, text="Informe seus dados:",
                                    fg_color="#ffffff", text_color="blue", font=("Arial", 20))
@@ -286,8 +291,7 @@ class TelaLogin(ctk.CTkFrame):
             if self.email in dados_conta:
                 if dados_conta[self.email] == self.senha:
 
-                    self.mostrar_menu(self.email)
-                    return
+                    self.mostrar_usuario_logado(self.email)
                 else:
                     self.label_avisologin.configure(
                         text="EMAIL OU SENHA INCORRETO.\nContate o suporte para recuperar usa senha", text_color="red")
@@ -297,11 +301,7 @@ class TelaLogin(ctk.CTkFrame):
                 self.label_avisologin.configure(
                     text="EMAIL NÃO CADASTRADO.\nVá para tela de cadastro")
                 return
-
-    def mostrar_menu(self):
-        print("Entrei menu")
-        pass
-
+        
 
 class TelaCadastro(ctk.CTkFrame):
 
@@ -418,8 +418,7 @@ class TelaCadastro(ctk.CTkFrame):
 
         entradas = [email, nome_familia, senha,
                     quantidade_pessoas, apartamento]
-        possiveis_andares=["10","20","30","40","50","60","70","80","90"]
-        possiveis_apartamentos=["01","02","03","04","05"]
+
     # Verificação: se algum campo de texto estiver vazio
         if any(campo == "" for campo in entradas):
             self.label_aviso.configure(
@@ -436,31 +435,6 @@ class TelaCadastro(ctk.CTkFrame):
             self.label_aviso.configure(
                 text="O código verificador deve ter entre 4 e 20 caracteres.", text_color="red")
             return
-        
-        #ESSES VERIFICADORES SERVIRÃO PARA DIZER SE O ANDAR E O APARTAMENTO É VÁLIDO OU NÃO
-        andar_valido = False
-        apto_valido = False
-
-        for andar in possiveis_andares:
-            #SÓ VALIDARÁ SE APARTAMENTO INICIAR COM O INTERÁVEL DA LISTA ANDAR
-            if apartamento.startswith(andar):
-                andar_valido = True
-                #BREAK IRÁ QUEBRAR O LOOP FOR,ACABANDO A INTERAÇÃO
-                break
-
-        for apto in possiveis_apartamentos:
-             #SÓ VALIDARÁ SE APARTAMENTO INICIAR COM O INTERÁVEL DA LISTA APARTAMENTO
-            if apartamento.endswith(apto):
-                apto_valido = True
-                #BREAK IRÁ QUEBRAR O LOOP FOR,ACABANDO COM A INTERAÇÃO
-                break
-
-        if not (andar_valido and apto_valido): #VERIFICA SE AMBOS SÃO VÁLIDOS(TRUE)
-            self.label_aviso.configure(text="Apartamento inválido", text_color="red")
-            #return irá parar a função caso o aviso apareça
-            return
-
-
 
         quantidade_pessoas = int(quantidade_pessoas)
         verificador = int(verificador)
@@ -471,7 +445,7 @@ class TelaCadastro(ctk.CTkFrame):
         self.nome_familia = nome_familia
         self.quantidade = quantidade_pessoas
         self.pontos = 0
-        self.apartamento = int(apartamento)
+        self.apartamento = apartamento
         self.verificador = int(verificador)
 
         self.email_valido()
@@ -518,17 +492,29 @@ class TelaCadastro(ctk.CTkFrame):
     def conferir_ap(self):
 
        # FUNÇÃO UTILIZADA PARA ANALISAR SE O APARTAMENTO JÁ ESTÁ CADASTRADO OU NÃO
-        if self.apartamento in dados_apartamento.values():
+        dados_lidos = self._carregar_dados() # Load data here
+        dados_apartamento_cadastro = dados_lidos["apartamento"]
+
+        if self.apartamento in dados_apartamento_cadastro.values():
             self.label_aviso.configure(
-                text="APARTAMENTO JÁ CADASTRADO.TENTE NOVAMENTE", text_color="red")
+                text="APARTAMENTO JÁ CADASTRADO. TENTE NOVAMENTE", text_color="red")
         else:
             self.cadastrar_conta()
+
+    def _carregar_dados(self): # Add this method to TelaCadastro
+        with open(r"banco_dados.JSON", "r", encoding="utf-8") as f:
+            return json.load(f)
+
+    def _salvar_dados(self, dados_completos): # Add this method to TelaCadastro
+        with open(r"banco_dados.JSON", "w", encoding="utf-8") as f:
+            json.dump(dados_completos, f, indent=4, ensure_ascii=False)
 
     def cadastrar_conta(self):
 
         # FUNÇÃO UTILIZADA PARA CADASTRAR CONTA NO BANCO DE DADOS
 
         try:
+            dados = self._carregar_dados()
             dados_conta[self.email] = self.senha
             dados_familia[self.email] = self.nome_familia
             dados_quantidade[self.email] = self.quantidade
@@ -637,7 +623,7 @@ class TelaModoAdm(ctk.CTkFrame):
         #self.entrada_emailadm.pack(pady=2)
 
         # 2-entrada senha
-        label_senhaadm= ctk.CTkLabel(self.frame_adm, text="Digite o código de acesso:", text_color="#000000", anchor="w", width=300)
+        label_senhaadm= ctk.CTkLabel(self.frame_adm, text="Digite código de acesso:", text_color="#000000", anchor="w", width=300)
         label_senhaadm.pack(pady=(2, 0))
 
         self.entrada_senhaadm = ctk.CTkEntry(self.frame_adm, width=300, show="*")
@@ -680,15 +666,15 @@ class TelaModoAdm(ctk.CTkFrame):
 
             frame_conteudo = ctk.CTkFrame(self.frame_adm, fg_color="#f0f0f0")
 
-            botao_ver_dados = ctk.CTkButton(frame_conteudo, text="🔍Ver dados", fg_color="blue",
+            botao_ver_dados = ctk.CTkButton(frame_conteudo, text="Ver dados", fg_color="blue",
                                                 text_color="#ffffff", width=300, command=self.tela_ver_dados)
             botao_ver_dados.pack(pady=10)
 
-            botao_editar_dados = ctk.CTkButton(frame_conteudo, text="✏️Editar dados", fg_color="blue",
+            botao_editar_dados = ctk.CTkButton(frame_conteudo, text="Editar dados", fg_color="blue",
                                                 text_color="#ffffff", width=300, command=self.tela_editar_dados)
             botao_editar_dados.pack(pady=10)
 
-            botao_analise_dados = ctk.CTkButton(frame_conteudo, text="📊Analisar dados", fg_color="blue",
+            botao_analise_dados = ctk.CTkButton(frame_conteudo, text="Analisar dados", fg_color="blue",
                                                 text_color="#ffffff", width=300, command=self.tela_analise_dados)
             botao_analise_dados.pack(pady=10)
 
@@ -720,8 +706,6 @@ class TelaModoAdm(ctk.CTkFrame):
             label_tabela = ctk.CTkLabel(frame_scroll, text=tabela, font=("Courier", 12), anchor="w", justify="left")
             label_tabela.pack(padx=10, pady=10)
 
-            
-
             #fazer botão de voltar para o menu
            
             pass
@@ -738,33 +722,6 @@ class TelaModoAdm(ctk.CTkFrame):
     def tela_analise_dados(self):
             for widget in self.frame_adm.winfo_children():
                 widget.destroy()
-            
-            frame_topo = ctk.CTkFrame(self.frame_adm, fg_color="#1A73E8", height=80)
-            frame_topo.pack(fill="x")
-
-            titulo = ctk.CTkLabel(frame_topo, text="💧 MODO ADM",text_color="#f0f0f0", font=("Arial", 24, "bold"))
-            titulo.pack(pady=20)
-
-            frame_conteudo = ctk.CTkFrame(self.frame_adm, fg_color="#f0f0f0")
-            frame_conteudo.pack(fill="both", expand=True)
-
-            frame_lado_esquerdo=ctk.CTkFrame(frame_conteudo,fg_color="#b41111")
-            frame_lado_esquerdo.pack(side="left",fill="both",expand=True)
-
-            frame_lado_direito=ctk.CTkFrame(frame_conteudo,fg_color="#09ec6f")
-            frame_lado_direito.pack(side="right",fill="both",expand=True)
-            
-            
-            
-            
-            
-            
-            #grafico_pizza=self.gerar_grafico1()
-
-            #img_ctk = CTkImage(dark_image=grafico_pizza, size=(400, 400))
-
-            #label = CTkLabel(master=self.frame_adm, image=img_ctk, text="")
-            #label.pack()
             pass
     
     def gerar_tabela(self):
@@ -785,72 +742,19 @@ class TelaModoAdm(ctk.CTkFrame):
 
         pass
     
-    def gerar_grafico1(self):
-        #Método responsável pela geração do gráfico de pizza que será feito em relação a quantidade de membros 
-
-        #esse counter é uma classe nativa do python que contará a repetição de cada valor do dicionário dados_quantidade 
-        #e armazenará em um dicionário por exemplo. {2:5,...}-->o número 2 se repete 5 vezes
-        contagem = Counter(dados_quantidade.values())
-
-
-        #Nesse loop for dentro da variável label,será criado mensagens do tipo "2 membros","3 membros" e armazerá em uma lista na variável.
-        #O loop irá rolar e irá criar um label para cada tipo de quantidade "2","3" e etc
-        labels = [f"{membros} membros" for membros in contagem.keys()]
-
-        #essa variável sizes irá criar uma lista da quantidade de vezes que o valor aparece.Por exemplo,se o valor 3 aparece 5 vezes,ele terá o valor 5
-        sizes = list(contagem.values())
-
-        # Criar gráfico de pizza
-        # Criar figura e eixo do gráfico
-
-        #fig é a janela geral do gráfico e area_usada é a área específica onde o gráfico será desenhado
-        fig, area_usada = plt.subplots(figsize=(8,8)) #fgsize define o tamanho do gráfico em polegadas
         
-        #Desenha o gráfico pizza na área a area_usada
-        area_usada.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=140)
-        #size define o tamanho de cada fatia
-        #labels+define o texto de cada fatia
-        #autopct='%1.1f%%' mostra as porcentagens dentro da fatia
-        #startangle=140: gira o gráfico para ficar mais esteticamente agradável.
 
 
 
-        area_usada.set_title("Distribuição de famílias por número de membros", fontsize=14)#define o título do gráfico e a fonte
-
-        area_usada.axis('equal')#garante que o gráfico seja um círculo perfeito
-
-        # Salvar o gráfico em memória como imagem PNG
-        buffer = BytesIO()#cria um buffer de memória que simula um arquivo png,mas que ficará dentro da memória
-        fig.savefig(buffer, format='png', bbox_inches='tight') #salva a figura dentro do buffer
-        #bbox_inches='tight' remove os espaços em branco entre o gráfico
-        plt.close(fig)  #Fecha o gráfico da memória do matplotlib para liberar RAM e evitar vazamentos.
-        buffer.seek(0) #Move o cursor do buffer para o início do conteúdo.
-
-        
-        imagem = Image.open(buffer)
-
-        return imagem
-
-    def gerar_grafico2(self):
-        #Método responsável por gerar o gráfico de consu
-        pass
-
-    def gerar_grafico3(self):
-        pass
-
-    def gerar_valor_media(self):
-        consumo_listado=list(dados_consumo)
-        quantidade_consumo_registrado=len(consumo_listado)
-        media_consumo_condominio=sum(dados_consumo)/quantidade_consumo_registrado
-
-        return media_consumo_condominio
-
-    
 
 
-class Menu(ctk.CTkFrame):
-    def __init__ (self, master):
+
+class UsuarioLogado(ctk.CTkFrame):
+    def __init__ (self, master, email_logado):
         super().__init__(master)
+        
+        self.email_logado=email_logado
+        
         self.frame_menu = ctk.CTkFrame(self, fg_color="#ffffff")
        
         self.frame_topo_menu = ctk.CTkFrame(self.frame_menu, fg_color= "#1A73E8", height=80)
@@ -868,6 +772,50 @@ class Menu(ctk.CTkFrame):
 
         self.frameprincipalmenu = ctk.CTkFrame(self.frame_conteudo_menu, fg_color="#ffffff")
         self.frameprincipalmenu.pack(fill='both', expand=True, padx=30, pady=30)
+
+        label_interaja = ctk.CTkLabel(
+            self.frame_lateral_menu,
+            text= 'Interaja',
+            font=("Arial", 17, 'bold'),
+            text_color = "#1A73E8",
+            anchor = 'w'
+        )
+
+        label_interaja.pack(fill='x', padx=20, pady=(20, 5))
+
+
+        #Chamamento da classe game 
+        self.game_manager = Game(master=self.frame_lateral_menu,
+                                  content_frame=self.frameprincipalmenu, 
+                                  email=self.email_logado,
+                                  reset_callback=self.reset_principal_menu_content)
+        self.game_manager.pack(fill='x', pady=5)
+
+        
+
+        #Separador visual
+        separator = ctk.CTkFrame(self.frame_lateral_menu, height=2, fg_color="#792dc0")
+        separator.pack(fill='x', padx=20, pady=10)
+
+        #Chamamento da classe GerenciarUser
+        label_gerenciar = ctk.CTkLabel(
+            self.frame_lateral_menu,
+            text="Gerenciar",
+            font=("Arial", 14, "bold"),
+            text_color="#1A73E8", # Usando a cor do tema para destaque
+            anchor="w"
+        )
+        label_gerenciar.pack(fill='x', padx=20, pady=(0, 5)) # Adiciona espaçamento vertical
+
+        
+        self.user_manager = GerenciarUsuario(master=self.frame_lateral_menu, 
+                                           content_frame=self.frameprincipalmenu, 
+                                           email=self.email_logado,
+                                           reset_callback=self.reset_principal_menu_content,
+                                           voltar_inicial_callback=self.voltar_inicial_callback)
+        self.user_manager.pack(fill='x', pady=5)
+
+        self.reset_principal_menu_content()
 
     def reset_principal_menu_content(self):
         for widget in self.frameprincipalmenu.winfo_children():
@@ -889,101 +837,540 @@ class Menu(ctk.CTkFrame):
         label_menu_principal_image = ctk.CTkLabel(self.frameprincipalmenu, image=ctk_imagem_menu_principal, text="")
         label_menu_principal_image.pack()
 
-        #Botões do menu lateral
+    
+class Game(ctk.CTkFrame):
+    def __init__(self, master, content_frame, reset_callback,  email, **kwargs):
+        super(). __init__(master, **kwargs)
+        self.content_frame = content_frame
+        self.email = email
+        self.reset_callback = reset_callback
+        self.configure(fg_color='white')
 
-         # ---- Botões do Menu Lateral ----
-         # ---- Botões do Menu Lateral ----
-    # Cada botão chama sua respectiva função, passando o frame_principalmenu e a função de reset como callback
-        botao1 = ctk.CTkButton(self.frame_lateral_menu, text="🏆 Ranking mensal", fg_color="white", text_color="#1A73E8",
-                            font=("Arial", 12), anchor="w",
-                            command=self.mostrar_ranking(), cursor="hand2")
-        botao1.pack(fill="x", pady=(20, 10), padx=20)
+        self.criar_widgets()
 
-        botao2 = ctk.CTkButton(self.frame_lateral_menu, text="🎁 Resgatar prêmios", fg_color="white", text_color="#1A73E8",
-                            font=("Arial", 12), anchor="w",
-                            command=self.resgatar_premio(), cursor="hand2")
-        botao2.pack(fill="x", pady=10, padx=20)
+    def criar_widgets(self):
+        botao1 = ctk.CTkButton(self, text="🏆 Ranking mensal", fg_color='white', text_color="#1A73E8",
+                                    font=("Arial", 15), anchor='w', command=self.mostrar_ranking, cursor="hand2")
+        botao1.pack(fill='x', pady=(20, 10), padx=20)
+        
+        botao2 = ctk.CTkButton(self, text="🎁 Resgatar prêmios", fg_color="white", text_color="#1A73E8",
+                                    font=("Arial", 15), anchor='w', command=self.resgatar_premio, cursor="hand2")
+        botao2.pack(fill='x', pady=10, padx=20)
+        
+        botao3 = ctk.CTkButton(self, text="🧮 Cálculo de pontos", fg_color="white", text_color="#1A73E8",
+                                    font=("Arial", 15), anchor='w', command=self.calculo_pontuacao, cursor='hand2')
+        botao3.pack(fill='x',pady=10, padx=20)
+        
+        botao4 = ctk.CTkButton(self, text="🧠 Quiz semanal", fg_color='white', text_color="#1A73E8",
+                                    font=("Arial", 15), anchor='w', command=self.quiz_semanal, cursor="hand2")
+        botao4.pack(fill='x', pady=10, padx=20)
 
-        botao3 = ctk.CTkButton(self.frame_lateral_menu, text="🧮 Cálculo de pontos", fg_color="white", text_color="#1A73E8",
-                            font=("Arial", 12), anchor="w",
-                            command=self.calculo_pontuacao(), cursor="hand2")
-        botao3.pack(fill="x", pady=10, padx=20)
+    def _carregar_dados(self):
+        with open(r"banco_dados.JSON", "r", encoding="utf-8") as f:
+            return json.load(f)
 
-        botao4 = ctk.CTkButton(self.frame_lateral_menu, text="🧠 Quiz semanal", fg_color="white", text_color="#1A73E8",
-                            font=("Arial", 12), anchor="w",
-                            command=self.quiz_semanal(), cursor="hand2")
-        botao4.pack(fill="x", pady=10, padx=20)
+    def _salvar_dados(self, dados_completos):
+        with open(r"banco_dados.JSON", "w", encoding="utf-8") as f:
+            json.dump(dados_completos, f, indent=4, ensure_ascii=False)
 
-        botao5 = ctk.CTkButton(self.frame_lateral_menu, text="📘 Área educativa", fg_color="white", text_color="#1A73E8",
-                            font=("Arial", 12), anchor="w",
-                            command=lambda: area_educativa(email, senha, frame_menu), cursor="hand2")
-        botao5.pack(fill="x", pady=10, padx=20)
+    
+    def limpar_conteudo(self):
+        for widget in self.content_frame.winfo_children():
+            widget.destroy()
 
-        botao6 = ctk.CTkButton(self.frame_lateral_menu, text="📊 Mostrar dados", fg_color="white", text_color="#1A73E8",
-                            font=("Arial", 12), anchor="w",
-                            command=lambda: mostrar_dados(email, senha, frame_principalmenu, reset_principal_menu_content), cursor="hand2")
-        botao6.pack(fill="x", pady=10, padx=20)
-
-        botao7 = ctk.CTkButton(self.frame_lateral_menu, text="🔄 Atualizar dados", fg_color="white", text_color="#1A73E8",
-                            font=("Arial", 12), anchor="w",
-                            command=lambda: atualizar_dados(email, senha, frame_principalmenu, reset_principal_menu_content), cursor="hand2")
-        botao7.pack(fill="x", pady=10, padx=20)
-
-        botao8 = ctk.CTkButton(self.frame_lateral_menu, text="🗑 Deletar conta", fg_color="white", text_color="#1A73E8",
-                            font=("Arial", 12), anchor="w",
-                            command=lambda: deletar_conta(email, senha, frame_principalmenu, reset_principal_menu_content), cursor="hand2")
-        botao8.pack(fill="x", pady=10, padx=20)
-
-        botao9 = ctk.CTkButton(self.frame_lateral_menu, text="✍️ Enviar feedback", fg_color="white", text_color="#1A73E8",
-                            font=("Arial", 12), anchor="w",
-                            command=lambda: feedback(email, senha, frame_principalmenu, reset_principal_menu_content), cursor="hand2")
-        botao9.pack(fill="x", pady=10, padx=20)
-
-
-        #Frame rodapé
-        frame_rodape_menu = ctk.CTkFrame(self.frame_menu, fg_color="#f0f0f0", height=30)
-        frame_rodape_menu.pack(fill='x', side ='bottom')
-
-        texto_rodape_menu = ctk.CTkLabel(
-        frame_rodape_menu, text = 'Versão 2.0 • Suporte: ecodropsuporte@gmail.com', text_color="#5f6368", font =("Arial", 10))
-        frame_rodape_menu.pack()
-
-        self.frame_menu.pack(fill='both', expand=True)
+    
 
     def mostrar_ranking(self):
-        pass
+        self.limpar_conteudo()
+        label_titulo = ctk.CTkLabel(self.content_frame, text="🏆 Ranking Mensal", font=("Arial", 20, "bold"), text_color="#1A73E8")
+        label_titulo.pack(pady=(20, 10))
+
+        try:
+           dados_lidos=self._carregar_dados()
+           dados_pontos_ranking = dados_lidos.get("pontos", {})
+           dados_familia_ranking = dados_lidos.get("familia", {})
+        except Exception as e:
+            ctk.CTkLabel(self.content_frame, text=f"Erro ao carregar dados {e}", text_color='red').pack()
+            return
         
+        ranking_data = [{'familia': dados_familia_ranking.get(email, "N/A"), 'pontos': pts} 
+                        for email, pts in dados_pontos_ranking.items()]
+        ranking_data.sort(key=lambda x: x["pontos"], reverse=True)
+
+        if not ranking_data:
+            ctk.CTkLabel(self.content_frame, text="Nenhum dado de ranking dispoível", font=("Arial", 15), text_color="#5f6368").pack(pady=10)
+        else:
+            header_frame = ctk.CTkFrame(self.content_frame, fg_color="transparent")
+            header_frame.pack(fill="x", padx=50, pady=(10, 5))
+            ctk.CTkLabel(header_frame, text="Posição", font=("Arial", 12, "bold"), width=80).pack(side="left", padx=5)
+            ctk.CTkLabel(header_frame, text="Família", font=("Arial", 12, "bold"), width=200).pack(side="left", padx=5)
+            ctk.CTkLabel(header_frame, text="Pontos", font=("Arial", 12, "bold"), width=100).pack(side="left", padx=5)
+            
+            for i, item in enumerate(ranking_data):
+                row_frame = ctk.CTkFrame(self.content_frame, fg_color="#f0f2f5" if i % 2 == 0 else "white", corner_radius=5)
+                row_frame.pack(fill="x", padx=50, pady=2)
+                ctk.CTkLabel(row_frame, text=f"{i+1}º", width=80).pack(side="left", padx=5, pady=3)
+                ctk.CTkLabel(row_frame, text=item["familia"], width=200, anchor="w").pack(side="left", padx=5, pady=3)
+                ctk.CTkLabel(row_frame, text=item["pontos"], width=100).pack(side="left", padx=5, pady=3)
+
+        botao_voltar = ctk.CTkButton(self.content_frame, text="⬅ Voltar ao Menu", fg_color="gray", command=self.reset_callback)
+        botao_voltar.pack(pady=20)
+
 
     def resgatar_premio(self):
-        pass
+        self.limpar_conteudo()
+        dados_atuais=self._carregar_dados()
+        pontos_usuario=dados_atuais["pontos"].get(self.email,0)
+
+        label_titulo = ctk.CTkLabel(self.content_frame, text="🎁 Resgatar Prêmios", font=("Arial", 20, "bold"), text_color="#1A73E8")
+        label_titulo.pack(pady=(20, 10))
+
+       
+        label_pontos_saldo = ctk.CTkLabel(self.content_frame, text=f"Seus pontos atuais: {pontos_usuario} 🌟",
+                                          font=("Arial", 16, "bold"), text_color="#28a745")
+        label_pontos_saldo.pack(pady=(0, 20))
+
+        label_mensagem_resgate = ctk.CTkLabel(self.content_frame, text="", font=("Arial", 15))
+        label_mensagem_resgate.pack(pady=(0, 10))
+
         
+        scroll_frame = ctk.CTkScrollableFrame(self.content_frame, label_text="Prêmios Disponíveis", width=500, height=300)
+        scroll_frame.pack(pady=10, padx=20, fill='both', expand=True)
+
+        
+        def realizar_resgate(premio_selecionado):
+            dados_para_salvar = self._carregar_dados()
+            pontos_disponiveis = dados_para_salvar["pontos"].get(self.email, 0)
+            
+            if pontos_disponiveis >= premio_selecionado["custo"]:
+                dados_para_salvar["pontos"][self.email] -= premio_selecionado["custo"]
+                self._salvar_dados(dados_para_salvar)
+                
+                label_pontos_saldo.configure(text=f"Seus pontos atuais: {dados_para_salvar['pontos'][self.email]} 🌟")
+                label_mensagem_resgate.configure(text=f"Prêmio '{premio_selecionado['nome']}' resgatado!", text_color="green")
+            else:
+                label_mensagem_resgate.configure(text='Pontos insuficientes!', text_color='red')
+
+        for premio in premios_disponiveis:
+            premio_frame = ctk.CTkFrame(scroll_frame, fg_color='white', corner_radius=10)
+            premio_frame.pack(fill='x', pady=5, padx=5)
+            info_frame = ctk.CTkFrame(premio_frame, fg_color="transparent")
+            info_frame.pack(side="left", fill="x", expand=True, padx=10)
+            ctk.CTkLabel(info_frame, text=premio["nome"], font=("Arial", 14, "bold"), anchor="w").pack(fill="x")
+            ctk.CTkLabel(info_frame, text=f"Custo: {premio['custo']} pontos", font=("Arial", 12), text_color="#6c757d", anchor="w").pack(fill="x")
+            botao_resgatar = ctk.CTkButton(premio_frame, text="Resgatar", fg_color="#ffc107", text_color="black", width=100, command=lambda p=premio: realizar_resgate(p))
+            botao_resgatar.pack(side="right", padx=10, pady=10)
+
+        botao_voltar = ctk.CTkButton(self.content_frame, text="⬅ Voltar ao Menu", fg_color="gray", command=self.reset_callback)
+        botao_voltar.pack(pady=20)
+
+
+
     def calculo_pontuacao(self):
-        pass
+        self.limpar_conteudo()
+        label_titulo = ctk.CTkLabel(self.content_frame, text="🧮 Cálculo de Pontos", font=("Arial", 20, "bold"), text_color="#1A73E8")
+        label_titulo.pack(pady=(20,10))
+
+        ctk.CTkLabel(self, text='Informe seu consumo diário (em litros):', font=("Arial", 15)).pack(pady=(0, 10))
+
+        entrada_consumo = ctk.CTkEntry(self.content_frame, width=200, validate="key",
+                                       validatecommand=(self.register(self.validar_numeros), "%P"))
+        entrada_consumo.pack(padx=50, pady=(0, 10), anchor="w")
+
+        botao_voltar = ctk.CTkButton(self.content_frame, text=" Voltar ao Menu", fg_color="gray",
+                                   command=self.reset_callback)
+        
+        label_resultado=ctk.CTkLabel(self.content_frame, text='', font=("Arial", 15, 'bold'))
+        label_resultado.pack(pady=(10, 0))
+
+        botao_voltar.pack(pady=20)
+
+        def calcular_acao():
+            consumo_str = entrada_consumo.get()
+            if not consumo_str:
+                label_resultado.configure(text="Por favor, insira o consumo.", text_color='red')
+
+            try:
+                consumo_diario = int(consumo_str)
+                dados_atuais=self._carregar_dados()
+                pontos_usuario=dados_atuais['pontos'].get(self.email, 0)
+                membros =dados_atuais['membros'].get(self.email, 1)
+
+                consumo_ideal_total = 90*membros  #VAMOS ESTABELECER UMA META DE CONSUMO MENOR
+                pontos_ganhos = 0
+
+                if consumo_diario < consumo_ideal_total:
+                    litros_economizados = consumo_ideal_total - consumo_diario
+                    pontos_ganhos = int(litros_economizados/10)
+
+                if pontos_ganhos>0:
+                    dados_atuais['pontos'][self.email] = pontos_usuario + pontos_ganhos
+                    self._salvar_dados(dados_atuais)
+                    label_resultado.configure(text=f'parabéns! Você ganhou {pontos_ganhos} pontos!', text_color='green')
+                else:
+                    label_resultado.configure(text="Nenhum ponto ganho. Tente reduzir o consumo!", text_color="#E67E22")
+            except Exception as e:
+                label_resultado.configure(text=f"Erro: {e}", text_color="red")
+
+        botao_calcular=ctk.CTkButton(self.content_frame, text='Voltar ao Menu', fg_color='gray', command=self.reset_callback)
+        botao_calcular.pack(pady=10)
+        botao_voltar = ctk.CTkButton(self.content_frame, text="⬅ Voltar ao Menu", fg_color="gray", command=self.reset_callback)
+        botao_voltar.pack(pady=20)
+
 
     def quiz_semanal(self):
-        pass
-    
-    def area_educativa(self):
-        pass
-    
-    def mostrar_dados(self):
-        pass
+        self.limpar_conteudo()
+        label_titulo = ctk.CTkLabel(self.content_frame, text = "🧠 Quiz Semanal", font=("Arial", 20, "bold"), text_color="#1A73E8")
+        label_titulo.pack(pady=(20, 10))
 
-    def atualizar_dados(self):
-        pass
+        try:
+            dados_lidos = self._carregar_dados()
+            questoes_disponiveis = dados_lidos.get("questoes_quiz", [])
+            data_ultimo_quiz_str=dados_lidos.get("ultimo_quiz", {}). get(self.email)
 
-    def deletar_conta(self):
-        pass
+            data_atual = datetime.now().date()
+            pode_fazer_quiz = True
 
-    def feedback(self):
-        pass
-   
+            if data_ultimo_quiz_str:
+                data_ultimo_quiz = datetime.strptime(data_ultimo_quiz_str, "%Y-%m-%d").date()
+                if data_ultimo_quiz >= data_atual - timedelta(days=data_atual.weekday() +  7):  #Verifica se o usuário já fez na semana atual
+                    pode_fazer_quiz = False
+            if not pode_fazer_quiz:
+                ctk.CTkLabel(self. content_frame, text='Você já realizou o quiz esta semana', text_color= 'red', font=("Arial", 14)). pack(pady=20)
+                ctk.CTkButton(self.content_frame, text='Voltar', fg_color="gray", command=self.reset_callback).pack()
+                return
+            if len (questoes_disponiveis) < 5:
+                ctk.CTkLabel(self.content_frame, text= 'Quiz indisponível. Contate o ADM.', font=("Arial", 15)).pack(pady=20)
+                ctk.CTkButton(self.content_frame, text='Voltar', fg_color='gray', command= self.reset_callback).pack()
+                return
+        except Exception as e:
+            ctk.CTkLabel(self.content_frame, text=f"Erro ao carregar quiz: {e}", text_color="red").pack()
+            return
+        
+        questoes_para_quiz = random.sample(questoes_disponiveis, 5)
+        respostas_usuario = {}
+        current_question_index = 0
+
+        question_label = ctk.CTkLabel(self.content_frame, text="", font=("Arial", 16, "bold"), wraplength=500)
+        question_label.pack(pady=(20, 10))
+        options_frame = ctk.CTkFrame(self.content_frame, fg_color="transparent")
+        options_frame.pack(pady=10)
+        radio_var = ctk.StringVar()
+        quiz_message_label = ctk.CTkLabel(self.content_frame, text="", font=("Arial", 12))
+        quiz_message_label.pack()
+
+        def mostrar_questao (index):
+            for widget in options_frame.winfo_children():
+                widget.destroy()
+
+            questao=questoes_para_quiz[index]
+            question_label.configure(text=f'Questão {index+1}: {questao['pergunta']}')
+            radio_var.set('')
+
+            for option in questao ['opcoes']:
+                ctk.CTkRadioButton(options_frame, text=option, variable=radio_var, value=option).pack(anchor='w', pady=4)
+
+            botao_proxima.configure(text='Próxima questão' if index < 4 else "Finalizar quiz")
+
+
+        def proxima_questao():
+            nonlocal current_question_index
+            if not radio_var.get():
+                quiz_message_label.configure(text="Selecione uma opção!", text_color='red')
+                return
+
+            quiz_message_label.configure(text='')
+            respostas_usuario[current_question_index] = radio_var.get()
+
+            current_question_index += 1
+            if current_question_index < len(questoes_para_quiz):
+                mostrar_questao(current_question_index)
+            else:
+                calculate_score()
+
+        def calculate_score():
+            pontuacao = sum(1 for i, q in enumerate(questoes_para_quiz) if respostas_usuario.get(i) == q['resposta_correta'])
+            pontos_ganhos = pontuacao * 100
+            
+            dados_finais = self._carregar_dados()
+            dados_finais["pontos"][self.email] = dados_finais["pontos"].get(self.email, 0) + pontos_ganhos
+            if "ultimo_quiz" not in dados_finais: dados_finais["ultimo_quiz"] = {}
+            dados_finais["ultimo_quiz"][self.email] = datetime.now().date().strftime("%Y-%m-%d")
+            self._salvar_dados(dados_finais)
+
+            self.limpar_conteudo()
+            ctk.CTkLabel(self.content_frame, text="🎉 Quiz Concluído! 🎉", font=("Arial", 22, "bold"), text_color="#1A73E8").pack(pady=20)
+            ctk.CTkLabel(self.content_frame, text=f"Você acertou {pontuacao} de 5 questões.", font=("Arial", 16)).pack(pady=5)
+            ctk.CTkLabel(self.content_frame, text=f"Você ganhou {pontos_ganhos} pontos!", font=("Arial", 16, "bold"), text_color="green").pack(pady=5)
+            ctk.CTkButton(self.content_frame, text="⬅ Voltar ao Menu", fg_color="gray", command=self.reset_callback).pack(pady=20)
+
+        botao_proxima = ctk.CTkButton(self.content_frame, text="", command=proxima_questao)
+        botao_proxima.pack(pady=20)
+        mostrar_questao(0)
         
 
 
 
 
-        self.mostrar_menu()
+
+         
+class GerenciarUsuario(ctk.CTkFrame):
+        
+        def __init__ (self, master, content_frame, reset_callback, voltar_inicial_callback, email, **kwargs):
+            super().__init__(master, **kwargs)
+            self.content_frame=content_frame
+            self.email=email
+            self.reset_callback=reset_callback
+            self.voltar_inicial_callback= voltar_inicial_callback
+            self.configure(fg_color="white")
+
+            self.criar_widgets()
+
+
+        def _carregar_dados(self):
+            """Carrega os dados do arquivo JSON."""
+            with open(r"banco_dados.JSON", "r", encoding="utf-8") as f:
+                return json.load(f)
+
+        def _salvar_dados(self, dados_completos):
+            """Salva os dados no arquivo JSON."""
+            with open(r"banco_dados.JSON", "w", encoding="utf-8") as f:
+                json.dump(dados_completos, f, indent=4, ensure_ascii=False)
+
+        def criar_widgets(self):
+            botao5 = ctk.CTkButton (self, text="📘 Área educativa", fg_color="white",text_color="#1A73E8",
+                                    font=("Arial", 15), anchor="w", commad=self.area_educativa, cursor="hand2")
+            botao5.pack(fill='x', pady=10, padx=20)
+            
+            botao6= ctk.CTkButton (self, text= "📊 Mostrar dados", fg_color='white', text_color="#1A73E8",
+                                   font=("Arial", 15), anchor='w', command=self.mostrar_dados, cursor="hand2")
+            botao6.pack(fill='x', pady=10, padx=20)
+
+            botao7 = ctk.CTkButton (self, text ="🔄 Atualizar dados", fg_color='white', text_color= "#1A73E8",
+                                    font=("Arial", 15), anchor='w', command=self.atualizar_dados, cursor="hand2")
+            botao7.pack(fill='x', pady=10, padx=20)
+
+            botao8 = ctk.CTkButton(self, text="🗑 Deletar conta", fg_color='white', text_color= "#1A73E8",
+                                    font=("Arial", 15), anchor='w', command=self.deletar_conta, cursor="hand2")
+            botao8.pack(fill='x', pady=10, padx=20)
+
+            botao9 = ctk.CTkButton(self, text="✍️ Enviar feedback", fg_color='white', text_color= "#1A73E8",
+                                    font=("Arial", 15), anchor='w', command=self.feedback, cursor="hand2")
+            botao9.pack(fill='x', pady=10, padx=20)
+
+        def limpar_conteudo(self):
+            for widget in self.content_frame.winfo_children():
+                widget.destroy()
+
+        def area_educativa(self):
+            self.limpar_conteudo()
+            label = ctk.CTkLabel(self.content_frame, text="Funcionalidade: Área Educativa\n(A ser implementada)", font=("Arial", 18))
+            label.pack(pady=20)
+        # Aqui você pode adicionar o conteúdo da área educativa que já tinha.
+
+        def mostrar_dados(self):
+            self.limpar_conteudo()
+            label_titulo=ctk.CTkLabel(self.content_frame, text = "📊 Seus Dados",
+                                      font=("Arial", 20, 'bold'),
+                                      text_color= "#1A73E8")
+            label_titulo.pack(pady=(20, 10))
+
+            dados = self._carregar_dados()
+            user_family = dados['familia'].get(self.email, "N/A")
+            user_membros= dados['membros'].get(self.email, 'N/A')
+            user_points= dados['pontos'].get(self.email, 'N/A')
+            user_apartment= dados['apartamento'].get(self.email, 'N/A')
+
+            data_text = f'''
+            Email: {self.email}
+            Sobrenome da família: {user_family}
+            Membros da família: {user_membros}
+            Pontos acumulados: {user_points}
+            Número do apartamento: {user_apartment}
+            '''
+
+            ctk.CTkLabel(self.content_frame, text=data_text,
+                 font=("Arial", 14), text_color="#333333", justify="left").pack(pady=10)
+
+            botao_voltar = ctk.CTkButton(self.content_frame, text="⬅ Voltar ao Menu",
+                                 fg_color="gray", text_color="white",
+                                 command=self.reset_callback)
+            botao_voltar.pack(pady=20)
+                
+
+
+            
+
+        def atualizar_dados(self):
+            self.limpar_conteudo()
+            label_titulo = ctk.CTkLabel(self.content_frame, text="🔄 Atualizar Dados", 
+                                        font=("Arial", 20,'bold'),
+                                        text_color = "#1A73E8")
+            label_titulo.pack(pady=(20, 10))
+
+            dados = self._carregar_dados()
+            nome_atual = dados_familia.get(self.email, "")
+            membros_atuais = dados_quantidade.get(self.email, "")
+
+            # Campo Nome da Família
+            label_nome_familia = ctk.CTkLabel(self.content_frame, text="Nome da Família:",
+                                       font=("Arial", 12, "bold"), text_color="#5f6368", anchor="w")
+            label_nome_familia.pack(fill="x", padx=50, pady=(10, 0))
+            entrada_nome_familia = ctk.CTkEntry(self.content_frame, width=300)
+            entrada_nome_familia.insert(0, nome_atual)
+            entrada_nome_familia.pack(padx=50, pady=(0, 10))
+
+            # Campo Quantidade de Membros
+            label_membros = ctk.CTkLabel(self.content_frame, text="Quantidade de Membros:",
+                                  font=("Arial", 12, "bold"), text_color="#5f6368", anchor="w")
+            label_membros.pack(fill="x", padx=50, pady=(10, 0))
+            entrada_membros = ctk.CTkEntry(self.content_frame, width=300, validate="key",
+                                   validatecommand=(self.register(Game.validar_numeros), "%P"))
+            entrada_membros.insert(0, str(membros_atuais))
+            entrada_membros.pack(padx=50, pady=(0, 10))
+
+            # Campo Nova Senha (opcional)
+            label_nova_senha = ctk.CTkLabel(self.content_frame, text="Nova Senha (deixe em branco para não alterar):",
+                                     font=("Arial", 12, "bold"), text_color="#5f6368", anchor="w")
+            label_nova_senha.pack(fill="x", padx=50, pady=(10, 0))
+            entrada_nova_senha = ctk.CTkEntry(self.content_frame, width=300, show="*")
+            entrada_nova_senha.pack(padx=50, pady=(0, 10))
+
+            label_mensagem_atualizar = ctk.CTkLabel(self.content_frame, text="", text_color="red", font=("Arial", 12))
+            label_mensagem_atualizar.pack(pady=(0, 10))
+
+            def salvar_atualizacao_acao():
+                novo_nome = entrada_nome_familia.get().strip()
+                nova_qtde_membros_str = entrada_membros.get().strip()
+                nova_senha = entrada_nova_senha.get().strip()
+
+                if not novo_nome or not nova_qtde_membros_str:
+                    label_mensagem_atualizar.configure(text="Nome da família e quantidade de membros são obrigatórios.", text_color="red")
+                
+
+                try:
+                    nova_qtde_membros = int(nova_qtde_membros_str)
+                    if nova_qtde_membros <= 0:
+                        label_mensagem_atualizar.configure(text="Quantidade de membros deve ser maior que zero.", text_color="red")
+                        return
+                except ValueError:
+                    label_mensagem_atualizar.configure(text="Quantidade de membros deve ser um número válido.", text_color="red")
+                    return
+
+                if nova_senha and not (4 <= len(nova_senha) <= 20):
+                    label_mensagem_atualizar.configure(text="A nova senha deve ter entre 4 e 20 caracteres.", text_color="red")
+                    return
+
+                try:
+                    data = self._carregar_dados()
+                    data['familia'][self.email]=novo_nome
+                    data['membros'][self.email]=nova_qtde_membros
+                    if nova_senha:
+                        data['senha'][self.email]=nova_senha
+
+                    self._salvar_dados(data)
+                    label_mensagem_atualizar.configure(text='Dados atualizados com sucesso!', text_color='green')
+                    entrada_nova_senha.delete(0, ctk.END)
+                except Exception as e:
+                           label_mensagem_atualizar.configure(text=f"Erro ao atualizar: {e}", text_color="red")
+
+            botao_salvar = ctk.CTkButton(self.content_frame, text="Salvar Atualizações", fg_color="#1A73E8", text_color="white", command=salvar_atualizacao_acao)
+            botao_salvar.pack(pady=10)
+            botao_voltar = ctk.CTkButton(self.content_frame, text="⬅ Voltar ao Menu", fg_color="gray", text_color="white", command=self.reset_callback)
+            botao_voltar.pack(pady=20)
+
+
+
+
+        def deletar_conta(self):
+            self.limpar_conteudo()
+            label_titulo = ctk.CTkLabel(self.content_frame, text="🗑 Deletar Conta",
+                                 font=("Arial", 20, "bold"), text_color="#1A73E8")
+            label_titulo.pack(pady=(20, 10))
+
+            label_confirmacao = ctk.CTkLabel(self.content_frame, text="ATENÇÃO: Esta ação é irreversível!\nDeseja realmente deletar sua conta?",
+                                      font=("Arial", 14, "bold"), text_color="red")
+            label_confirmacao.pack(pady=20)
+
+            def confirmar_delecao_action():
+                
+                try:
+                    data=self._carregar_dados()
+                    if self.email in data['senha']:
+                        del data["senha"][self.email]
+                        del data["familia"][self.email]
+                        del data["membros"][self.email]
+                        del data["pontos"][self.email]
+                        del data["apartamento"][self.email]
+                        del data["verificador"][self.email]
+                        if self.email in data["ultimo_quiz"]: # Remove o registro do quiz também
+                            del data["ultimo_quiz"][self.email]
+                    else:
+                        label_confirmacao.configure(text="Erro: Conta não encontrada.", text_color="red")
+                except Exception as e:
+                    label_confirmacao.configure(text=f"Erro ao deletar conta: {e}", text_color="red")
+
+            botao_confirmar_delecao = ctk.CTkButton(self.content_frame, text="Confirmar Deleção", fg_color="red", hover_color="#cc0000", command=confirmar_delecao_action)
+            botao_confirmar_delecao.pack(pady=10)
+            botao_voltar = ctk.CTkButton(self.content_frame, text="Cancelar", fg_color="gray", text_color="white", command=self.reset_callback)
+            botao_voltar.pack(pady=20)
+
+
+        def feedback(self):
+            self.limpar_conteudo()
+            label_titulo = ctk.CTkLabel(self.content_frame, text="✍️ Enviar Feedback", font=("Arial", 20, "bold"), text_color="#1A73E8")
+            label_titulo.pack(pady=(20, 10))
+        
+            ctk.CTkLabel(self.content_frame, text="Por favor, deixe sua opinião sobre o sistema EcoDrop:", font=("Arial", 14), text_color="#333333").pack(pady=(0, 10))
+
+            ctk.CTkLabel(self.content_frame, text="Seu Feedback (até 140 caracteres):", font=("Arial", 12, "bold"), text_color="#5f6368", anchor="w").pack(fill="x", padx=50, pady=(10, 0))
+            entrada_feedback = ctk.CTkTextbox(self.content_frame, width=400, height=80)
+            entrada_feedback.pack(padx=50, pady=(0, 10))
+
+            ctk.CTkLabel(self.content_frame, text="Sua nota para o sistema (0 a 10):", font=("Arial", 12, "bold"), text_color="#5f6368", anchor="w").pack(fill="x", padx=50, pady=(10, 0))
+            entrada_nota = ctk.CTkEntry(self.content_frame, width=100, validate="key", validatecommand=(self.register(self._validar_nota), "%P"))
+            entrada_nota.pack(padx=50, pady=(0, 20), anchor="w")
+
+            label_mensagem_feedback = ctk.CTkLabel(self.content_frame, text="", text_color="red", font=("Arial", 12))
+            label_mensagem_feedback.pack(pady=(0, 10))
+
+            def enviar_feedback_acao():
+                feedback_text = entrada_feedback.get("1.0", "end-1c").strip()
+                nota_text = entrada_nota.get().strip()
+
+                if not feedback_text or not nota_text:
+                    label_mensagem_feedback.configure(text="Por favor, preencha todos os campos.", text_color="red")
+                    return
+                if len(feedback_text) > 140:
+                    label_mensagem_feedback.configure(text="O feedback não pode exceder 140 caracteres.", text_color="red")
+                    return
+
+                try:
+                    with open("feedback.csv", "a", newline="", encoding="utf-8") as f:
+                        writer = csv.writer(f)
+                        # Escreve cabeçalho se o arquivo estiver vazio
+                        if f.tell() == 0:
+                            writer.writerow(["Email", "Feedback", "Nota", "Data/Hora"])
+                        writer.writerow([self.email, feedback_text, nota_text, time.strftime("%Y-%m-%d %H:%M:%S")])
+                
+                    label_mensagem_feedback.configure(text="Feedback enviado com sucesso! Agradecemos.", text_color="green")
+                    entrada_feedback.delete("1.0", ctk.END)
+                    entrada_nota.delete(0, ctk.END)
+                except Exception as e:
+                    label_mensagem_feedback.configure(text=f"Erro ao salvar feedback: {e}", text_color="red")
+
+            botao_enviar = ctk.CTkButton(self.content_frame, text="Enviar Feedback", fg_color="#1A73E8", text_color="white", command=enviar_feedback_acao)
+            botao_enviar.pack(pady=10)
+            botao_voltar = ctk.CTkButton(self.content_frame, text="⬅ Voltar ao Menu", fg_color="gray", text_color="white", command=self.reset_callback)
+            botao_voltar.pack(pady=20)
+
+    
+
+
+
+
+
+      
 
         
 
