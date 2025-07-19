@@ -3,16 +3,13 @@ from customtkinter import CTkImage, CTkLabel
 
 from PIL import Image
 import json
-import csv
-import time
-import re
-import random
+
 import pandas as pd
 import matplotlib as plt
 from collections import Counter
 from io import BytesIO
 import matplotlib.pyplot as plt
-from datetime import datetime, timedelta
+
 
 
 # Carregamento dos dados globais
@@ -31,15 +28,6 @@ with open(r"dados_usuarios.json", "r", encoding="utf-8") as arquivo:
     dados_lidos = json.load(arquivo)
     dados_consumo = dados_lidos["consumo"]
 
-# Prêmios disponíveis para resgate
-premios_disponiveis = [
-    {"nome": "Voucher de R$ 10", "custo": 100},
-    {"nome": "Desconto de 5% na conta de água", "custo": 200},
-    {"nome": "Kit de produtos sustentáveis", "custo": 300},
-    {"nome": "Voucher de R$ 25", "custo": 500},
-    {"nome": "Desconto de 10% na conta de água", "custo": 800},
-    {"nome": "Voucher de R$ 50", "custo": 1000}
-]
 
 mensagens_agua = [
     "💧 Cada gota conta. Economize água!",

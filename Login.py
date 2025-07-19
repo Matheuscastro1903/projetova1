@@ -13,6 +13,7 @@ from collections import Counter
 from io import BytesIO
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
+from validar import validar_letras_espacos,validar_numeros
 
 
 # Carregamento dos dados globais

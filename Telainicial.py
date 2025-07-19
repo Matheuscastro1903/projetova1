@@ -3,16 +3,14 @@ from customtkinter import CTkImage, CTkLabel
 
 from PIL import Image
 import json
-import csv
-import time
-import re
-import random
+
 import pandas as pd
 import matplotlib as plt
 from collections import Counter
 from io import BytesIO
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
+from validar import validar_letras_espacos,validar_numeros
 
 
 # Carregamento dos dados globais
@@ -58,6 +56,7 @@ mensagens_agua = [
     "👶 Ensine as crianças a cuidar da água.",
     "💙 Água limpa é direito de todos. Preserve!"
 ]
+
 
 
 class TelaInicial(ctk.CTkFrame):

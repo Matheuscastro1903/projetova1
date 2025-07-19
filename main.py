@@ -20,6 +20,7 @@ from Cadastro import TelaCadastro
 from ModoAdm import TelaModoAdm,OperacoesAdm
 from Sobrenos import TelaSobreNos
 from UsuarioLogado import UsuarioLogado,Game,GerenciarUsuario
+from validar import validar_letras_espacos,validar_numeros
 
 
 # Carregamento dos dados globais
@@ -65,6 +66,8 @@ mensagens_agua = [
     "👶 Ensine as crianças a cuidar da água.",
     "💙 Água limpa é direito de todos. Preserve!"
 ]
+
+
 
 
 class App(ctk.CTk):
