@@ -1317,6 +1317,8 @@ class OperacoesAdm():
         return media_consumo_condominio
     pass
 
+
+
 class UsuarioLogado(ctk.CTkFrame):
     def __init__(self, master, email, senha):
         super().__init__(master)
