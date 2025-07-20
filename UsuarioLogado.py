@@ -334,6 +334,27 @@ class UsuarioLogado(ctk.CTkFrame):
                                      font=("Arial", 20, "bold"), text_color="#1A73E8")
         label_titulo.pack(pady=(20, 10))
 
+        # --- INÍCIO DA MODIFICAÇÃO ---
+
+        # Pega a data de hoje
+        hoje = datetime.now()
+
+        # Verifica se o dia atual é o dia 28
+        if hoje.day != 28:
+            # Se não for o dia 28, exibe uma mensagem e impede a execução do resto da função
+            ctk.CTkLabel(self.frameprincipal_menu, 
+                         text="O cálculo de pontuação só está disponível no dia 28 de cada mês.",
+                         font=("Arial", 14), text_color="orange", wraplength=500).pack(pady=20)
+            
+            botao_voltar = ctk.CTkButton(self.frameprincipal_menu, text="⬅ Voltar ao Menu",
+                                         fg_color="gray", text_color="white",
+                                         command=self.reset_principal_menu_content)
+            botao_voltar.pack(pady=20)
+            return # Impede que o resto do código do método seja executado
+
+        # --- FIM DA MODIFICAÇÃO ---
+
+        # O código abaixo só será executado se o dia for 28
         ctk.CTkLabel(self.frameprincipal_menu, text="Informe seu consumo diário (em litros) para calcular pontos:",
                      font=("Arial", 14), text_color="#333333").pack(pady=(0, 10))
 
