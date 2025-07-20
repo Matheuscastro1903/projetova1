@@ -677,12 +677,12 @@ Número do Apartamento: {user_apartment}"""
                                         font=("Arial", 14), text_color="#333333")
         label_instrucao.pack(pady=(0, 10))
 
-        # Campo de Entrada de Texto do Feedback
+       # Campo de Entrada de Texto do Feedback
         label_feedback_texto = ctk.CTkLabel(self.frameprincipal_menu, text="Seu Feedback (até 140 caracteres):",
                                              font=("Arial", 12, "bold"), text_color="#5f6368", anchor="w")
         label_feedback_texto.pack(fill="x", padx=50, pady=(10, 0))
         self.entrada_feedback = ctk.CTkEntry(self.frameprincipal_menu, width=400, height=80)
-        self.entrada_feedback.pack(padx=50, pady=(0, 10))
+        self.entrada_feedback.pack(padx=50, pady=(0, 10), anchor="w")
 
         # Escala de Avaliação
         label_nota = ctk.CTkLabel(self.frameprincipal_menu, text="Sua nota para o sistema (0 a 10):",
