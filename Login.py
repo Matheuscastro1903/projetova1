@@ -13,7 +13,7 @@ from collections import Counter
 from io import BytesIO
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
-from validar import validar_letras_espacos,validar_numeros
+from validar import validar_letras_espacos, validar_numeros
 
 
 # Carregamento dos dados globais
@@ -61,9 +61,11 @@ mensagens_agua = [
 ]
 
 
-class TelaLogin(ctk.CTkFrame):
+class Login(ctk.CTkFrame):
     def __init__(self, master, voltar_inicial, mostrar_menu):
         super().__init__(master)
+        #atributo de classe responsável por contar a quantidade de tentativas no login
+        self.tentativas=0
         self.voltar_inicial = voltar_inicial
         self.mostrar_menu = mostrar_menu
         self.frame_login = ctk.CTkFrame(self, fg_color="#ffffff")
@@ -125,14 +127,54 @@ class TelaLogin(ctk.CTkFrame):
 
             if self.email in dados_conta:
                 if dados_conta[self.email] == self.senha:
-                    self.mostrar_menu(self.email,self.senha)
+                    self.mostrar_menu(self.email, self.senha)
                     return
                 else:
                     self.label_avisologin.configure(
                         text="EMAIL OU SENHA INCORRETO.\nContate o suporte para recuperar usa senha", text_color="red")
+                    self.tentativas+=1
+                    if self.tentativas==4:
+                        self.aviso_sistema()
+                    
                     return
 
             else:
                 self.label_avisologin.configure(
                     text="EMAIL NÃO CADASTRADO.\nVá para tela de cadastro")
+                self.tentativas+=1
+                if self.tentativas==4:
+                    self.aviso_sistema()
                 return
+            
+    def aviso_sistema(self):
+        for widget in self.frame_login.winfo_children():
+            widget.destroy()
+       
+    
+
+        # Mensagem de título
+        titulo = ctk.CTkLabel(self.frame_login,
+                          text="🚫 Limite de Tentativas Atingido",
+                          font=("Arial", 20, "bold"),
+                          text_color="red")
+        titulo.pack(pady=(30, 10))
+
+        # Mensagem adicional
+        msg = ctk.CTkLabel(self.frame_login,
+                       text="O sistema será encerrado por segurança.",
+                       font=("Arial", 16))
+        msg.pack(pady=5)
+
+        # Label de contagem regressiva
+        self.label_contador = ctk.CTkLabel(self.frame_login,
+                                       text="Fechando em 7 segundos...",
+                                       font=("Arial", 16, "italic"))
+        self.label_contador.pack(pady=(20, 10))
+        self.after(7000, self.sair_sistema)
+
+    def sair_sistema(self):
+        """Função utilizada para fechar sistema """
+        # Fechando dessa forma irá "destruir" a janela que foi definida no master
+        self.master.destroy()  # Fecha a janela principal
+    
+        pass

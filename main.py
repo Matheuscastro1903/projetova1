@@ -15,12 +15,13 @@ import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 
 from Telainicial import TelaInicial
-from Login import TelaLogin
-from Cadastro import TelaCadastro
-from ModoAdm import TelaModoAdm,OperacoesAdm
-from Sobrenos import TelaSobreNos
-from UsuarioLogado import UsuarioLogado,Game,GerenciarUsuario
-from validar import validar_letras_espacos,validar_numeros
+from Login import Login
+from Cadastro import Cadastro
+from ModoAdm import ModoAdm,OperacoesAdm
+from Sobrenos import SobreNos
+from UsuarioLogado import UsuarioLogado
+
+
 
 
 # Carregamento dos dados globais
@@ -102,7 +103,7 @@ class App(ctk.CTk):
     def criar_tela_login(self):
         self.esquecer_frames()
         if self.tela_login is None:
-            self.tela_login = TelaLogin(
+            self.tela_login = Login(
                 self, voltar_inicial=self.criar_tela_inicial, 
                 mostrar_menu=self.criar_tela_menu)
             self.telas.append(self.tela_login)
@@ -112,7 +113,7 @@ class App(ctk.CTk):
     def criar_tela_cadastro(self):
         self.esquecer_frames()
         if self.tela_cadastro is None:
-            self.tela_cadastro = TelaCadastro(
+            self.tela_cadastro = Cadastro(
                 self, 
                 voltar_inicial=self.criar_tela_inicial, 
                 mostrar_login=self.criar_tela_login)
@@ -123,7 +124,7 @@ class App(ctk.CTk):
         self.esquecer_frames()
 
         if self.tela_modoadm is None:
-            self.tela_modoadm = TelaModoAdm(self, voltar_inicial=self.criar_tela_inicial)
+            self.tela_modoadm = ModoAdm(self, voltar_inicial=self.criar_tela_inicial)
             
             self.telas.append(self.tela_modoadm)
             
@@ -133,7 +134,7 @@ class App(ctk.CTk):
 
         self.esquecer_frames()
         if self.tela_sobrenos is None:
-            self.tela_sobrenos = TelaSobreNos(
+            self.tela_sobrenos = SobreNos(
                 self, voltar_inicial=self.criar_tela_inicial)
             self.telas.append(self.tela_sobrenos)
 

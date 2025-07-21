@@ -61,7 +61,7 @@ mensagens_agua = [
 ]
 
 
-class TelaCadastro(ctk.CTkFrame):
+class Cadastro(ctk.CTkFrame):
 
     # Atributos de classe,servirão para todos os casos e evitará ter que criar uma lista toda vez que for verificar o email,melhorando
 

@@ -57,7 +57,7 @@ mensagens_agua = [
 ]
 
 
-class TelaSobreNos(ctk.CTkFrame):
+class SobreNos(ctk.CTkFrame):
     def __init__(self, master, voltar_inicial):
         super().__init__(master)
         self.frame_sobrenos = ctk.CTkFrame(self, fg_color="#ffffff")

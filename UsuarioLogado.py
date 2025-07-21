@@ -6,6 +6,7 @@ import json
 import csv
 import time
 import random
+from datetime import datetime
 from validar import validar_letras_espacos,validar_numeros
 
 # Carregamento dos dados globais
@@ -23,6 +24,7 @@ with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
 with open(r"dados_usuarios.json", "r", encoding="utf-8") as arquivo:
     dados_lidos = json.load(arquivo)
     dados_consumo = dados_lidos["consumo"]
+    dados_calculo=dados_lidos["calculo_realizado"]
 
 # Prêmios disponíveis para resgate
 premios_disponiveis = [
@@ -61,9 +63,7 @@ class UsuarioLogado(ctk.CTkFrame):
         self.email = email
         self.senha = senha
         
-        # Inicializar as classes Game e GerenciarUsuario
-        self.game = Game()
-        self.gerenciar_usuario = GerenciarUsuario()
+        
         
         self.criar_interface()
 
@@ -340,7 +340,7 @@ class UsuarioLogado(ctk.CTkFrame):
         hoje = datetime.now()
 
         # Verifica se o dia atual é o dia 28
-        if hoje.day != 28:
+        if hoje.day != 21:
             # Se não for o dia 28, exibe uma mensagem e impede a execução do resto da função
             ctk.CTkLabel(self.frameprincipal_menu, 
                          text="O cálculo de pontuação só está disponível no dia 28 de cada mês.",
@@ -355,77 +355,180 @@ class UsuarioLogado(ctk.CTkFrame):
         # --- FIM DA MODIFICAÇÃO ---
 
         # O código abaixo só será executado se o dia for 28
-        ctk.CTkLabel(self.frameprincipal_menu, text="Informe seu consumo diário (em litros) para calcular pontos:",
-                     font=("Arial", 14), text_color="#333333").pack(pady=(0, 10))
+        self.label_atencao=ctk.CTkLabel(self.frameprincipal_menu, 
+                         text="",
+                         font=("Arial", 14), text_color="orange", wraplength=500)
+        self.label_atencao.pack(pady=20)
 
-        label_consumo = ctk.CTkLabel(self.frameprincipal_menu, text="Consumo Diário (Litros):",
-                                      font=("Arial", 12, "bold"), text_color="#5f6368", anchor="w")
-        label_consumo.pack(fill="x", padx=50, pady=(10, 0))
+        self.label_aviso=ctk.CTkLabel(self.frameprincipal_menu, 
+                         text="Calculo de pontuação disponível.",
+                         font=("Arial", 14), text_color="#1A73E8", wraplength=500)
+        self.label_aviso.pack(pady=20)
 
-        self.entrada_consumo = ctk.CTkEntry(self.frameprincipal_menu, width=200, validate="key",
-                                       validatecommand=(self.register(validar_numeros), "%P"))
-        self.entrada_consumo.pack(padx=50, pady=(0, 10), anchor="w")
 
-        self.label_resultado_pontos = ctk.CTkLabel(self.frameprincipal_menu, text="", font=("Arial", 14, "bold"), text_color="green")
-        self.label_resultado_pontos.pack(pady=(10, 0))
-
-        self.label_mensagem_calculo = ctk.CTkLabel(self.frameprincipal_menu, text="", text_color="red", font=("Arial", 12))
-        self.label_mensagem_calculo.pack(pady=(0, 10))
-
-        botao_calcular = ctk.CTkButton(self.frameprincipal_menu, text="Calcular Pontos",
+        self.botao_calcular = ctk.CTkButton(self.frameprincipal_menu, text="Calcular Pontos",
                                        fg_color="#1A73E8", text_color="white",
                                        command=self.calcular_pontos_acao)
-        botao_calcular.pack(pady=10)
+        self.botao_calcular.pack(pady=10)
 
-        botao_voltar = ctk.CTkButton(self.frameprincipal_menu, text="⬅ Voltar ao Menu",
+        self.botao_voltar = ctk.CTkButton(self.frameprincipal_menu, text="⬅ Voltar ao Menu",
                                      fg_color="gray", text_color="white",
                                      command=self.reset_principal_menu_content)
-        botao_voltar.pack(pady=20)
+        self.botao_voltar.pack(pady=20)
 
     def calcular_pontos_acao(self):
-        consumo_str = self.entrada_consumo.get().strip()
-        if not consumo_str:
-            self.label_mensagem_calculo.configure(text="Por favor, insira o consumo diário.", text_color="red")
+        self.botao_voltar.destroy()
+        self.botao_calcular.destroy()
+        if self.email not in dados_consumo:
+            self.label_atencao.configure(text="Seu consumo não foi cadastrado ainda,fale com seu síndico.")
+            self.botao_voltar = ctk.CTkButton(self.frameprincipal_menu, text="⬅ Voltar ao Menu",
+                                     fg_color="gray", text_color="white",
+                                     command=self.reset_principal_menu_content)
+            self.botao_voltar.pack(pady=20)
             return
-
-        try:
-            consumo_diario = int(consumo_str)
-            if consumo_diario < 0:
-                self.label_mensagem_calculo.configure(text="O consumo não pode ser negativo.", text_color="red")
-                return
-
-            global dados_pontos, dados_quantidade
-            membros = dados_quantidade.get(self.email, 1)
-
-            # Lógica de cálculo de pontos simplificada:
-            # Consumo ideal per capita (ex: 100 litros/dia)
-            consumo_ideal_total = 100 * membros
-            pontos_ganhos = 0
-
-            if consumo_diario < consumo_ideal_total:
-                litros_economizados = consumo_ideal_total - consumo_diario
-                pontos_ganhos = int(litros_economizados / 10)  # 1 ponto a cada 10 litros economizados
-
-            if pontos_ganhos > 0:
-                dados_pontos[self.email] = dados_pontos.get(self.email, 0) + pontos_ganhos
-                # Atualiza o JSON com os novos pontos
+        calculo_realizado=dados_calculo[self.email]
+        if calculo_realizado==True:
+            consumo=dados_consumo[self.email]
+            qpessoas=dados_quantidade[self.email]
+            gasto_estimado=qpessoas*30*110
+            if consumo>gasto_estimado:
                 try:
-                    with open(r"banco_dados.JSON", "r+", encoding="utf-8") as f:
-                        data = json.load(f)
-                        data["pontos"][self.email] = dados_pontos[self.email]
-                        f.seek(0)
-                        json.dump(data, f, indent=4, ensure_ascii=False)
-                        f.truncate()
-                    self.label_resultado_pontos.configure(text=f"Parabéns! Você ganhou {pontos_ganhos} pontos. Total: {dados_pontos[self.email]}", text_color="green")
-                    self.label_mensagem_calculo.configure(text="")
-                except Exception as e:
-                    self.label_mensagem_calculo.configure(text=f"Erro ao salvar pontos: {e}", text_color="red")
-            else:
-                self.label_resultado_pontos.configure(text="Nenhum ponto ganho desta vez. Continue economizando!", text_color="#5f6368")
-                self.label_mensagem_calculo.configure(text="Seu consumo foi maior ou igual ao ideal. Tente reduzir mais!", text_color="orange")
+                    self.label_aviso.configure(text=f"Seu gasto({consumo}L) foi acima do ideal({gasto_estimado}L).Vamos melhorar!!",text_color="Red")
+                    imagem = Image.open("fotos/mascotetriste.jpg")
+                    ctk_imagem = ctk.CTkImage(light_image=imagem, dark_image=imagem, size=(200, 200))
+                    label = ctk.CTkLabel(self.frameprincipal_menu, image=ctk_imagem, text="")
+                    label.pack()
+                except:
+                    placeholder = ctk.CTkLabel(self.frameprincipal_menu, 
+                                       text="📷 Imagem não encontrada",
+                                       font=("Arial", 16))
+                    placeholder.pack(pady=30)
+                self.botao_voltar = ctk.CTkButton(self.frameprincipal_menu, text="⬅ Voltar ao Menu",
+                                     fg_color="gray", text_color="white",
+                                     command=self.reset_principal_menu_content)
+                self.botao_voltar.pack(pady=20)
+                
+                return
+            
+            elif consumo==gasto_estimado:
+                try:
+                    self.label_aviso.configure(text=f"Seu gasto({consumo}) foi igual ao ideal.Bom desempenho,mas vamos melhorar!!",text_color="#1A73E8")
+                    imagem = Image.open("fotos/mascoteprincipall.png")
+                    ctk_imagem = ctk.CTkImage(light_image=imagem, dark_image=imagem, size=(200, 200))
+                    label = ctk.CTkLabel(self.frameprincipal_menu, image=ctk_imagem, text="")
+                    label.pack()
+                except:
+                    placeholder = ctk.CTkLabel(self.frameprincipal_menu, 
+                                       text="📷 Imagem não encontrada",
+                                       font=("Arial", 16))
+                    placeholder.pack(pady=30)
+                self.botao_voltar = ctk.CTkButton(self.frameprincipal_menu, text="⬅ Voltar ao Menu",
+                                     fg_color="gray", text_color="white",
+                                     command=self.reset_principal_menu_content)
+                self.botao_voltar.pack(pady=20)
+                return
+                
 
-        except ValueError:
-            self.label_mensagem_calculo.configure(text="Consumo diário deve ser um número válido.", text_color="red")
+            else:
+                try:
+                    self.label_aviso.configure(text=f"Seu gasto({consumo}) foi abaixo do ideal({gasto_estimado}L).Parabénsss!!!",text_color="green")
+                    imagem = Image.open("fotos/mascotefeliz.jpg")
+                    ctk_imagem = ctk.CTkImage(light_image=imagem, dark_image=imagem, size=(200, 200))
+                    label = ctk.CTkLabel(self.frameprincipal_menu, image=ctk_imagem, text="")
+                    label.pack()
+                except:
+                    self.label_aviso.configure(text=f"Seu gasto({consumo}) foi abaixo do ideal.Parabénsss!!",text_color="green")
+                    placeholder = ctk.CTkLabel(self.frameprincipal_menu, 
+                                       text="📷 Imagem não encontrada",
+                                       font=("Arial", 16))
+                    placeholder.pack(pady=30)
+                self.botao_voltar = ctk.CTkButton(self.frameprincipal_menu, text="⬅ Voltar ao Menu",
+                                     fg_color="gray", text_color="white",
+                                     command=self.reset_principal_menu_content)
+                self.botao_voltar.pack(pady=20)
+                    
+                
+            
+        elif calculo_realizado==False:
+            consumo=dados_consumo[self.email]
+            qpessoas=dados_quantidade[self.email]
+            gasto_estimado=qpessoas*30*110
+            if consumo>gasto_estimado:
+                try:
+                    self.label_aviso.configure(text=f"Seu gasto({consumo}L) foi acima do ideal({gasto_estimado}L).Vamos melhorar!!",text_color="Red")
+                    imagem = Image.open("fotos/mascotetriste.jpg")
+                    ctk_imagem = ctk.CTkImage(light_image=imagem, dark_image=imagem, size=(200, 200))
+                    label = ctk.CTkLabel(self.frameprincipal_menu, image=ctk_imagem, text="")
+                    label.pack()
+                except:
+                    placeholder = ctk.CTkLabel(self.frameprincipal_menu, 
+                                       text="📷 Imagem não encontrada",
+                                       font=("Arial", 16))
+                    placeholder.pack(pady=30)
+                self.botao_voltar = ctk.CTkButton(self.frameprincipal_menu, text="⬅ Voltar ao Menu",
+                                     fg_color="gray", text_color="white",
+                                     command=self.reset_principal_menu_content)
+                self.botao_voltar.pack(pady=20)
+                
+                return
+            
+            elif consumo==gasto_estimado:
+                try:
+                    self.label_aviso.configure(text=f"Seu gasto({consumo}) foi igual ao ideal.Bom desempenho,mas vamos melhorar!!",text_color="#1A73E8")
+                    imagem = Image.open("fotos/mascoteprincipall.png")
+                    ctk_imagem = ctk.CTkImage(light_image=imagem, dark_image=imagem, size=(200, 200))
+                    label = ctk.CTkLabel(self.frameprincipal_menu, image=ctk_imagem, text="")
+                    label.pack()
+                except:
+                    placeholder = ctk.CTkLabel(self.frameprincipal_menu, 
+                                       text="📷 Imagem não encontrada",
+                                       font=("Arial", 16))
+                    placeholder.pack(pady=30)
+                
+                self.botao_voltar = ctk.CTkButton(self.frameprincipal_menu, text="⬅ Voltar ao Menu",
+                                     fg_color="gray", text_color="white",
+                                     command=self.reset_principal_menu_content)
+                self.botao_voltar.pack(pady=20)
+                return
+                
+
+            else:
+                try:
+                    self.label_aviso.configure(text=f"Seu gasto({consumo}) foi abaixo do ideal({gasto_estimado}L).Parabénsss!!\nVocê ganhou 100 pontos!!",text_color="green")
+                    imagem = Image.open("fotos/mascotefeliz.jpg")
+                    ctk_imagem = ctk.CTkImage(light_image=imagem, dark_image=imagem, size=(200, 200))
+                    label = ctk.CTkLabel(self.frameprincipal_menu, image=ctk_imagem, text="")
+                    label.pack()
+                except:
+                    self.label_aviso.configure(text=f"Seu gasto({consumo}) foi abaixo do ideal.Parabénsss!!\nVocê ganhou 100 pontos!!",text_color="green")
+                    placeholder = ctk.CTkLabel(self.frameprincipal_menu, 
+                                       text="📷 Imagem não encontrada",
+                                       font=("Arial", 16))
+                    placeholder.pack(pady=30)
+
+                
+                    
+                dados_pontos[self.email]+=100
+                with open(r"banco_dados.JSON", "w", encoding="utf-8") as arquivo:
+                # Aqui, estamos criando um dicionário com duas chaves:
+                    json.dump({"senha": dados_conta, "familia": dados_familia, "membros": dados_quantidade, "pontos": dados_pontos,
+                           "apartamento": dados_apartamento, "verificador": dados_codigov}, arquivo, indent=4, ensure_ascii=False)
+
+                dados_calculo[self.email]=True
+                with open(r"dados_usuarios.json", "w", encoding="utf-8") as arquivo:
+                # Aqui, estamos criando um dicionário com duas chaves:
+                    json.dump({"calculo_realizado":dados_calculo,"consumo":dados_consumo}, arquivo, indent=4, ensure_ascii=False)
+                
+                self.botao_voltar = ctk.CTkButton(self.frameprincipal_menu, text="⬅ Voltar ao Menu",
+                                     fg_color="gray", text_color="white",
+                                     command=self.reset_principal_menu_content)
+                self.botao_voltar.pack(pady=20)
+
+                return
+            
+            
+
+
 
     def quiz_semanal(self):
         """🧠 Função: Quiz Semanal - Disponibiliza 5 questões toda segunda-feira. Dependendo do desempenho, o usuário recebe pontos."""
@@ -452,53 +555,481 @@ class UsuarioLogado(ctk.CTkFrame):
         self.limpar_frame_principal()
 
         label_titulo = ctk.CTkLabel(self.frameprincipal_menu, text="📘 Área Educativa",
-                                     font=("Arial", 20, "bold"), text_color="#1A73E8")
+                                 font=("Arial", 20, "bold"), text_color="#1A73E8")
         label_titulo.pack(pady=(20, 10))
 
-        # Scroll frame para o conteúdo educativo
-        scroll_frame = ctk.CTkScrollableFrame(self.frameprincipal_menu, width=600, height=400)
-        scroll_frame.pack(fill="both", expand=True, padx=20, pady=10)
+        # Scroll como atributo da classe
+        self.scroll_frame = ctk.CTkScrollableFrame(self.frameprincipal_menu, width=600, height=400,fg_color="#ffffff")
+        self.scroll_frame.pack(fill="both", expand=True, padx=20, pady=10)
 
-        # Artigos educativos
-        artigos = [
-            "Europa investe €15 bilhões em preservação de recursos hídricos até 2027",
-            "Cientistas desenvolvem tecnologia para extrair água potável do ar usando resíduos alimentares",
-            "Universidade do Texas inicia construção do maior centro universitário de reúso de água dos EUA",
-            "Alunos serão instruídos sobre conservação da água e limpeza do rio Ganges na Índia",
-            "Impacto dos datacenters em áreas com escassez hídrica na América Latina",
-            "8 filmes educativos para crianças sobre sustentabilidade"
+        # Botões locais (sem self)
+        botao_areaedu1 = ctk.CTkButton(self.scroll_frame,
+            text="Europa investe €15 bilhões em preservação de recursos hídricos até 2027",
+            fg_color="white", text_color="#1A73E8", font=("Arial", 12), anchor="w",
+            command=self.mostrar_artigo1)
+        botao_areaedu1.pack(fill="x", pady=5, padx=10)
+
+        botao_areaedu2 = ctk.CTkButton(self.scroll_frame,
+            text="Cientistas desenvolvem tecnologia para extrair água potável do ar usando resíduos alimentares",
+            fg_color="white", text_color="#1A73E8", font=("Arial", 12), anchor="w",
+            command=self.mostrar_artigo2)
+        botao_areaedu2.pack(fill="x", pady=5, padx=10)
+
+        botao_areaedu3 = ctk.CTkButton(self.scroll_frame,
+            text="Universidade do Texas inicia construção do maior centro universitário de reúso de água dos EUA",
+            fg_color="white", text_color="#1A73E8", font=("Arial", 12), anchor="w",
+            command=self.mostrar_artigo3)
+        botao_areaedu3.pack(fill="x", pady=5, padx=10)
+
+        botao_areaedu4 = ctk.CTkButton(self.scroll_frame,
+            text="Alunos serão instruídos sobre conservação da água e limpeza do rio Ganges na Índia",
+            fg_color="white", text_color="#1A73E8", font=("Arial", 12), anchor="w",
+            command=self.mostrar_artigo4)
+        botao_areaedu4.pack(fill="x", pady=5, padx=10)
+
+        botao_areaedu5 = ctk.CTkButton(self.scroll_frame,
+            text="Impacto dos datacenters em áreas com escassez hídrica na América Latina",
+            fg_color="white", text_color="#1A73E8", font=("Arial", 12), anchor="w",
+            command=self.mostrar_artigo5)
+        botao_areaedu5.pack(fill="x", pady=5, padx=10)
+
+        botao_areaedu6 = ctk.CTkButton(self.scroll_frame,
+            text="8 filmes educativos para crianças sobre sustentabilidade",
+            fg_color="white", text_color="#1A73E8", font=("Arial", 12), anchor="w",
+            command=self.mostrar_artigo6)
+        botao_areaedu6.pack(fill="x", pady=5, padx=10)
+
+        botao_voltar = ctk.CTkButton(self.scroll_frame, text="⬅ Voltar ao Menu",
+                                 fg_color="gray", text_color="white",
+                                 command=self.reset_principal_menu_content)
+        botao_voltar.pack(pady=20)
+
+    
+    def mostrar_artigo1(self):
+
+        # Limpa o conteúdo anterior do scroll_frame
+        for widget in self.scroll_frame.winfo_children():
+            widget.destroy()
+
+        # Título da notícia
+        titulo = ctk.CTkLabel(
+            self.scroll_frame,
+            text="🌍 Investimento de €15 bilhões para combater a crise hídrica na Europa",
+            text_color="#1A73E8",
+            font=("Arial", 20, "bold"),
+            wraplength=500,
+            justify="left"
+        )
+        titulo.pack(pady=(20, 10), padx=10)
+
+        # Corpo do texto
+        corpo_texto = (
+            "A Universidade Europeia e o Banco Europeu de Investimento anunciaram, em 7 de junho, "
+            "um aporte de €15 bilhões (≈US$17bi) a projetos voltados à redução da poluição, "
+            "prevenção do desperdício e fomento à inovação no setor hídrico ao longo dos próximos três anos. "
+            "A ação considera a intensificação das secas e pressões agrícolas e urbanas causadas pelas mudanças climáticas. "
+            "Como medida de responsabilização, o Reino Unido restringiu bônus a executivos de empresas de água que não investem "
+            "o suficiente na qualidade dos corpos de água."
+        )
+
+        label_corpo = ctk.CTkLabel(
+            self.scroll_frame,
+            text=corpo_texto,
+            font=("Arial", 16),
+            wraplength=500,
+            justify="left"
+        )
+        label_corpo.pack(padx=10, pady=(0, 20))
+
+        # Botão Voltar
+        botao_voltar = ctk.CTkButton(
+            self.scroll_frame,
+            text="Voltar",
+            command=self.area_educativa,
+            fg_color="#1A73E8",  
+            hover_color="#12496D",
+            font=("Arial", 14, "bold")
+        )
+        botao_voltar.pack(pady=(0, 20))
+
+    def mostrar_artigo2(self):
+        # Limpa o conteúdo anterior do scroll_frame
+        for widget in self.scroll_frame.winfo_children():
+            widget.destroy()
+
+        # Título da notícia
+        titulo = ctk.CTkLabel(
+            self.scroll_frame,
+            text="🎒 Extração de água potável do ar usando alimentos",
+            text_color="#1A73E8",
+            font=("Arial", 20, "bold"),
+            wraplength=500,
+            justify="left"
+        )
+        titulo.pack(pady=(20, 10), padx=10)
+
+        # Corpo do texto
+        corpo_texto = (
+            "Pesquisadores da Universidade do Texas em Austin publicaram, em abril, um método inovador para captar água do ar "
+            "usando hidrogéis feitos com biomassa de resíduos alimentares e conchas. Esses materiais absorvem grandes volumes "
+            "de umidade e liberam água pura com aquecimento leve. Em campo, foram obtidos 15L de água por kg de gel por dia—"
+            "recuperando 95% do volume captado."
+        )
+
+        label_corpo = ctk.CTkLabel(
+            self.scroll_frame,
+            text=corpo_texto,
+            text_color="#333333",
+            font=("Arial", 14),
+            wraplength=500,
+            justify="left"
+        )
+        label_corpo.pack(padx=10, pady=10)
+
+        # Destaque: Impacto prático
+        label_importancia = ctk.CTkLabel(
+            self.scroll_frame,
+            text="💡 Impacto prático:",
+            text_color="#1A73E8",
+            font=("Arial", 20, "bold"),
+            wraplength=500,
+            justify="left"
+        )
+        label_importancia.pack(pady=(20, 5), padx=10)
+
+        texto_importancia = (
+            "Trata-se de uma solução biodegradável, modular e de baixo consumo energético — ideal para comunidades rurais, "
+            "irrigação localizada ou situações emergenciais em áreas carentes de infraestrutura hídrica."
+        )
+
+        label_importancia_texto = ctk.CTkLabel(
+            self.scroll_frame,
+            text=texto_importancia,
+            font=("Arial", 14),
+            wraplength=500,
+            justify="left"
+        )
+        label_importancia_texto.pack(padx=10, pady=(0, 20))
+
+        # Botão Voltar
+        botao_voltar = ctk.CTkButton(
+            self.scroll_frame,
+            text="Voltar",
+            command=self.area_educativa,
+            fg_color="#1A73E8",  
+            hover_color="#12496D",
+            font=("Arial", 14, "bold")
+        )
+        botao_voltar.pack(pady=(0, 20))
+
+    def mostrar_artigo3(self):
+        # Limpa o conteúdo anterior do scroll_frame
+        for widget in self.scroll_frame.winfo_children():
+            widget.destroy()
+
+        # Título da notícia
+        titulo = ctk.CTkLabel(
+            self.scroll_frame,
+            text="🏗️ UT Austin constrói o maior centro universitário de reúso de água nos EUA",
+            text_color="#1A73E8",
+            font=("Arial", 20, "bold"),
+            wraplength=500,
+            justify="left"
+        )
+        titulo.pack(pady=(20, 10), padx=10)
+
+        # Corpo do texto
+        corpo_texto = (
+            "Em maio, a UT anunciou a construção do WaterHub, instalação de 900m² que vai tratar até 1 milhão de galões "
+            "(≈3,8 mil m³) de esgoto por dia. A previsão de operação é para o segundo semestre de 2027. O local servirá como laboratório "
+            "de pesquisa prática para estudantes, integrando ensino e teste de tecnologias de reúso para aliviar sistemas municipais sobrecarregados."
+        )
+
+        label_corpo = ctk.CTkLabel(
+            self.scroll_frame,
+            text=corpo_texto,
+            text_color="#333333",
+            font=("Arial", 14),
+            wraplength=500,
+            justify="left"
+        )
+        label_corpo.pack(padx=10, pady=10)
+
+        # Destaque: Por que isso importa?
+        label_importancia = ctk.CTkLabel(
+            self.scroll_frame,
+            text="💡 Por que isso importa?",
+            text_color="#1A73E8",
+            font=("Arial", 20, "bold"),
+            wraplength=500,
+            justify="left"
+        )
+        label_importancia.pack(pady=(20, 5), padx=10)
+
+        texto_importancia = (
+            "Esse centro universitário vai impulsionar a pesquisa e o desenvolvimento de tecnologias inovadoras de reúso de água, "
+            "contribuindo para a sustentabilidade urbana e formação técnica avançada."
+        )
+
+        label_importancia_texto = ctk.CTkLabel(
+            self.scroll_frame,
+            text=texto_importancia,
+            font=("Arial", 14),
+            wraplength=500,
+            justify="left"
+        )
+        label_importancia_texto.pack(padx=10, pady=(0, 20))
+
+        # Botão Voltar
+        botao_voltar = ctk.CTkButton(
+            self.scroll_frame,
+            text="Voltar",
+            command=self.area_educativa,
+            fg_color="#1A73E8",  
+            hover_color="#12496D",
+            font=("Arial", 14, "bold")
+        )
+        botao_voltar.pack(pady=(0, 20))
+
+    def mostrar_artigo4(self):
+        # Limpa o conteúdo anterior do scroll_frame
+        for widget in self.scroll_frame.winfo_children():
+            widget.destroy()
+
+        # Título
+        titulo = ctk.CTkLabel(
+            self.scroll_frame,
+            text="📰 Educação Ambiental na Índia: Estudantes de Uttar Pradesh se tornam embaixadores da limpeza",
+            text_color="#1A73E8",
+            font=("Arial", 20, "bold"),
+            wraplength=500,
+            justify="left"
+        )
+        titulo.pack(pady=(20, 10), padx=10)
+
+        # Parágrafo da notícia
+        corpo_texto = (
+            "Em junho de 2024, o governo do estado de Uttar Pradesh, na Índia, lançou uma iniciativa educativa para envolver os alunos "
+            "das escolas públicas e privadas na conservação ambiental e limpeza do rio Ganges, um dos maiores e mais sagrados rios da Ásia. "
+            "O programa inclui formação de “embaixadores estudantis da limpeza”, práticas de higiene e conservação hídrica, visitas a locais "
+            "poluídos, plantio de árvores, redações, campanhas ambientais e integração da comunidade escolar e familiar."
+        )
+        label_corpo = ctk.CTkLabel(
+            self.scroll_frame,
+            text=corpo_texto,
+            text_color="#333333",
+            font=("Arial", 14),
+            wraplength=500,
+            justify="left"
+        )
+        label_corpo.pack(padx=10, pady=10)
+
+        # Destaque: Por que isso importa?
+        label_importancia = ctk.CTkLabel(
+            self.scroll_frame,
+            text="💡 Por que isso importa?",
+            text_color="#1A73E8",
+            font=("Arial", 20, "bold"),
+            wraplength=500,
+            justify="left"
+        )
+        label_importancia.pack(pady=(20, 5), padx=10)
+
+        texto_importancia = (
+            "A iniciativa ajuda a sensibilizar jovens sobre a conservação hídrica e atitudes sustentáveis desde cedo, "
+            "envolvendo também suas famílias e escolas, o que pode gerar impacto real na limpeza do Ganges e na formação de cidadãos conscientes."
+        )
+
+        label_texto_importancia = ctk.CTkLabel(
+            self.scroll_frame,
+            text=texto_importancia,
+            text_color="#000000",
+            font=("Arial", 14),
+            wraplength=500,
+            justify="left"
+        )
+        label_texto_importancia.pack(padx=10, pady=5)
+
+        # Fontes
+        label_fontes = ctk.CTkLabel(
+            self.scroll_frame,
+            text="🔗 Fontes:",
+            text_color="#1A73E8",
+            font=("Arial", 14, "bold"),
+            wraplength=500,
+            justify="left"
+        )
+        label_fontes.pack(pady=(20, 5), padx=10)
+
+        lbl = ctk.CTkLabel(
+            self.scroll_frame,
+            text="• timesofindia.indiatimes.com",
+            text_color="#333333",
+            font=("Arial", 13),
+            anchor="w",
+            justify="left"
+        )
+        lbl.pack(padx=10)
+
+        # Botão Voltar
+        botao_voltar = ctk.CTkButton(
+            self.scroll_frame,
+            text="Voltar",
+            command=self.area_educativa,
+            fg_color="#1A73E8",
+            hover_color="#12496D",
+            font=("Arial", 14, "bold")
+        )
+        botao_voltar.pack(pady=(0, 20))
+
+    def mostrar_artigo5(self):
+        # Limpa o conteúdo anterior do scroll_frame
+        for widget in self.scroll_frame.winfo_children():
+            widget.destroy()
+
+        # Título
+        titulo = ctk.CTkLabel(
+            self.scroll_frame,
+            text="📰 Impacto dos datacenters em áreas com escassez hídrica na América Latina",
+            text_color="#1A73E8",
+            font=("Arial", 20, "bold"),
+            wraplength=500,
+            justify="left"
+        )
+        titulo.pack(pady=(20, 10), padx=10)
+
+        # Parágrafo da notícia
+        corpo_texto = (
+            "Um artigo do The Guardian chama atenção para a instalação de grandes datacenters em regiões "
+            "com escassez de água no Brasil e outros países da América Latina. Um dos casos citados em Caucaia (CE) "
+            "está em regiões afetadas por seca, e esses centros utilizam até 80 % da água retirada para resfriamento, "
+            "gerando riscos de esgotamento de recursos hídricos locais. O texto destaca a necessidade de maior transparência, "
+            "engajamento comunitário e uso de alternativas como dessalinização e reúso."
+        )
+
+        label_corpo = ctk.CTkLabel(
+            self.scroll_frame,
+            text=corpo_texto,
+            text_color="#333333",
+            font=("Arial", 14),
+            wraplength=500,
+            justify="left"
+        )
+        label_corpo.pack(padx=10, pady=10)
+
+        # Destaque: Por que isso importa?
+        label_importancia = ctk.CTkLabel(
+            self.scroll_frame,
+            text="💡 Por que isso importa?",
+            text_color="#1A73E8",
+            font=("Arial", 20, "bold"),
+            wraplength=500,
+            justify="left"
+        )
+        label_importancia.pack(pady=(20, 5), padx=10)
+
+        texto_importancia = (
+            "Educação ambiental sobre impactos tecnológicos no ciclo da água.\n\n"
+            "Inovação na busca por soluções de resfriamento menos dependentes de água.\n\n"
+            "Reflexão sobre políticas de concessão hídrica e planejamento sustentável."
+        )
+
+        label_texto_importancia = ctk.CTkLabel(
+            self.scroll_frame,
+            text=texto_importancia,
+            text_color="#000000",
+            font=("Arial", 14),
+            wraplength=500,
+            justify="left"
+        )
+        label_texto_importancia.pack(padx=10, pady=5)
+
+        # Fontes
+        label_fontes = ctk.CTkLabel(
+            self.scroll_frame,
+            text="🔗 Fontes:",
+            text_color="#1A73E8",
+            font=("Arial", 14, "bold"),
+            wraplength=500,
+            justify="left"
+        )
+        label_fontes.pack(pady=(20, 5), padx=10)
+
+        lbl = ctk.CTkLabel(
+            self.scroll_frame,
+            text="• theguardian.com",
+            text_color="#333333",
+            font=("Arial", 13),
+            anchor="w",
+            justify="left"
+        )
+        lbl.pack(padx=10)
+
+        # Botão Voltar
+        botao_voltar = ctk.CTkButton(
+            self.scroll_frame,
+            text="Voltar",
+            command=self.area_educativa,
+            fg_color="#1A73E8",
+            hover_color="#12496D",
+            font=("Arial", 14, "bold")
+        )
+        botao_voltar.pack(pady=(0, 20))
+
+    def mostrar_artigo6(self):
+        # Limpa o conteúdo anterior do scroll_frame
+        for widget in self.scroll_frame.winfo_children():
+            widget.destroy()
+
+        # Título
+        titulo = ctk.CTkLabel(
+            self.scroll_frame,
+            text="🌿 8 Filmes sobre Sustentabilidade para Crianças",
+            text_color="#1A73E8",
+            font=("Arial", 16, "bold"),  # fonte menor
+            wraplength=500,
+            justify="left"
+        )
+        titulo.pack(pady=(10, 5), padx=10)
+
+        # Lista dos filmes com mini-resumos (sem "A Fuga das Galinhas", com "Avatar" incluído)
+        filmes = [
+            ("Wall-E (2008)", "Um clássico da Pixar! Mostra um futuro onde a Terra foi tomada pelo lixo e a humanidade vive no espaço. Wall-E, um robô solitário, nos ensina sobre consumo, lixo e amor pelo planeta."),
+            ("Lorax: Em Busca da Trúfula Perdida (2012)", "Baseado na obra do Dr. Seuss, aborda desmatamento e exploração de recursos naturais, com personagens carismáticos e músicas cativantes."),
+            ("Happy Feet: O Pinguim (2006)", "Através de um pinguim dançarino, o filme aborda temas como mudança climática, preservação dos oceanos e o impacto da pesca predatória."),
+            ("Rio (2011)", "Além da aventura, mostra a importância da biodiversidade brasileira e os perigos do tráfico de animais silvestres."),
+            ("Irmão Urso (Brother Bear) (2003)", "Aborda o respeito à natureza, ao ciclo da vida e à conexão espiritual com o meio ambiente, com forte mensagem sobre empatia e equilíbrio natural."),
+            ("O Rei Leão (1994 / 2019)", "Apesar de não focar diretamente em sustentabilidade, ensina sobre o “ciclo da vida” e o equilíbrio ecológico da savana africana."),
+            ("Meu Amigo Totoro (1988)", "Um clássico do Studio Ghibli. Exalta a harmonia entre seres humanos e natureza, com um toque mágico e poético."),
+            ("Avatar (2009)", "Conta a história de um ex-fuzileiro que, ao interagir com o povo Na'vi e a natureza de Pandora, aprende a importância do equilíbrio ecológico e respeito ao meio ambiente.")
         ]
 
-        for artigo in artigos:
-            btn_artigo = ctk.CTkButton(scroll_frame, text=artigo,
-                                       fg_color="white", text_color="#1A73E8",
-                                       font=("Arial", 12), anchor="w",
-                                       command=lambda a=artigo: self.mostrar_artigo(a))
-            btn_artigo.pack(fill="x", pady=5, padx=10)
+        # Exibe os filmes e seus resumos
+        #titulo_filme=primeiro elemento da tupla
+        #resumo=segundo elemento da tupla
+        for titulo_filme, resumo in filmes:
+            label_filme = ctk.CTkLabel(
+                self.scroll_frame,
+                text=f"• {titulo_filme}\n  {resumo}",
+                text_color="#333333",
+                font=("Arial", 14),
+                wraplength=500,
+                justify="left"
+            )
+            label_filme.pack(pady=(5, 10), padx=20)
 
-        botao_voltar = ctk.CTkButton(self.frameprincipal_menu, text="⬅ Voltar ao Menu",
-                                     fg_color="gray", text_color="white",
-                                     command=self.reset_principal_menu_content)
-        botao_voltar.pack(pady=20)
+        # Botão Voltar
+        botao_voltar = ctk.CTkButton(
+            self.scroll_frame,
+            text="Voltar",
+            command=self.area_educativa,
+            fg_color="#1A73E8",
+            hover_color="#12496D",
+            font=("Arial", 14, "bold")
+        )
+        botao_voltar.pack(pady=(10, 20))
 
-    def mostrar_artigo(self, titulo_artigo):
-        """Exibe o conteúdo de um artigo específico"""
-        self.limpar_frame_principal()
-        
-        label_titulo = ctk.CTkLabel(self.frameprincipal_menu, text=titulo_artigo,
-                                     font=("Arial", 16, "bold"), text_color="#1A73E8",
-                                     wraplength=600)
-        label_titulo.pack(pady=(20, 10))
-
-        conteudo = ctk.CTkLabel(self.frameprincipal_menu, 
-                                text="Conteúdo do artigo seria exibido aqui com informações detalhadas sobre sustentabilidade e conservação da água.",
-                                font=("Arial", 14), wraplength=600, justify="left")
-        conteudo.pack(pady=20, padx=20)
-
-        botao_voltar = ctk.CTkButton(self.frameprincipal_menu, text="⬅ Voltar à Área Educativa",
-                                     fg_color="gray", text_color="white",
-                                     command=self.area_educativa)
-        botao_voltar.pack(pady=20)
+    
 
     # Métodos para as funcionalidades do grupo "Gerenciar Usuário"
     def mostrar_dados(self):
@@ -764,49 +1295,3 @@ Número do Apartamento: {user_apartment}"""
             self.label_mensagem_feedback.configure(text=f"Erro ao salvar feedback: {e}", text_color="red")
 
 
-class Game:
-    """Classe responsável pelas funcionalidades de gamificação"""
-    def __init__(self):
-        pass
-    
-    def mostrar_ranking(self):
-        # Implementar lógica do ranking
-        pass
-    
-    def resgatar_premio(self):
-        # Implementar lógica de resgate de prêmios
-        pass
-    
-    def calculo_pontuacao(self):
-        # Implementar lógica de cálculo de pontuação
-        pass
-    
-    def quiz_semanal(self):
-        # Implementar lógica do quiz semanal
-        pass
-    
-    def area_educativa(self):
-        # Implementar lógica da área educativa
-        pass
-
-
-class GerenciarUsuario:
-    """Classe responsável pelo gerenciamento de dados do usuário"""
-    def __init__(self):
-        pass
-    
-    def mostrar_dados(self):
-        # Implementar lógica para mostrar dados do usuário
-        pass
-    
-    def atualizar_dados(self):
-        # Implementar lógica para atualizar dados do usuário
-        pass
-    
-    def deletar_conta(self):
-        # Implementar lógica para deletar conta
-        pass
-    
-    def feedback(self):
-        # Implementar lógica para enviar feedback
-        pass

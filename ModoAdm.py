@@ -48,7 +48,7 @@ mensagens_agua = [
 ]
 
 
-class TelaModoAdm(ctk.CTkFrame):
+class ModoAdm(ctk.CTkFrame):
 
     def __init__(self, master, voltar_inicial):
         super().__init__(master)
@@ -60,7 +60,8 @@ class TelaModoAdm(ctk.CTkFrame):
         self.grafico_consumopessoa=None
         self.grafico_consumoap=None
         self.media=None
-        
+        #atributo que serve para controlar a quantidade de tentativas
+        self.tentativas=0
         
         
         self.frame_adm = ctk.CTkFrame(self, fg_color="#ffffff")
@@ -103,9 +104,37 @@ class TelaModoAdm(ctk.CTkFrame):
                 self.tela_inicial_adm()
             else:
                 self.label_avisoadm.configure(text="Código inválido",text_color="Red")
+                self.tentativas+=1
+                if self.tentativas==4:
+                    self.atencao_adm()
+
             pass
     
+    def atencao_adm(self):
+        for widget in self.frame_adm.winfo_children():
+            widget.destroy()
+       
     
+
+        # Mensagem de título
+        titulo = ctk.CTkLabel(self.frame_adm,
+                          text="🚫 Limite de Tentativas Atingido",
+                          font=("Arial", 20, "bold"),
+                          text_color="red")
+        titulo.pack(pady=(30, 10))
+
+        # Mensagem adicional
+        msg = ctk.CTkLabel(self.frame_adm,
+                       text="O sistema será encerrado por segurança.",
+                       font=("Arial", 16))
+        msg.pack(pady=5)
+
+        # Label de contagem regressiva
+        self.label_contador = ctk.CTkLabel(self.frame_adm,
+                                       text="Fechando em 7 segundos...",
+                                       font=("Arial", 16, "italic"))
+        self.label_contador.pack(pady=(20, 10))
+        self.after(7000, self.sair_sistema)
     
     
     def tela_inicial_adm(self):
@@ -398,7 +427,7 @@ class TelaModoAdm(ctk.CTkFrame):
         """Função utilizada para fechar sistema """
         # Fechando dessa forma irá "destruir" a janela que foi definida no master
         self.master.destroy()  # Fecha a janela principal
-    # Ou qualquer outra lógica de saída que você preferir
+   
 
 
 
