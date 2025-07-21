@@ -131,10 +131,10 @@ class Login(ctk.CTkFrame):
                     return
                 else:
                     self.label_avisologin.configure(
-                        text="EMAIL OU SENHA INCORRETO.\nContate o suporte para recuperar usa senha", text_color="red")
+                        text="EMAIL OU SENHA INCORRETO.", text_color="red")
                     self.tentativas+=1
                     if self.tentativas==4:
-                        self.aviso_sistema()
+                        self.tentar_verificador()
                     
                     return
 
@@ -145,7 +145,58 @@ class Login(ctk.CTkFrame):
                 if self.tentativas==4:
                     self.aviso_sistema()
                 return
-            
+    
+
+    def tentar_verificador(self):
+        for widget in self.frame_login.winfo_children():
+            widget.destroy()
+
+        
+        label_adm = ctk.CTkLabel(self.frame_login, text="Insira o código de acesso \nVocê tem apenas uma chance.",
+                                   fg_color="#ffffff", text_color="red", font=("Arial", 20))
+        label_adm.pack(pady=2)
+        
+         # 2-entrada senha
+        label_emailveri= ctk.CTkLabel(self.frame_login, text="Digite seu email:", text_color="#000000", anchor="w", width=300)
+        label_emailveri.pack(pady=(2, 0))
+
+        self.entrada_email_veri = ctk.CTkEntry(self.frame_login, width=300)
+        self.entrada_email_veri.pack(pady=2)
+
+
+
+        # 2-entrada senha
+        label_codigov= ctk.CTkLabel(self.frame_login, text="Digite o código verificador:", text_color="#000000", anchor="w", width=300)
+        label_codigov.pack(pady=(2, 0))
+
+        self.entrada_codigo_veri = ctk.CTkEntry(self.frame_login, width=300, show="*")
+        self.entrada_codigo_veri.pack(pady=2)
+
+        # 3-entrada email cond
+
+        # botão logar
+        botao_entrar_verificador = ctk.CTkButton(self.frame_login, text="Entrar", fg_color="blue",
+                                    text_color="#ffffff", width=300, command=self.conferir_verificador)
+        botao_entrar_verificador.pack(pady=2)
+        # botão voltar
+    
+        
+
+    def conferir_verificador(self):
+        try:
+            codigo=int(self.entrada_codigo_veri.get().strip())
+            email=self.entrada_email_veri.get().strip()
+
+            if dados_codigov[email]==codigo:
+                self.mostrar_menu(self.email, self.senha)
+            else:
+                self.aviso_sistema()
+
+        except:
+            self.aviso_sistema()
+
+
+
     def aviso_sistema(self):
         for widget in self.frame_login.winfo_children():
             widget.destroy()
