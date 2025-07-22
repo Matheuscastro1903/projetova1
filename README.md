@@ -1,29 +1,29 @@
 #PROJETO ECODROP  
 Esse repositório é responsável por guardar o código do projeto EcoDrop.O projeto ECODROP surge com o objetivo de incentivar práticas sustentáveis em residências, por meio de um sistema que gamefica o processo de economia de água, visando incentivar os usuários a usarem esse recurso essencial de uma forma mais consciente.
 
-Bibliotecas usadas para o projeto.
+#Bibliotecas usadas para o projeto.
 
 Biblioteca "json"=Conseguir passar o arquivo JSON para dicionário python para se tornar mais fácil seu uso
 
-Biblioteca "csv"= 
+Biblioteca "csv"= Permite que dados de um arquivo CSV sejam processados no código, permitindo também pegar dados e armazená-los em um arquivo CSV
 
 Biblioteca "re"=Responsável por fazer a verificação do formato do email
 
-Biblioteca "random"=
+Biblioteca "random"= Permite com que introduzemos informações no código de forma aleatória
 
-Biblioteca "datetime"=
+Biblioteca "datetime"= Garante com que manipulemos datas e horas.
 
-Biblioteca "PIL"=
+Biblioteca "PIL"= Por meio do PIL (Pillow) conseguimos abrir, manipular e salvar imagens 
 
-Biblioteca "io"=
+Biblioteca "io"= Fornece ferramentas Python para lidar com fluxos de entrada e saída. Permite manipular dados dados como se fossem arquivos, seja em memória ou em disco
 
-Biblioteca "pandas"=
+Biblioteca "pandas"= Garante o trabalho com dados estruturados, como planilhas ou banco de dados, sendo o DataFrame (uma tabela bidimensional com linhas e colunas) as principais estruturas utilizadas
 
-Biblioteca "collection"=
+Biblioteca "collection"= Fornece estruturas de dados especializados. Oferece alternativas às estruturas de dados básicos, como listas e tuplas, com funcionalidades extras que tornam a resolução de certos problemas mais eficiente e limpa
 
-Biblioteca "matplotlib"=
+Biblioteca "matplotlib"= Utilizada para criação de gráficos 2D e 3D e visualizações de dados. É essencial para transformar análises numéricas e estatísticas em representações visuais fáceis de entender
 
-Biblioteca "datetime"=
+
 
 
 
