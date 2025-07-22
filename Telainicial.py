@@ -62,6 +62,11 @@ mensagens_agua = [
 class TelaInicial(ctk.CTkFrame):
     def __init__(self, master, mostrar_login, mostrar_cadastro, modo_adm, sobre_nos):
         super().__init__(master)
+        """
+        Essa classe é responsável por guardar a parte da interface responsável pela tela inicial.
+        O usuário terá 4 opções de botão(Login,cadastro,Modo adm e Sobre Nós),dependendo da escolha,
+        será retornado uma respostas para a classe App e inicializará outra parte da interface.
+        """
 
         # Frame topo
         self.frame_topo = ctk.CTkFrame(self, fg_color="#1A73E8", height=80)

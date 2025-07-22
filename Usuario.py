@@ -56,14 +56,17 @@ mensagens_agua = [
 
 class Usuario(ctk.CTkFrame):
 
-    # Atributos de classe,servirão para todos os casos e evitará ter que criar uma lista toda vez que for verificar o email,melhorando
-
+    
+    """Atributos de classes para verificação do email.Isso evitará ter que criar uma lista toda vez que for verificar"""
     DOMINIOS_VALIDOS = {"gmail.com", "outlook.com",
                         "hotmail.com", "yahoo.com", "icloud.com"}
     REGEX_EMAIL = re.compile(
         r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
 
     def __init__(self, master, voltar_inicial, mostrar_login):
+        """
+        O init irá inicializar a interface da parte do cadastro,mostrando as entradas e botões necessários para realizar o processo
+        """
         super().__init__(master)
 
         self.mostrar_login = mostrar_login
@@ -150,6 +153,7 @@ class Usuario(ctk.CTkFrame):
         botao_voltar.pack()
 
     def conferir_cadastrar(self):
+        """Esse método confere se todos os campos estão preenchidos,para assim poder começar a verificação"""
         email = self.entrada_email.get().strip()
         nome_familia = self.entrada_nome.get().strip()
         senha = self.entrada_senha.get().strip()
@@ -271,7 +275,11 @@ class Usuario(ctk.CTkFrame):
 
     def cadastrar_conta(self):
 
-        # FUNÇÃO UTILIZADA PARA CADASTRAR CONTA NO BANCO DE DADOS
+        """FUNÇÃO UTILIZADA PARA CADASTRAR CONTA NO BANCO DE DADOS.APÓS ESSE PROCESSO,O USUÁRIO SERÁ REDIRECIONADO PARA UMA ÁREA,ONDE SERÁ 
+        DISPONIBILIZADO A OPÇÃO DE IR PARA LOGIN OU SAIR DO SISTEMA 
+
+        """
+
 
         try:
             dados_conta[self.email] = self.senha

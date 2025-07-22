@@ -36,6 +36,10 @@ class ModoAdm(ctk.CTkFrame):
 
     def __init__(self, master, voltar_inicial):
         super().__init__(master)
+        """
+        Esse init servirá para iniciar o modo adm,no qual o usuário terá que inserir o código correto para acessar a área do administrador.
+        """
+
         #define self.operaco como None para criar um objeto da classe
         # operações  apenas se o self.operacao não tiver sido criado ainda
         self.operacao=None
@@ -43,7 +47,7 @@ class ModoAdm(ctk.CTkFrame):
         self.grafico_pizza=None
         self.grafico_consumopessoa=None
         self.grafico_consumoap=None
-        self.media=None
+        self.gasto=None
         #atributo que serve para controlar a quantidade de tentativas
         self.tentativas=0
         
@@ -83,6 +87,11 @@ class ModoAdm(ctk.CTkFrame):
         self.frame_adm.pack(fill="both", expand=True)
 
     def conferir_adm(self):
+            """
+            Esse método é responsável por verificar se o código de acesso está correto,caso não esteja,depois de 4 tentativas o usuário será 
+            redirecionado para uma área que fechará o sistema por segurança
+            
+            """
             entrada_senha=self.entrada_senhaadm.get().strip()
             if entrada_senha=="!GaMa#1903!":
                 self.tela_inicial_adm()
@@ -95,6 +104,9 @@ class ModoAdm(ctk.CTkFrame):
             pass
     
     def atencao_adm(self):
+        """
+        Esse método é responsável pela atualização do frame,dando um aviso que o limite de tentativas foi atingido e que o sistema fechará em 7 segundos
+        """
         for widget in self.frame_adm.winfo_children():
             widget.destroy()
        
@@ -120,8 +132,12 @@ class ModoAdm(ctk.CTkFrame):
         self.label_contador.pack(pady=(20, 10))
         self.after(7000, self.sair_sistema)
     
-    
+
     def tela_inicial_adm(self):
+            """
+            Esse método é responsável por criar a tela inicial dentro do modo adm,fornecendo 3 opções ao usuário(Ver dados/Editar/Analisar Dados/)
+            """
+
             for widget in self.frame_adm.winfo_children():
                 widget.destroy()
             #A IDENTAÇÃO TEM QUE FICAR DESSA FORMA OU A CADA INTERAÇÃO,SERÁ CRIADO MAIS FRAMES DESSA TELA DE INÍCIO DO 
@@ -158,8 +174,11 @@ class ModoAdm(ctk.CTkFrame):
             pass
     
     
-    
+
     def tela_ver_dados(self):
+            """Método responsável por atualizar o frame para a opção ver dados.Esse método irá receber uma tabela como resposta de um método 
+            da classe OperacoesAdm.Após isso o usuário poderá visualizar os dados não sensíveis dos usuários.
+            """
             for widget in self.frame_adm.winfo_children():
                 widget.destroy()
             
@@ -201,8 +220,11 @@ class ModoAdm(ctk.CTkFrame):
             pass
     
     
-    
     def tela_editar_dados(self):
+            """
+            Esse método é responsável por atualizar a tela para a opção de editar dados,que se assemelha muito com o processo de atualização que 
+            o usuário pode fazer.
+            """
             for widget in self.frame_adm.winfo_children():
                 widget.destroy()
             frame_topo = ctk.CTkFrame(self.frame_adm, fg_color="#1A73E8", height=80)
@@ -288,7 +310,9 @@ class ModoAdm(ctk.CTkFrame):
         return all(c.isalpha() or c.isspace() for c in novo_texto) or novo_texto == ""
     
     def conferir_entradas(self):
-        print(1)
+        """
+        Ess método confere se as entradas necessárias estão preenchidas
+        """
         self.email=self.entrada_email.get().strip()
         self.apartamento=self.entrada_apartamento.get().strip()
         self.quantidade_pessoas=self.entrada_qmembros.get().strip()
@@ -346,7 +370,8 @@ class ModoAdm(ctk.CTkFrame):
     
     
     def verificar_email_edicao(self):
-        print(2)
+        """Esse método verifica se o email colocado na opção de editar está cadastrado ou não
+        """
         
         
         
@@ -358,7 +383,10 @@ class ModoAdm(ctk.CTkFrame):
         pass
     
     def salvar_edicao_dados(self):
-        print(3)
+        """
+        Esse método é responsável por salvar a edição dos dados,puxando outra função que mostrará uma tela atualizando,avisando que o sistema
+        precisa ser reinicializado para a atualização completa
+        """
         try:
             # Atualiza os dados que o admin pode alterar no
             dados_familia[self.email] = self.nome_familia
@@ -379,6 +407,10 @@ class ModoAdm(ctk.CTkFrame):
             print("Erro salvamento")
 
     def mostrar_aviso_adm(self):
+        """
+        Método responsável por mostrar aviso que o sistema precisa ser reinicializado para total atualização dos dados,fechando o sistema 
+        em 7 seg
+        """
         for widget in self.frame_adm.winfo_children():
                 widget.destroy()
 
@@ -413,9 +445,10 @@ class ModoAdm(ctk.CTkFrame):
         self.master.destroy()  # Fecha a janela principal
    
 
-
-
     def tela_analise_dados(self):
+            """Esse método é responsável por atualizar a tela para a opção analisar dados,na qual o usuário poderá analisar gráficos em relação a
+            dados de consumo ou dados dos usuários,sendo possível fazer uma análise mais crítica.
+            """
             for widget in self.frame_adm.winfo_children():
                 widget.destroy()
             
@@ -443,8 +476,8 @@ class ModoAdm(ctk.CTkFrame):
                 self.grafico_consumopessoa=self.operacao.gerar_grafico2()
             if self.grafico_consumoap is None:
                 self.grafico_consumoap=self.operacao.gerar_grafico3()
-            if self.media is None:
-                self.media=self.operacao.gerar_valor_media()
+            if self.gasto is None:
+                self.gasto=self.operacao.gerar_valor_media()
             
 
             img_pizza = CTkImage(dark_image=self.grafico_pizza, size=(400, 400))
@@ -458,7 +491,7 @@ class ModoAdm(ctk.CTkFrame):
             label_media_brasileira=CTkLabel(frame_lado_esquerdo,text="-Média brasileira de gasto de água por dia é de 154L por pessoa")
             label_media_brasileira.pack(pady=5)
             
-            label_media_condominio=CTkLabel(frame_lado_esquerdo,text=f"-Total de água gasto pelo condomínio {self.media}")
+            label_media_condominio=CTkLabel(frame_lado_esquerdo,text=f"-Total de água gasto pelo condomínio {self.gasto}")
             label_media_condominio.pack(pady=5)
 
             
@@ -479,14 +512,20 @@ class ModoAdm(ctk.CTkFrame):
 
             
             pass
-    
+
+
+
 class OperacoesAdm():
+    """Essa classe é responsável apenas por fazer as Operações necessárias para a criação de tabela,gráficos e média,usados no modo adm
+    """
     def __init__(self):
         print("entrei operações adm")
         
         pass
     
     def gerar_tabela(self):
+        """Método responsável por gerar a tabela da opção ver dados do modo adm
+        """
         
         dados_organizados = []
         
@@ -525,7 +564,7 @@ class OperacoesAdm():
         
     
     def gerar_grafico_pizza(self):
-        #Método responsável pela geração do gráfico de pizza que será feito em relação a quantidade de membros 
+        """Método responsável pela geração do gráfico de pizza que será feito em relação a quantidade de membros """
 
         #esse counter é uma classe nativa do python que contará a repetição de cada valor do dicionário dados_quantidade 
         #e armazenará em um dicionário por exemplo. {2:5,...}-->o número 2 se repete 5 vezes
@@ -540,7 +579,7 @@ class OperacoesAdm():
         sizes = list(contagem.values())
 
         # Criar gráfico de pizza
-        # Criar figura e eixo do gráfico
+       
 
         #fig é a janela geral do gráfico e area_usada é a área específica onde o gráfico será desenhado
         fig, area_usada = plt.subplots(figsize=(8,8)) #fgsize define o tamanho do gráfico em polegadas
@@ -558,7 +597,7 @@ class OperacoesAdm():
 
         area_usada.axis('equal')#garante que o gráfico seja um círculo perfeito
 
-        # Salvar o gráfico em memória como imagem PNG
+        #salvar o gráfico em memória como imagem png
         buffer = BytesIO()#cria um buffer de memória que simula um arquivo png,mas que ficará dentro da memória
         fig.savefig(buffer, format='png', bbox_inches='tight') #salva a figura dentro do buffer
         #bbox_inches='tight' remove os espaços em branco entre o gráfico
@@ -568,12 +607,14 @@ class OperacoesAdm():
         
         imagem = Image.open(buffer)
 
-        print("gráfico pizza gerado")
+        
 
         return imagem
 
     def gerar_grafico2(self):
-        #Método responsável por gerar o gráfico de consumo por quantidade
+        """Método responsável por gerar o gráfico de consumo por quantidade de pessoas 
+        
+        """
         dicionario_grafico={}
 
         for email in dados_quantidade:
@@ -648,6 +689,7 @@ class OperacoesAdm():
 
 
     def gerar_grafico3(self):
+        """Método responsável por gerar gráfico de consumo por andar"""
         dicionario_grafico2={}
        
         dicionario_andares = {
@@ -696,23 +738,23 @@ class OperacoesAdm():
         consumos=list(dicionario_andares.values())
         
 
-       # Criar figura e área onde o gráfico será desenhado
+       #criar figura e área onde o gráfico será desenhado
        #fig="janela" que será utilizada para armazenar a area_utilizada pela figura
         fig, area_utilizada = plt.subplots(figsize=(10, 6))
 
-        # Criar gráfico de barras de consumo(eixoy) x quantidade(eixo x) com a cor skyblue
+        #criar gráfico de barras de consumo(eixoy) x quantidade(eixo x) com a cor skyblue
         area_utilizada.bar(andares, consumos, color="skyblue")
 
-        #Título do gráfico
+        #título do gráfico
         area_utilizada.set_title("Consumo total por andar", fontsize=16, pad=20)
-        #Título relação eixo x
+        #título relação eixo x
         area_utilizada.set_xlabel("Andar correspondente", fontsize=12)
-        #Título relação eixo y
+        #título relação eixo y
         area_utilizada.set_ylabel("Consumo total (litros ou m³)", fontsize=12)
         #cria linhas no eixo y para ajudar a visualizar na análise de dados
         area_utilizada.grid(axis="y", linestyle="--", alpha=0.7)
 
-        # Função enumerate retorna o índice do valor e o valor que está na lista
+        #função enumerate retorna o índice do valor e o valor que está na lista
         for i, valor in enumerate(consumos):
             #+1 serve para posicionar o texto acima da barra.Valor é o valor no eixo y
             #passa o valor para string para ser possível colocar em texto
@@ -746,10 +788,11 @@ class OperacoesAdm():
             
 
     def gerar_valor_media(self):
+        """Método responsável por gerar valor de consumo total do condomínio"""
         
         consumo_listado=list(dados_consumo.values())
-        media_consumo_condominio=sum(consumo_listado)
+        consumo_condominio=sum(consumo_listado)
         
 
-        return media_consumo_condominio
+        return consumo_condominio
     pass

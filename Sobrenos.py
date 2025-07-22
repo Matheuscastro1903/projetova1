@@ -4,12 +4,6 @@ from customtkinter import CTkImage, CTkLabel
 from PIL import Image
 import json
 
-import pandas as pd
-import matplotlib as plt
-from collections import Counter
-from io import BytesIO
-import matplotlib.pyplot as plt
-from datetime import datetime, timedelta
 
 
 # Carregamento dos dados globais
@@ -28,15 +22,7 @@ with open(r"dados_usuarios.json", "r", encoding="utf-8") as arquivo:
     dados_lidos = json.load(arquivo)
     dados_consumo = dados_lidos["consumo"]
 
-# Prêmios disponíveis para resgate
-premios_disponiveis = [
-    {"nome": "Voucher de R$ 10", "custo": 100},
-    {"nome": "Desconto de 5% na conta de água", "custo": 200},
-    {"nome": "Kit de produtos sustentáveis", "custo": 300},
-    {"nome": "Voucher de R$ 25", "custo": 500},
-    {"nome": "Desconto de 10% na conta de água", "custo": 800},
-    {"nome": "Voucher de R$ 50", "custo": 1000}
-]
+
 
 mensagens_agua = [
     "💧 Cada gota conta. Economize água!",
@@ -57,8 +43,16 @@ mensagens_agua = [
 ]
 
 
+"""Essa classe SobreNos armazena tudo correspondente a área Sobre Nós,que tem como objetivo contar nossa história de criação"""
+
 class SobreNos(ctk.CTkFrame):
     def __init__(self, master, voltar_inicial):
+
+        """
+        Só um método é necessário pois essa área só irá mostrar o texto a respeito da nossa história 
+        e uma foto nossa na primeira apresentação do trabalho
+        """
+
         super().__init__(master)
         self.frame_sobrenos = ctk.CTkFrame(self, fg_color="#ffffff")
 
