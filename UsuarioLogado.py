@@ -530,25 +530,96 @@ class UsuarioLogado(ctk.CTkFrame):
 
 
 
-    def quiz_semanal(self):
-        """🧠 Função: Quiz Semanal - Disponibiliza 5 questões toda segunda-feira. Dependendo do desempenho, o usuário recebe pontos."""
-        self.limpar_frame_principal()
+   def quiz_semanal(self):
+            """🧠 Função: Quiz Semanal - Disponibiliza 5 questões toda segunda-feira. Dependendo do desempenho, o usuário recebe pontos."""
+            self.limpar_frame_principal()
+            label_titulo = ctk.CTkLabel(self.frameprincipal_menu, text="🧠 Quiz Semanal",
+                                 font=("Arial", 20, "bold"), text_color="#1A73E8")
+            label_titulo.pack(pady=(20, 10))
 
-        label_titulo = ctk.CTkLabel(self.frameprincipal_menu, text="🧠 Quiz Semanal",
-                                     font=("Arial", 20, "bold"), text_color="#1A73E8")
-        label_titulo.pack(pady=(20, 10))
-
-        # Implementação simplificada do quiz
-        ctk.CTkLabel(self.frameprincipal_menu, text="Quiz semanal não disponível no momento.",
+            hoje = datetime.now()
+            if hoje.weekday() != 0:  # 0 = Monday
+                ctk.CTkLabel(self.frameprincipal_menu, text="O quiz semanal só está disponível às segundas-feiras.",
                      font=("Arial", 14), text_color="#5f6368").pack(pady=50)
-
-        ctk.CTkLabel(self.frameprincipal_menu, text="Volte na próxima segunda-feira para participar!",
+                ctk.CTkLabel(self.frameprincipal_menu, text="Volte na próxima segunda-feira para participar!",
                      font=("Arial", 12), text_color="orange").pack(pady=10)
-
-        botao_voltar = ctk.CTkButton(self.frameprincipal_menu, text="⬅ Voltar ao Menu",
+                botao_voltar = ctk.CTkButton(self.frameprincipal_menu, text="⬅ Voltar ao Menu",
                                      fg_color="gray", text_color="white",
                                      command=self.reset_principal_menu_content)
-        botao_voltar.pack(pady=20)
+                botao_voltar.pack(pady=20)
+                return
+
+    # Impede refazer o quiz na mesma segunda-feira
+            global dados_ultimo_quiz
+            ultima_data = dados_ultimo_quiz.get(self.email)
+            if ultima_data == hoje.strftime("%Y-%m-%d"):
+                ctk.CTkLabel(self.frameprincipal_menu, text="Você já participou do quiz desta semana!",
+                     font=("Arial", 14), text_color="orange").pack(pady=50)
+                botao_voltar = ctk.CTkButton(self.frameprincipal_menu, text="⬅ Voltar ao Menu",
+                                     fg_color="gray", text_color="white",
+                                     command=self.reset_principal_menu_content)
+                botao_voltar.pack(pady=20)
+                return
+
+    # Seleciona 5 perguntas aleatórias do banco
+            perguntas = random.sample(dados_questoes_quiz, 5)
+            self.quiz_perguntas = perguntas
+            self.quiz_respostas = []
+            self.quiz_indice = 0
+            self.quiz_pontos = 0
+
+            def mostrar_pergunta():
+                for widget in self.frameprincipal_menu.winfo_children():
+                    if widget != label_titulo:
+                        widget.destroy()
+                pergunta = self.quiz_perguntas[self.quiz_indice]
+                ctk.CTkLabel(self.frameprincipal_menu, text=f"Pergunta {self.quiz_indice+1} de 5",
+                     font=("Arial", 14, "bold"), text_color="#1A73E8").pack(pady=(10, 5))
+                ctk.CTkLabel(self.frameprincipal_menu, text=pergunta["pergunta"],
+                     font=("Arial", 14), text_color="#333333", wraplength=500).pack(pady=10)
+                var_resposta = ctk.StringVar()
+                for alt in pergunta["alternativas"]:
+                    ctk.CTkRadioButton(self.frameprincipal_menu, text=alt, variable=var_resposta, value=alt).pack(anchor="w", padx=50)
+                def responder():
+                    resposta = var_resposta.get()
+                    if not resposta:
+                        return
+                    self.quiz_respostas.append(resposta)
+                    if resposta == pergunta["correta"]:
+                        self.quiz_pontos += 1
+                    self.quiz_indice += 1
+                    if self.quiz_indice < 5:
+                        mostrar_pergunta()
+                    else:
+                        mostrar_resultado()
+                ctk.CTkButton(self.frameprincipal_menu, text="Responder", fg_color="#1A73E8", text_color="white", command=responder).pack(pady=20)
+
+            def mostrar_resultado(self):
+                for widget in self.frameprincipal_menu.winfo_children():
+                    if widget != label_titulo:
+                        widget.destroy()
+                pontos_ganhos = self.quiz_pontos * 20  # Exemplo: 20 pontos por acerto
+                global dados_pontos
+                dados_pontos[self.email] = dados_pontos.get(self.email, 0) + pontos_ganhos
+        # Atualiza banco de dados
+                try:
+                    with open(r"banco_dados.JSON", "r+", encoding="utf-8") as f:
+                        data = json.load(f)
+                        data["pontos"][self.email] = dados_pontos[self.email]
+                        data.setdefault("ultimo_quiz", {})[self.email] = hoje.strftime("%Y-%m-%d")
+                        f.seek(0)
+                        json.dump(data, f, indent=4, ensure_ascii=False)
+                        f.truncate()
+                except Exception as e:
+                    ctk.CTkLabel(self.frameprincipal_menu, text=f"Erro ao salvar pontos: {e}", text_color="red").pack()
+                ctk.CTkLabel(self.frameprincipal_menu, text=f"Você acertou {self.quiz_pontos} de 5 perguntas!\nPontos ganhos: {pontos_ganhos}",
+                     font=("Arial", 16, "bold"), text_color="#28a745").pack(pady=30)
+                ctk.CTkButton(self.frameprincipal_menu, text="⬅ Voltar ao Menu",
+                      fg_color="gray", text_color="white",
+                      command=self.reset_principal_menu_content).pack(pady=20)
+
+            mostrar_pergunta()
+
 
     def area_educativa(self):
         """📘 Função: Área Educativa - Exibe conteúdo educativo sobre sustentabilidade e conservação da água."""
