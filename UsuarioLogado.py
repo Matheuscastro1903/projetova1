@@ -55,7 +55,7 @@ mensagens_agua = [
 ]
 
 
-""Classe voltada para armazenar as funcionalidades de game e gerenciamento de usuário, sendo mostradas em um frame diferente após o login""
+"""Classe voltada para armazenar as funcionalidades de game e gerenciamento de usuário, sendo mostradas em um frame diferente após o login"""
 
 class UsuarioLogado(ctk.CTkFrame):
     def __init__(self, master, email, senha):
@@ -69,7 +69,8 @@ class UsuarioLogado(ctk.CTkFrame):
 
 
     def criar_interface(self):
-    ""Criação da interface principal onde aparecem frames que armazenam as principais funcionalidades, o nome do projeto, o mascote e uma mensagem de boas vindas""
+        """Criação da interface principal onde aparecem frames que armazenam as principais funcionalidades, o nome do projeto, 
+        o mascote e uma mensagem de boas vindas"""
         # Frame topo
         self.frame_topo = ctk.CTkFrame(self, fg_color="#1A73E8", height=80)
         self.frame_topo.pack(fill="x")
@@ -99,7 +100,7 @@ class UsuarioLogado(ctk.CTkFrame):
 
 
     def criar_menu_lateral(self):
-    ""Armazenamento dos botões referentes às funcionalidades""
+        """Armazenamento dos botões referentes às funcionalidades"""
         # Label "Interaja" em azul claro
         label_interaja = ctk.CTkLabel(self.framelateral_menu, text="Interaja", 
                                       text_color="#87CEEB", font=("Arial", 16, "bold"))
@@ -170,7 +171,7 @@ class UsuarioLogado(ctk.CTkFrame):
         botao_feedback.pack(fill="x", pady=5, padx=20)
 
     def criar_conteudo_inicial(self):
-    ""Frame voltada para as boas-vindas""
+        """Frame voltada para as boas-vindas"""
         # Conteúdo inicial do frame principal
         texto_bem_vindo = ctk.CTkLabel(self.frameprincipal_menu, 
                                        text=f"Bem-vindo ao EcoDrop, {self.email}!",
@@ -345,7 +346,7 @@ class UsuarioLogado(ctk.CTkFrame):
         hoje = datetime.now()
 
         # Verifica se o dia atual é o dia 28
-        if hoje.day != 28:
+        if hoje.day != 22:
             # Se não for o dia 28, exibe uma mensagem e impede a execução do resto da função
             ctk.CTkLabel(self.frameprincipal_menu, 
                          text="O cálculo de pontuação só está disponível no dia 28 de cada mês.",
@@ -382,7 +383,7 @@ class UsuarioLogado(ctk.CTkFrame):
         self.botao_voltar.pack(pady=20)
 
     def calcular_pontos_acao(self):
-    ""Calcula os pontos que o usuário receberá com base na quantidade de litros economizados""
+        """Calcula os pontos que o usuário receberá com base na quantidade de litros economizados"""
         self.botao_voltar.destroy()
         self.botao_calcular.destroy()
         if self.email not in dados_consumo:
