@@ -682,7 +682,6 @@ class OperacoesAdm():
         return imagem
 
 
-
     def gerar_grafico3(self):
         """Método responsável por gerar gráfico de consumo por andar"""
         dicionario_grafico2={}
