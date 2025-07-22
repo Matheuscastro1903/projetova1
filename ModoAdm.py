@@ -568,9 +568,8 @@ class OperacoesAdm():
 
         #esse counter é uma classe nativa do python que contará a repetição de cada valor do dicionário dados_quantidade 
         #e armazenará em um dicionário por exemplo. {2:5,...}-->o número 2 se repete 5 vezes
+        
         contagem = Counter(dados_quantidade.values())
-
-
         #Nesse loop for dentro da variável label,será criado mensagens do tipo "2 membros","3 membros" e armazerá em uma lista na variável.
         #O loop irá rolar e irá criar um label para cada tipo de quantidade "2","3" e etc
         labels = [f"{membros} membros" for membros in contagem.keys()]
@@ -591,8 +590,6 @@ class OperacoesAdm():
         #autopct='%1.1f%%' mostra as porcentagens dentro da fatia
         #startangle=140: gira o gráfico para ficar mais esteticamente agradável.
 
-
-
         area_usada.set_title("Distribuição de famílias por número de membros", fontsize=20, pad=30)#define o título do gráfico e a fonte
 
         area_usada.axis('equal')#garante que o gráfico seja um círculo perfeito
@@ -606,8 +603,6 @@ class OperacoesAdm():
 
         
         imagem = Image.open(buffer)
-
-        
 
         return imagem
 
