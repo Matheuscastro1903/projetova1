@@ -1,18 +1,10 @@
 import customtkinter as ctk
 from customtkinter import CTkImage, CTkLabel
 
-from PIL import Image
+
 import json
-import csv
-import time
-import re
-import random
-import pandas as pd
-import matplotlib as plt
-from collections import Counter
-from io import BytesIO
-import matplotlib.pyplot as plt
-from datetime import datetime, timedelta
+
+
 
 from Telainicial import TelaInicial
 from Login import Login
