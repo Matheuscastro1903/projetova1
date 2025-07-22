@@ -94,6 +94,9 @@ Esse arquivo guarda a classe SobreNos, na qual é responsável por guardar a par
 
 
 
+•Arquivo "validar.py".
+
+Esse arquivo é responsável por guardar funções importantes para o tratamento de erros no processo de cadastro e atualização.
 
 
 
