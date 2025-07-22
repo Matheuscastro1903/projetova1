@@ -530,7 +530,7 @@ class UsuarioLogado(ctk.CTkFrame):
 
 
 
-   def quiz_semanal(self):
+    def quiz_semanal(self):
             """🧠 Função: Quiz Semanal - Disponibiliza 5 questões toda segunda-feira. Dependendo do desempenho, o usuário recebe pontos."""
             self.limpar_frame_principal()
             label_titulo = ctk.CTkLabel(self.frameprincipal_menu, text="🧠 Quiz Semanal",
