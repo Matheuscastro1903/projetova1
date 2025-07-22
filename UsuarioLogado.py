@@ -1133,41 +1133,58 @@ Número do Apartamento: {user_apartment}"""
         botao_voltar.pack(pady=20)
 
     def atualizar_dados(self):
-        """🔄 Função: Atualizar Dados - Permite ao usuário atualizar o nome da família, quantidade de membros e senha."""
+        """🔄 Função: Atualizar Dados - Permite ao usuário atualizar o nome da família, quantidade de membros, email, número do apartamento e senha."""
         self.limpar_frame_principal()
 
         label_titulo = ctk.CTkLabel(self.frameprincipal_menu, text="🔄 Atualizar Dados",
-                                     font=("Arial", 20, "bold"), text_color="#1A73E8")
+                                 font=("Arial", 20, "bold"), text_color="#1A73E8")
         label_titulo.pack(pady=(20, 10))
 
-        # Carrega dados atuais
-        global dados_familia, dados_quantidade, dados_conta
+        global dados_familia, dados_quantidade, dados_conta, dados_apartamento
         nome_atual = dados_familia.get(self.email, "")
         membros_atuais = dados_quantidade.get(self.email, "")
+        apartamento_atual = dados_apartamento.get(self.email, "")
+        email_atual = self.email
 
         ctk.CTkLabel(self.frameprincipal_menu, text="Preencha os campos que deseja atualizar:",
-                     font=("Arial", 14), text_color="#333333").pack(pady=(0, 10))
+                 font=("Arial", 14), text_color="#333333").pack(pady=(0, 10))
 
-        # Campo Nome da Família
+    # Campo Email
+        label_email = ctk.CTkLabel(self.frameprincipal_menu, text="Novo Email:",
+                               font=("Arial", 12, "bold"), text_color="#5f6368", anchor="w")
+        label_email.pack(fill="x", padx=50, pady=(10, 0))
+        self.entrada_email = ctk.CTkEntry(self.frameprincipal_menu, width=300)
+        self.entrada_email.insert(0, email_atual)
+        self.entrada_email.pack(padx=50, pady=(0, 10))
+
+    # Campo Nome da Família
         label_nome_familia = ctk.CTkLabel(self.frameprincipal_menu, text="Nome da Família:",
-                                           font=("Arial", 12, "bold"), text_color="#5f6368", anchor="w")
+                                       font=("Arial", 12, "bold"), text_color="#5f6368", anchor="w")
         label_nome_familia.pack(fill="x", padx=50, pady=(10, 0))
         self.entrada_nome_familia = ctk.CTkEntry(self.frameprincipal_menu, width=300)
         self.entrada_nome_familia.insert(0, nome_atual)
         self.entrada_nome_familia.pack(padx=50, pady=(0, 10))
 
-        # Campo Quantidade de Membros
+    # Campo Quantidade de Membros
         label_membros = ctk.CTkLabel(self.frameprincipal_menu, text="Quantidade de Membros:",
-                                      font=("Arial", 12, "bold"), text_color="#5f6368", anchor="w")
+                                  font=("Arial", 12, "bold"), text_color="#5f6368", anchor="w")
         label_membros.pack(fill="x", padx=50, pady=(10, 0))
         self.entrada_membros = ctk.CTkEntry(self.frameprincipal_menu, width=300, validate="key",
-                                       validatecommand=(self.register(validar_numeros), "%P"))
+                                   validatecommand=(self.register(validar_numeros), "%P"))
         self.entrada_membros.insert(0, str(membros_atuais))
         self.entrada_membros.pack(padx=50, pady=(0, 10))
 
-        # Campo Nova Senha (opcional)
+    # Campo Número do Apartamento
+        label_apartamento = ctk.CTkLabel(self.frameprincipal_menu, text="Número do Apartamento:",
+                                     font=("Arial", 12, "bold"), text_color="#5f6368", anchor="w")
+        label_apartamento.pack(fill="x", padx=50, pady=(10, 0))
+        self.entrada_apartamento = ctk.CTkEntry(self.frameprincipal_menu, width=300)
+        self.entrada_apartamento.insert(0, str(apartamento_atual))
+        self.entrada_apartamento.pack(padx=50, pady=(0, 10))
+
+    # Campo Nova Senha (opcional)
         label_nova_senha = ctk.CTkLabel(self.frameprincipal_menu, text="Nova Senha (deixe em branco para não alterar):",
-                                         font=("Arial", 12, "bold"), text_color="#5f6368", anchor="w")
+                                     font=("Arial", 12, "bold"), text_color="#5f6368", anchor="w")
         label_nova_senha.pack(fill="x", padx=50, pady=(10, 0))
         self.entrada_nova_senha = ctk.CTkEntry(self.frameprincipal_menu, width=300, show="*")
         self.entrada_nova_senha.pack(padx=50, pady=(0, 10))
@@ -1176,22 +1193,24 @@ Número do Apartamento: {user_apartment}"""
         self.label_mensagem_atualizar.pack(pady=(0, 10))
 
         botao_salvar = ctk.CTkButton(self.frameprincipal_menu, text="Salvar Atualizações",
-                                     fg_color="#1A73E8", text_color="white",
-                                     command=self.salvar_atualizacao_acao)
+                                 fg_color="#1A73E8", text_color="white",
+                                 command=self.salvar_atualizacao_acao)
         botao_salvar.pack(pady=10)
 
         botao_voltar = ctk.CTkButton(self.frameprincipal_menu, text="⬅ Voltar ao Menu",
-                                     fg_color="gray", text_color="white",
-                                     command=self.reset_principal_menu_content)
+                                 fg_color="gray", text_color="white",
+                                 command=self.reset_principal_menu_content)
         botao_voltar.pack(pady=20)
 
     def salvar_atualizacao_acao(self):
+        novo_email = self.entrada_email.get().strip()
         novo_nome = self.entrada_nome_familia.get().strip()
         nova_qtde_membros_str = self.entrada_membros.get().strip()
+        novo_apartamento = self.entrada_apartamento.get().strip()
         nova_senha = self.entrada_nova_senha.get().strip()
 
-        if not novo_nome or not nova_qtde_membros_str:
-            self.label_mensagem_atualizar.configure(text="Nome da família e quantidade de membros são obrigatórios.", text_color="red")
+        if not novo_email or not novo_nome or not nova_qtde_membros_str or not novo_apartamento:
+            self.label_mensagem_atualizar.configure(text="Todos os campos exceto senha são obrigatórios.", text_color="red")
             return
 
         try:
@@ -1211,14 +1230,35 @@ Número do Apartamento: {user_apartment}"""
             with open(r"banco_dados.JSON", "r+", encoding="utf-8") as f:
                 data = json.load(f)
 
-                data["familia"][self.email] = novo_nome
-                data["membros"][self.email] = nova_qtde_membros
-                if nova_senha:
-                    data["senha"][self.email] = nova_senha
+            # Se o email mudou, precisamos transferir todos os dados para o novo email
+                if novo_email != self.email:
+                # Verifica se o novo email já existe
+                    if novo_email in data["senha"]:
+                        self.label_mensagem_atualizar.configure(text="Este email já está cadastrado.", text_color="red")
+                        return
+                # Move todos os dados para o novo email
+                    for key in ["senha", "familia", "membros", "pontos", "apartamento", "verificador"]:
+                        if self.email in data.get(key, {}):
+                            data[key][novo_email] = data[key].pop(self.email)
+                # Atualiza campos com os novos valores
+                    data["familia"][novo_email] = novo_nome
+                    data["membros"][novo_email] = nova_qtde_membros
+                    data["apartamento"][novo_email] = novo_apartamento
+                    if nova_senha:
+                        data["senha"][novo_email] = nova_senha
+                # Atualiza variáveis globais
+                    self.email = novo_email
+                else:
+                    data["familia"][self.email] = novo_nome
+                    data["membros"][self.email] = nova_qtde_membros
+                    data["apartamento"][self.email] = novo_apartamento
+                    if nova_senha:
+                        data["senha"][self.email] = nova_senha
 
-                # Atualiza as variáveis globais
+            # Atualiza variáveis globais
                 dados_familia[self.email] = novo_nome
                 dados_quantidade[self.email] = nova_qtde_membros
+                dados_apartamento[self.email] = novo_apartamento
                 if nova_senha:
                     dados_conta[self.email] = nova_senha
 
@@ -1229,7 +1269,7 @@ Número do Apartamento: {user_apartment}"""
             self.entrada_nova_senha.delete(0, ctk.END)
         except Exception as e:
             self.label_mensagem_atualizar.configure(text=f"Erro ao atualizar dados: {e}", text_color="red")
-
+    
     def deletar_conta(self):
         """🗑️ Função: Deletar Conta - Permite ao usuário excluir sua conta permanentemente do sistema."""
         self.limpar_frame_principal()
