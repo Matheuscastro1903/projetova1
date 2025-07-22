@@ -28,7 +28,8 @@
         "kylianmbappe7@gmail.com": "432432423432",
         "diegoshowza87@gmail.com": "87878787",
         "pedroailton@gmail.com": "iloveifpe",
-        "camilaseabra@gmail.com": "12345"
+        "camilaseabra@gmail.com": "12345",
+        "professorcleyton@gmail.com": "123456"
     },
     "familia": {
         "joao.silva@email.com": "Silva",
@@ -59,7 +60,8 @@
         "kylianmbappe7@gmail.com": "Mbappé",
         "diegoshowza87@gmail.com": "Showza",
         "pedroailton@gmail.com": "Ailton",
-        "camilaseabra@gmail.com": "Seabra"
+        "camilaseabra@gmail.com": "Seabra",
+        "professorcleyton@gmail.com": "Vanut"
     },
     "membros": {
         "joao.silva@email.com": 1,
@@ -90,7 +92,8 @@
         "kylianmbappe7@gmail.com": 5,
         "diegoshowza87@gmail.com": 6,
         "pedroailton@gmail.com": 4,
-        "camilaseabra@gmail.com": 3
+        "camilaseabra@gmail.com": 3,
+        "professorcleyton@gmail.com": 1
     },
     "pontos": {
         "joao.silva@email.com": 750,
@@ -121,7 +124,8 @@
         "kylianmbappe7@gmail.com": 0,
         "diegoshowza87@gmail.com": 0,
         "pedroailton@gmail.com": 0,
-        "camilaseabra@gmail.com": 0
+        "camilaseabra@gmail.com": 0,
+        "professorcleyton@gmail.com": 0
     },
     "apartamento": {
         "joao.silva@email.com": 1001,
@@ -152,7 +156,8 @@
         "kylianmbappe7@gmail.com": 6001,
         "diegoshowza87@gmail.com": 6002,
         "pedroailton@gmail.com": 9001,
-        "camilaseabra@gmail.com": 8005
+        "camilaseabra@gmail.com": 8005,
+        "professorcleyton@gmail.com": 9005
     },
     "verificador": {
         "joao.silva@email.com": 83456,
@@ -183,6 +188,7 @@
         "kylianmbappe7@gmail.com": 34243242,
         "diegoshowza87@gmail.com": 878787878787,
         "pedroailton@gmail.com": 5435252,
-        "camilaseabra@gmail.com": 123123123
+        "camilaseabra@gmail.com": 123123123,
+        "professorcleyton@gmail.com": 312123412
     }
 }

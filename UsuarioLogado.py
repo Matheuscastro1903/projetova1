@@ -340,7 +340,7 @@ class UsuarioLogado(ctk.CTkFrame):
         hoje = datetime.now()
 
         # Verifica se o dia atual é o dia 28
-        if hoje.day != 21:
+        if hoje.day != 28:
             # Se não for o dia 28, exibe uma mensagem e impede a execução do resto da função
             ctk.CTkLabel(self.frameprincipal_menu, 
                          text="O cálculo de pontuação só está disponível no dia 28 de cada mês.",

@@ -2,19 +2,12 @@
 import customtkinter as ctk
 from customtkinter import CTkImage, CTkLabel
 
-from PIL import Image
 import json
-import csv
-import time
 import re
-import random
-import pandas as pd
-import matplotlib as plt
-from collections import Counter
-from io import BytesIO
 import matplotlib.pyplot as plt
-from datetime import datetime, timedelta
 from validar import validar_letras_espacos,validar_numeros
+
+
 
 # Carregamento dos dados globais
 with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
@@ -61,7 +54,7 @@ mensagens_agua = [
 ]
 
 
-class Cadastro(ctk.CTkFrame):
+class Usuario(ctk.CTkFrame):
 
     # Atributos de classe,servirão para todos os casos e evitará ter que criar uma lista toda vez que for verificar o email,melhorando
 

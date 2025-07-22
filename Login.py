@@ -3,10 +3,6 @@ from customtkinter import CTkImage, CTkLabel
 
 from PIL import Image
 import json
-import csv
-import time
-import re
-import random
 import pandas as pd
 import matplotlib as plt
 from collections import Counter
@@ -33,36 +29,18 @@ with open(r"dados_usuarios.json", "r", encoding="utf-8") as arquivo:
     dados_consumo = dados_lidos["consumo"]
 
 # Prêmios disponíveis para resgate
-premios_disponiveis = [
-    {"nome": "Voucher de R$ 10", "custo": 100},
-    {"nome": "Desconto de 5% na conta de água", "custo": 200},
-    {"nome": "Kit de produtos sustentáveis", "custo": 300},
-    {"nome": "Voucher de R$ 25", "custo": 500},
-    {"nome": "Desconto de 10% na conta de água", "custo": 800},
-    {"nome": "Voucher de R$ 50", "custo": 1000}
-]
 
-mensagens_agua = [
-    "💧 Cada gota conta. Economize água!",
-    "🚿 Banhos curtos, planeta mais saudável.",
-    "🌍 Água é vida. Preserve cada gota.",
-    "🧼 Feche a torneira ao escovar os dentes.",
-    "💦 Pequenas atitudes salvam grandes recursos.",
-    "🔧 Torneiras pingando desperdiçam litros por dia!",
-    "🌱 Use a água da chuva para regar plantas.",
-    "❌ Água não é infinita. Use com consciência.",
-    "🪣 Reutilize a água sempre que puder.",
-    "🐳 Preserve os rios, lagos e oceanos.",
-    "📉 Menos desperdício, mais futuro.",
-    "🧽 Economize água ao lavar louça ou roupa.",
-    "🏡 Sua casa também pode ser sustentável.",
-    "👶 Ensine as crianças a cuidar da água.",
-    "💙 Água limpa é direito de todos. Preserve!"
-]
+
+
+
+
+
+"""Essa classes será responsável por toda a parte que se refere ao login,seja os tratamentos de erro,seja as operações feitas """
 
 
 class Login(ctk.CTkFrame):
     def __init__(self, master, voltar_inicial, mostrar_menu):
+        """Inicializador chamará a interface,com suas entradas e botões"""
         super().__init__(master)
         #atributo de classe responsável por contar a quantidade de tentativas no login
         self.tentativas=0
@@ -105,7 +83,7 @@ class Login(ctk.CTkFrame):
         self.frame_login.pack(fill="both", expand=True)
 
     def conferir_logar(self):
-        """Função utilizada para verificar se há espaços em branco ao apertar o botão logar"""
+        """Método utilizado para verificar se há espaços em branco ao apertar o botão logar"""
         email = self.entrada_emaillogin.get().strip()
         senha = self.entrada_senhalogin.get().strip()
         if email == "" or senha == "":
@@ -118,7 +96,10 @@ class Login(ctk.CTkFrame):
         self.login()
 
     def login(self):
-        """Função utilizada para verificar se email e senha estão corretos,para assim ir para o menu"""
+        """Método utilizado para verificar se email e senha estão corretos,para assim ir para o menu.Caso o usuário erre 
+        a senha 3x,será direcionado a parte de tentar entrar com o código verificador,caso erre novamente,o sistema fechará
+        por segurança """
+
         with open(r"banco_dados.JSON", "r", encoding="utf-8") as arquivo:
             # quando usa json.load o arquivo json é transformado em dicionário python
             arquivo_lido = json.load(arquivo)
@@ -148,6 +129,7 @@ class Login(ctk.CTkFrame):
     
 
     def tentar_verificador(self):
+        """Método responsvál por mostra o frame onde o usuário tentará entrar com o código verificador"""
         for widget in self.frame_login.winfo_children():
             widget.destroy()
 
@@ -183,6 +165,9 @@ class Login(ctk.CTkFrame):
         
 
     def conferir_verificador(self):
+        """Método responsável por verificar se o email e código verificador estão batendo.Caso contrário,irá para uma tela
+        avisando que o sistema fechará em 7 segundos"""
+
         try:
             codigo=int(self.entrada_codigo_veri.get().strip())
             email=self.entrada_email_veri.get().strip()
@@ -198,6 +183,7 @@ class Login(ctk.CTkFrame):
 
 
     def aviso_sistema(self):
+        """Método responsável por mostrar aviso que o sistem será encerrado em 7 segundos,por questões de segurança"""
         for widget in self.frame_login.winfo_children():
             widget.destroy()
        

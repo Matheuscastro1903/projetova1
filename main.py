@@ -16,7 +16,7 @@ from datetime import datetime, timedelta
 
 from Telainicial import TelaInicial
 from Login import Login
-from Cadastro import Cadastro
+from Usuario import Usuario
 from ModoAdm import ModoAdm,OperacoesAdm
 from Sobrenos import SobreNos
 from UsuarioLogado import UsuarioLogado
@@ -113,7 +113,7 @@ class App(ctk.CTk):
     def criar_tela_cadastro(self):
         self.esquecer_frames()
         if self.tela_cadastro is None:
-            self.tela_cadastro = Cadastro(
+            self.tela_cadastro = Usuario(
                 self, 
                 voltar_inicial=self.criar_tela_inicial, 
                 mostrar_login=self.criar_tela_login)

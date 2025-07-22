@@ -29,23 +29,7 @@ with open(r"dados_usuarios.json", "r", encoding="utf-8") as arquivo:
     dados_consumo = dados_lidos["consumo"]
 
 
-mensagens_agua = [
-    "💧 Cada gota conta. Economize água!",
-    "🚿 Banhos curtos, planeta mais saudável.",
-    "🌍 Água é vida. Preserve cada gota.",
-    "🧼 Feche a torneira ao escovar os dentes.",
-    "💦 Pequenas atitudes salvam grandes recursos.",
-    "🔧 Torneiras pingando desperdiçam litros por dia!",
-    "🌱 Use a água da chuva para regar plantas.",
-    "❌ Água não é infinita. Use com consciência.",
-    "🪣 Reutilize a água sempre que puder.",
-    "🐳 Preserve os rios, lagos e oceanos.",
-    "📉 Menos desperdício, mais futuro.",
-    "🧽 Economize água ao lavar louça ou roupa.",
-    "🏡 Sua casa também pode ser sustentável.",
-    "👶 Ensine as crianças a cuidar da água.",
-    "💙 Água limpa é direito de todos. Preserve!"
-]
+
 
 
 class ModoAdm(ctk.CTkFrame):
