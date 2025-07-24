@@ -29,7 +29,8 @@
         "diegoshowza87@gmail.com": "87878787",
         "pedroailton@gmail.com": "iloveifpe",
         "camilaseabra@gmail.com": "12345",
-        "professorcleyton@gmail.com": "123456"
+        "professorcleyton@gmail.com": "123456",
+        "professorcleytonufrpe@gmail.com": "12345"
     },
     "familia": {
         "joao.silva@email.com": "Silva",
@@ -61,7 +62,8 @@
         "diegoshowza87@gmail.com": "Showza",
         "pedroailton@gmail.com": "Ailton",
         "camilaseabra@gmail.com": "Seabra",
-        "professorcleyton@gmail.com": "Vanut"
+        "professorcleyton@gmail.com": "Vanut",
+        "professorcleytonufrpe@gmail.com": "Vanut"
     },
     "membros": {
         "joao.silva@email.com": 1,
@@ -93,7 +95,8 @@
         "diegoshowza87@gmail.com": 6,
         "pedroailton@gmail.com": 4,
         "camilaseabra@gmail.com": 3,
-        "professorcleyton@gmail.com": 1
+        "professorcleyton@gmail.com": 1,
+        "professorcleytonufrpe@gmail.com": 3
     },
     "pontos": {
         "joao.silva@email.com": 750,
@@ -103,7 +106,7 @@
         "gabriel.escobar@gmail.com": 200,
         "matheus1903@gmail.com": 800,
         "samuel.andrade@gmail.com": 100,
-        "vinicastro@gmail.com": 60,
+        "vinicastro@gmail.com": 160,
         "julinhacastro1907@gmail.com": 30,
         "albuquerquegustavo@hotmail.com": 0,
         "leonardo.lima@gmail.com": 120,
@@ -125,7 +128,8 @@
         "diegoshowza87@gmail.com": 0,
         "pedroailton@gmail.com": 0,
         "camilaseabra@gmail.com": 0,
-        "professorcleyton@gmail.com": 0
+        "professorcleyton@gmail.com": 0,
+        "professorcleytonufrpe@gmail.com": 0
     },
     "apartamento": {
         "joao.silva@email.com": 1001,
@@ -157,7 +161,8 @@
         "diegoshowza87@gmail.com": 6002,
         "pedroailton@gmail.com": 9001,
         "camilaseabra@gmail.com": 8005,
-        "professorcleyton@gmail.com": 9005
+        "professorcleyton@gmail.com": 9005,
+        "professorcleytonufrpe@gmail.com": 7005
     },
     "verificador": {
         "joao.silva@email.com": 83456,
@@ -189,6 +194,7 @@
         "diegoshowza87@gmail.com": 878787878787,
         "pedroailton@gmail.com": 5435252,
         "camilaseabra@gmail.com": 123123123,
-        "professorcleyton@gmail.com": 312123412
+        "professorcleyton@gmail.com": 312123412,
+        "professorcleytonufrpe@gmail.com": 41432423
     }
 }

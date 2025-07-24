@@ -3,6 +3,9 @@ PROJETO ECODROP
 Esse repositório é responsável por guardar o código do projeto EcoDrop. O projeto ECODROP surge com o objetivo de incentivar práticas sustentáveis em residências, por meio de um sistema que gamefica o processo de economia de água, visando incentivar os usuários a usarem esse recurso essencial de uma forma mais consciente.
 
 
+![Mascote Ecodrop](fotos/mascoteprincipall.png)
+
+
 
 
 •Bibliotecas usadas para o projeto
@@ -56,13 +59,13 @@ Esse arquivo é responsável por armazenar a classe master("App"). Ela que "coma
 Esse arquivo recebe a classe TelaInicial. Essa classe será responsável por guardar a parte da interface destinada a tela inicial do sistema, na qual o usuário poderá transitar entre 4 funcionalidades: login,cadastro,modo administrador e sobre nós
 
 
-
+![Tela inicial](imagensprojeto/telainicial.PNG)
 
 •Arquivo "Login.py".
 
 Recebe a classe Login. Essa classe é responsável por toda a operação de login, desde o surgimento da interface até o processo de validação. Após o processo de login ser feito, o usuário será redirecionado para a tela de menu principal do sistema.
 
-
+![Login](imagensprojeto/login.PNG)
 
 
 
@@ -70,7 +73,7 @@ Recebe a classe Login. Essa classe é responsável por toda a operação de logi
 
 Recebe a classe Usuario. Essa classe é responsável por armazenar tudo que diz a respeito do cadastro de usuário. Ela irá mostrar a parte da interface destinada ao cadastro, irá fazer o tratamento dos erros e salvar no arquivo json os novos dados. Caso as pessoas que estiverem utilizando o sistema e tenham finalizado a etapa de cadastro de usuário, terão a opção de ir para o login ou sair do sistema.
 
-
+![Cadastro](imagensprojeto/cadastro.PNG)
 
 
 •Arquivo "ModoAdm.py".
@@ -81,18 +84,22 @@ A ideia do modo administrador é o síndico poder ter um olhar mais crítico em 
 
 -Método Ver dados=Juntamente com a classe OperacoesAdm,mostrará uma tabela organizada com dados não sensíveis dos usuários.
 
+![Ver dados](imagensprojeto/admverdados.PNG)
+
 -Método Editar dados=Esse método da a opção do síndico editar dados que foram cadastrados de forma errada e ter maior controle sobre tudo que ocorre no sistema.
+
+![Editar](imagensprojeto/admeditardados.PNG)
 
 -Método Analisar dados=Juntamente com a classe OperacoesAdm,esse método irá mostrar gráficos para que o administrador consiga analisar quais andares gastam mais água,qual o gasto de água em relação a quantidade de pessoas no apartamento e outros tipos de análise.A ideia é fazer uma análise crítica,visando fazer estimativas e evitar erros.
 
-
+![Analisar Dados](imagensprojeto/admanalisardados.PNG)
 
 
 •Arquivo "Sobrenos.py".
 
 Esse arquivo guarda a classe SobreNos, na qual é responsável por guardar a parte da interface que será usada para mostrar um texto sobre a história do ECODROP e uma foto dos criadores do projeto.
 
-
+![Sobre nós](imagensprojeto/sobrenos.PNG)
 
 •Arquivo "validar.py".
 
@@ -105,21 +112,41 @@ Esse arquivo é responsável por guardar funções importantes para o tratamento
 
 -Método Mostrar Ranking: Essa função realiza um ranqueamento de famílias com base nos litros economizados no mês. Ocupa as posições mais altas aqueles que economizaram mais água ao longo do mês, tomando como critério o consumo médio diário de água.
 
+![Rankign](imagensprojeto/ranking.PNG)
+
 -Método Resgatar Prêmio: Essa função permite com que o usuário resgate certo prêmio, analisando se o usuário apresenta saldo suficiente para resgatar determinado prêmio.
+
+![Resgatar prêmio](imagensprojeto/interajaresgatar.PNG)
 
 -Método Cálculo Pontuação:Nessa função o sistema é direcionado a realizar um cálculo de pontos com base nos litros economizados, na quantidade de pessoas na residência e, também, no consumo médio diário de água. Ao efetuar o cálculo, o sistema concede uma certa quantidade de pontos ao usuário e esses pontos são convertidos em prêmios como: voucher, milhas, descontos, créditos de celular, descontos na residência.
 
+![Cálculo](imagensprojeto/calculo.PNG)
+
 -Método Quiz semanal: Nessa função é disponibilizado, toda segunda-feira, 5 questões diferentes que tem como tema o uso de água, estimulando ainda mais o desenvolvimento do pensamento crítico.
+
+![Quiz semanal](imagensprojeto/quiz.PNG)
+
 
 -Método Área Educativa: Essa função disponibiliza notícias reais que tratam sobre água.
 
+![Área educativa](imagensprojeto/areaedu.PNG)
+
+
 -Método Mostrar Dados:A função mostrar dados cadastrados pelo usuário. Printará os principais dados(menos a senha e o código verificador,por serem confidenciais) na tela para o usuário que deseja conferir algo.
+
+![Mostrar dados](imagensprojeto/gerenciarmostrar.PNG)
 
 -Método Atualizar dados: Nessa função o usuário terá a opção de escolher qual tipo de atualização deseja,atualizar dados da conta(email ou senha) ou dados pessoais(nome da família,quantidade de membros,apartamento).Dependendo da opção que ele escolher irá puxar outras funções mais específicas.Cada uma tendo um tratamento de erro para caso o usuário coloque uma opção inválida ou já cadastrada no email.O objetivo é o usuário ter de forma simples e fácil a opção de atualizar seus dados,de forma segura.
 
+![Atualizar conta](imagensprojeto/atualizar.PNG)
+
 -Método Deletar conta: Nessa função o usuário poderá deletar sua conta caso deseje.Se ele concluir essa ação, não poderá mais acessar aquela conta, necessitando fazer outro cadastro para entrar no sistema.
 
+![Deletar conta](imagensprojeto/gerenciardeletar.PNG)
+
 -Método Feedback: Nessa função o usuário tem a opção de escrever a sua opinião acerca do serviço oferecido pelo sistema, comentando se gostou ou não e tendo até 140 caracteres para digitar na aba de feedback mostrada. O usuário também pode dar uma nota de 0 a 10, julgando conforme sua experiência.
+
+![Feedback](imagensprojeto/feedback.PNG)
 
 
 
